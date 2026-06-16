@@ -230,13 +230,12 @@
   input[readonly], textarea[readonly] { background: var(--gray-bg); color: var(--gray-text); cursor: default; }
   textarea { resize: vertical; min-height: 90px; }
 
-  /* ── STAR RATING ── */
+  /* ── SCORE DROPDOWN (0.5 steps) ── */
   .rating-wrap { display: flex; align-items: center; gap: 12px; }
-  .stars { display: flex; gap: 4px; }
-  .star { font-size: 24px; cursor: pointer; color: #ddd; transition: color .15s; user-select: none; }
-  .star.filled { color: #f5a623; }
-  .star:hover { color: #f5a623; }
-  .rating-label { font-size: 13px; color: var(--gray-text); min-width: 90px; }
+  .score-sel { width: 260px; border: 1.5px solid var(--gray-border); border-radius: 7px; padding: 7px 9px; font-size: 13px; color: var(--text); background: #fff; outline: none; cursor: pointer; transition: border-color .18s; }
+  .score-sel:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(0,85,165,.1); }
+  .score-sel.ro { background: var(--gray-bg); pointer-events: none; opacity: .8; }
+  .rating-label { font-size: 13px; color: var(--gray-text); min-width: 140px; }
 
   /* ── PROGRESS BAR ── */
   .progress-bar-wrap { margin: 6px 0 18px; }
@@ -480,11 +479,18 @@
           <div class="form-row"><div class="form-group">
             <label>Self Rating</label>
             <div class="rating-wrap">
-              <div class="stars" id="stars-s1">
-                <span class="star" onclick="setRating('s1',1)">★</span><span class="star" onclick="setRating('s1',2)">★</span>
-                <span class="star" onclick="setRating('s1',3)">★</span><span class="star" onclick="setRating('s1',4)">★</span>
-                <span class="star" onclick="setRating('s1',5)">★</span>
-              </div>
+              <select class="score-sel" id="score-s1" onchange="setRating('s1',parseFloat(this.value)||0)">
+                <option value="">— Select —</option>
+                <option value="1">1.0 — Poor</option>
+                <option value="1.5">1.5 — Below Average</option>
+                <option value="2">2.0 — Below Average</option>
+                <option value="2.5">2.5 — Approaching</option>
+                <option value="3">3.0 — Satisfactory</option>
+                <option value="3.5">3.5 — Above Average</option>
+                <option value="4">4.0 — Good</option>
+                <option value="4.5">4.5 — Very Good</option>
+                <option value="5">5.0 — Excellent</option>
+              </select>
               <span class="rating-label" id="rating-label-s1">Not rated</span>
             </div>
           </div></div>
@@ -499,11 +505,18 @@
           <div class="form-row"><div class="form-group">
             <label>Self Rating</label>
             <div class="rating-wrap">
-              <div class="stars" id="stars-s2">
-                <span class="star" onclick="setRating('s2',1)">★</span><span class="star" onclick="setRating('s2',2)">★</span>
-                <span class="star" onclick="setRating('s2',3)">★</span><span class="star" onclick="setRating('s2',4)">★</span>
-                <span class="star" onclick="setRating('s2',5)">★</span>
-              </div>
+              <select class="score-sel" id="score-s2" onchange="setRating('s2',parseFloat(this.value)||0)">
+                <option value="">— Select —</option>
+                <option value="1">1.0 — Poor</option>
+                <option value="1.5">1.5 — Below Average</option>
+                <option value="2">2.0 — Below Average</option>
+                <option value="2.5">2.5 — Approaching</option>
+                <option value="3">3.0 — Satisfactory</option>
+                <option value="3.5">3.5 — Above Average</option>
+                <option value="4">4.0 — Good</option>
+                <option value="4.5">4.5 — Very Good</option>
+                <option value="5">5.0 — Excellent</option>
+              </select>
               <span class="rating-label" id="rating-label-s2">Not rated</span>
             </div>
           </div></div>
@@ -518,11 +531,18 @@
           <div class="form-row"><div class="form-group">
             <label>Self Rating</label>
             <div class="rating-wrap">
-              <div class="stars" id="stars-s3">
-                <span class="star" onclick="setRating('s3',1)">★</span><span class="star" onclick="setRating('s3',2)">★</span>
-                <span class="star" onclick="setRating('s3',3)">★</span><span class="star" onclick="setRating('s3',4)">★</span>
-                <span class="star" onclick="setRating('s3',5)">★</span>
-              </div>
+              <select class="score-sel" id="score-s3" onchange="setRating('s3',parseFloat(this.value)||0)">
+                <option value="">— Select —</option>
+                <option value="1">1.0 — Poor</option>
+                <option value="1.5">1.5 — Below Average</option>
+                <option value="2">2.0 — Below Average</option>
+                <option value="2.5">2.5 — Approaching</option>
+                <option value="3">3.0 — Satisfactory</option>
+                <option value="3.5">3.5 — Above Average</option>
+                <option value="4">4.0 — Good</option>
+                <option value="4.5">4.5 — Very Good</option>
+                <option value="5">5.0 — Excellent</option>
+              </select>
               <span class="rating-label" id="rating-label-s3">Not rated</span>
             </div>
           </div></div>
@@ -537,11 +557,18 @@
           <div class="form-row"><div class="form-group">
             <label>Self Rating</label>
             <div class="rating-wrap">
-              <div class="stars" id="stars-s4">
-                <span class="star" onclick="setRating('s4',1)">★</span><span class="star" onclick="setRating('s4',2)">★</span>
-                <span class="star" onclick="setRating('s4',3)">★</span><span class="star" onclick="setRating('s4',4)">★</span>
-                <span class="star" onclick="setRating('s4',5)">★</span>
-              </div>
+              <select class="score-sel" id="score-s4" onchange="setRating('s4',parseFloat(this.value)||0)">
+                <option value="">— Select —</option>
+                <option value="1">1.0 — Poor</option>
+                <option value="1.5">1.5 — Below Average</option>
+                <option value="2">2.0 — Below Average</option>
+                <option value="2.5">2.5 — Approaching</option>
+                <option value="3">3.0 — Satisfactory</option>
+                <option value="3.5">3.5 — Above Average</option>
+                <option value="4">4.0 — Good</option>
+                <option value="4.5">4.5 — Very Good</option>
+                <option value="5">5.0 — Excellent</option>
+              </select>
               <span class="rating-label" id="rating-label-s4">Not rated</span>
             </div>
           </div></div>
@@ -556,11 +583,18 @@
           <div class="form-row"><div class="form-group">
             <label>Self Rating</label>
             <div class="rating-wrap">
-              <div class="stars" id="stars-s5">
-                <span class="star" onclick="setRating('s5',1)">★</span><span class="star" onclick="setRating('s5',2)">★</span>
-                <span class="star" onclick="setRating('s5',3)">★</span><span class="star" onclick="setRating('s5',4)">★</span>
-                <span class="star" onclick="setRating('s5',5)">★</span>
-              </div>
+              <select class="score-sel" id="score-s5" onchange="setRating('s5',parseFloat(this.value)||0)">
+                <option value="">— Select —</option>
+                <option value="1">1.0 — Poor</option>
+                <option value="1.5">1.5 — Below Average</option>
+                <option value="2">2.0 — Below Average</option>
+                <option value="2.5">2.5 — Approaching</option>
+                <option value="3">3.0 — Satisfactory</option>
+                <option value="3.5">3.5 — Above Average</option>
+                <option value="4">4.0 — Good</option>
+                <option value="4.5">4.5 — Very Good</option>
+                <option value="5">5.0 — Excellent</option>
+              </select>
               <span class="rating-label" id="rating-label-s5">Not rated</span>
             </div>
           </div></div>
@@ -653,11 +687,18 @@
           <div class="form-row">
             <div class="form-group"><label>Employee Self-Rating</label><div id="mgr-s1-self-rating" style="font-size:20px;color:#f5a623;"></div></div>
             <div class="form-group"><label>Manager Rating</label>
-              <div class="rating-wrap"><div class="stars" id="mgr-stars-s1">
-                <span class="star" onclick="setMgrRating('s1',1)">★</span><span class="star" onclick="setMgrRating('s1',2)">★</span>
-                <span class="star" onclick="setMgrRating('s1',3)">★</span><span class="star" onclick="setMgrRating('s1',4)">★</span>
-                <span class="star" onclick="setMgrRating('s1',5)">★</span>
-              </div><span class="rating-label" id="mgr-rating-label-s1">Not rated</span></div>
+              <div class="rating-wrap"><select class="score-sel" id="mgr-score-s1" onchange="setMgrRating('s1',parseFloat(this.value)||0)">
+                <option value="">— Select —</option>
+                <option value="1">1.0 — Poor</option>
+                <option value="1.5">1.5 — Below Average</option>
+                <option value="2">2.0 — Below Average</option>
+                <option value="2.5">2.5 — Approaching</option>
+                <option value="3">3.0 — Satisfactory</option>
+                <option value="3.5">3.5 — Above Average</option>
+                <option value="4">4.0 — Good</option>
+                <option value="4.5">4.5 — Very Good</option>
+                <option value="5">5.0 — Excellent</option>
+              </select><span class="rating-label" id="mgr-rating-label-s1">Not rated</span></div>
             </div>
           </div>
           <div class="form-row"><div class="form-group full"><label>Manager Comments</label><textarea id="mgr-s1-comment" placeholder="Add your comments for this section..."></textarea></div></div>
@@ -669,11 +710,18 @@
           <div class="form-row">
             <div class="form-group"><label>Employee Self-Rating</label><div id="mgr-s2-self-rating" style="font-size:20px;color:#f5a623;"></div></div>
             <div class="form-group"><label>Manager Rating</label>
-              <div class="rating-wrap"><div class="stars" id="mgr-stars-s2">
-                <span class="star" onclick="setMgrRating('s2',1)">★</span><span class="star" onclick="setMgrRating('s2',2)">★</span>
-                <span class="star" onclick="setMgrRating('s2',3)">★</span><span class="star" onclick="setMgrRating('s2',4)">★</span>
-                <span class="star" onclick="setMgrRating('s2',5)">★</span>
-              </div><span class="rating-label" id="mgr-rating-label-s2">Not rated</span></div>
+              <div class="rating-wrap"><select class="score-sel" id="mgr-score-s2" onchange="setMgrRating('s2',parseFloat(this.value)||0)">
+                <option value="">— Select —</option>
+                <option value="1">1.0 — Poor</option>
+                <option value="1.5">1.5 — Below Average</option>
+                <option value="2">2.0 — Below Average</option>
+                <option value="2.5">2.5 — Approaching</option>
+                <option value="3">3.0 — Satisfactory</option>
+                <option value="3.5">3.5 — Above Average</option>
+                <option value="4">4.0 — Good</option>
+                <option value="4.5">4.5 — Very Good</option>
+                <option value="5">5.0 — Excellent</option>
+              </select><span class="rating-label" id="mgr-rating-label-s2">Not rated</span></div>
             </div>
           </div>
           <div class="form-row"><div class="form-group full"><label>Manager Comments</label><textarea id="mgr-s2-comment" placeholder="Add your comments for this section..."></textarea></div></div>
@@ -685,11 +733,18 @@
           <div class="form-row">
             <div class="form-group"><label>Employee Self-Rating</label><div id="mgr-s3-self-rating" style="font-size:20px;color:#f5a623;"></div></div>
             <div class="form-group"><label>Manager Rating</label>
-              <div class="rating-wrap"><div class="stars" id="mgr-stars-s3">
-                <span class="star" onclick="setMgrRating('s3',1)">★</span><span class="star" onclick="setMgrRating('s3',2)">★</span>
-                <span class="star" onclick="setMgrRating('s3',3)">★</span><span class="star" onclick="setMgrRating('s3',4)">★</span>
-                <span class="star" onclick="setMgrRating('s3',5)">★</span>
-              </div><span class="rating-label" id="mgr-rating-label-s3">Not rated</span></div>
+              <div class="rating-wrap"><select class="score-sel" id="mgr-score-s3" onchange="setMgrRating('s3',parseFloat(this.value)||0)">
+                <option value="">— Select —</option>
+                <option value="1">1.0 — Poor</option>
+                <option value="1.5">1.5 — Below Average</option>
+                <option value="2">2.0 — Below Average</option>
+                <option value="2.5">2.5 — Approaching</option>
+                <option value="3">3.0 — Satisfactory</option>
+                <option value="3.5">3.5 — Above Average</option>
+                <option value="4">4.0 — Good</option>
+                <option value="4.5">4.5 — Very Good</option>
+                <option value="5">5.0 — Excellent</option>
+              </select><span class="rating-label" id="mgr-rating-label-s3">Not rated</span></div>
             </div>
           </div>
           <div class="form-row"><div class="form-group full"><label>Manager Comments</label><textarea id="mgr-s3-comment" placeholder="Add your comments for this section..."></textarea></div></div>
@@ -701,11 +756,18 @@
           <div class="form-row">
             <div class="form-group"><label>Employee Self-Rating</label><div id="mgr-s4-self-rating" style="font-size:20px;color:#f5a623;"></div></div>
             <div class="form-group"><label>Manager Rating</label>
-              <div class="rating-wrap"><div class="stars" id="mgr-stars-s4">
-                <span class="star" onclick="setMgrRating('s4',1)">★</span><span class="star" onclick="setMgrRating('s4',2)">★</span>
-                <span class="star" onclick="setMgrRating('s4',3)">★</span><span class="star" onclick="setMgrRating('s4',4)">★</span>
-                <span class="star" onclick="setMgrRating('s4',5)">★</span>
-              </div><span class="rating-label" id="mgr-rating-label-s4">Not rated</span></div>
+              <div class="rating-wrap"><select class="score-sel" id="mgr-score-s4" onchange="setMgrRating('s4',parseFloat(this.value)||0)">
+                <option value="">— Select —</option>
+                <option value="1">1.0 — Poor</option>
+                <option value="1.5">1.5 — Below Average</option>
+                <option value="2">2.0 — Below Average</option>
+                <option value="2.5">2.5 — Approaching</option>
+                <option value="3">3.0 — Satisfactory</option>
+                <option value="3.5">3.5 — Above Average</option>
+                <option value="4">4.0 — Good</option>
+                <option value="4.5">4.5 — Very Good</option>
+                <option value="5">5.0 — Excellent</option>
+              </select><span class="rating-label" id="mgr-rating-label-s4">Not rated</span></div>
             </div>
           </div>
           <div class="form-row"><div class="form-group full"><label>Manager Comments</label><textarea id="mgr-s4-comment" placeholder="Add your comments for this section..."></textarea></div></div>
@@ -717,11 +779,18 @@
           <div class="form-row">
             <div class="form-group"><label>Employee Self-Rating</label><div id="mgr-s5-self-rating" style="font-size:20px;color:#f5a623;"></div></div>
             <div class="form-group"><label>Manager Rating</label>
-              <div class="rating-wrap"><div class="stars" id="mgr-stars-s5">
-                <span class="star" onclick="setMgrRating('s5',1)">★</span><span class="star" onclick="setMgrRating('s5',2)">★</span>
-                <span class="star" onclick="setMgrRating('s5',3)">★</span><span class="star" onclick="setMgrRating('s5',4)">★</span>
-                <span class="star" onclick="setMgrRating('s5',5)">★</span>
-              </div><span class="rating-label" id="mgr-rating-label-s5">Not rated</span></div>
+              <div class="rating-wrap"><select class="score-sel" id="mgr-score-s5" onchange="setMgrRating('s5',parseFloat(this.value)||0)">
+                <option value="">— Select —</option>
+                <option value="1">1.0 — Poor</option>
+                <option value="1.5">1.5 — Below Average</option>
+                <option value="2">2.0 — Below Average</option>
+                <option value="2.5">2.5 — Approaching</option>
+                <option value="3">3.0 — Satisfactory</option>
+                <option value="3.5">3.5 — Above Average</option>
+                <option value="4">4.0 — Good</option>
+                <option value="4.5">4.5 — Very Good</option>
+                <option value="5">5.0 — Excellent</option>
+              </select><span class="rating-label" id="mgr-rating-label-s5">Not rated</span></div>
             </div>
           </div>
           <div class="form-row"><div class="form-group full"><label>Manager Comments</label><textarea id="mgr-s5-comment" placeholder="Add your comments for this section..."></textarea></div></div>
@@ -743,11 +812,18 @@
           <div class="form-section-title">📊 Overall Manager Assessment</div>
           <div class="form-row">
             <div class="form-group"><label>Overall Manager Rating</label>
-              <div class="rating-wrap"><div class="stars" id="mgr-stars-overall">
-                <span class="star" onclick="setMgrRating('overall',1)">★</span><span class="star" onclick="setMgrRating('overall',2)">★</span>
-                <span class="star" onclick="setMgrRating('overall',3)">★</span><span class="star" onclick="setMgrRating('overall',4)">★</span>
-                <span class="star" onclick="setMgrRating('overall',5)">★</span>
-              </div><span class="rating-label" id="mgr-rating-label-overall">Not rated</span></div>
+              <div class="rating-wrap"><select class="score-sel" id="mgr-score-overall" onchange="setMgrRating('overall',parseFloat(this.value)||0)">
+                <option value="">— Select —</option>
+                <option value="1">1.0 — Poor</option>
+                <option value="1.5">1.5 — Below Average</option>
+                <option value="2">2.0 — Below Average</option>
+                <option value="2.5">2.5 — Approaching</option>
+                <option value="3">3.0 — Satisfactory</option>
+                <option value="3.5">3.5 — Above Average</option>
+                <option value="4">4.0 — Good</option>
+                <option value="4.5">4.5 — Very Good</option>
+                <option value="5">5.0 — Excellent</option>
+              </select><span class="rating-label" id="mgr-rating-label-overall">Not rated</span></div>
             </div>
             <div class="form-group"><label>Recommended Action</label>
               <select id="mgr-recommendation">
@@ -845,7 +921,7 @@
         <div class="card" style="padding:24px;">
           <div class="form-section-title">📘 S1 — Job Knowledge &amp; Technical Skills</div>
           <label>Employee Self-Assessment</label><textarea readonly id="hr-s1-text" style="margin-top:6px;"></textarea>
-          <div style="margin-top:8px;font-size:13px;color:var(--gray-text);">Self-Rating: <span id="hr-s1-rating" style="color:#f5a623;"></span></div>
+          <div style="margin-top:8px;font-size:13px;color:var(--gray-text);">Self-Rating: <span id="hr-s1-rating"></span></div>
         </div>
         <div class="card" style="padding:24px;">
           <div class="form-section-title">🎯 S2 — Work Quality &amp; Accuracy</div>
@@ -983,7 +1059,7 @@ const SUPABASE_URL  = 'https://rfayekgpmrrzmyxtchzr.supabase.co';
 const SUPABASE_ANON = 'sb_publishable_j3Q6d10J3LbIeT45dAmFHQ_e1rjEZ7g';
 const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
 
-const ratingLabels = ['','Poor','Below Average','Satisfactory','Good','Excellent'];
+const SCORE_LBL = {1:'Poor',1.5:'Below Average',2:'Below Average',2.5:'Approaching',3:'Satisfactory',3.5:'Above Average',4:'Good',4.5:'Very Good',5:'Excellent'};
 
 const state = {
   currentUser: null, currentRole: null, currentEmp: null, activeCycle: null,
@@ -1129,8 +1205,8 @@ function loadEmployeeForm(){
   const selfR=sd.selfRatings||{};
   ['s1','s2','s3','s4','s5'].forEach(s=>{
     const val=selfR[s]||0; state.ratings[s]=val;
-    const stars=document.getElementById('stars-'+s); if(stars) stars.querySelectorAll('.star').forEach((st,i)=>st.classList.toggle('filled',i<val));
-    const lbl=document.getElementById('rating-label-'+s); if(lbl) lbl.textContent=val>0?val+' / 5 — '+ratingLabels[val]:'Not rated';
+    const sel=document.getElementById('score-'+s); if(sel) sel.value=val||'';
+    const lbl=document.getElementById('rating-label-'+s); if(lbl) lbl.textContent=val>0?val+' / 5 — '+SCORE_LBL[val]:'Not rated';
   });
   const status=sub.status||'Draft';
   const ss=document.getElementById('emp-status-stat'); if(ss) ss.textContent=status;
@@ -1141,8 +1217,8 @@ function loadEmployeeForm(){
 }
 function setRating(section,val){
   state.ratings[section]=val;
-  document.getElementById('stars-'+section).querySelectorAll('.star').forEach((s,i)=>s.classList.toggle('filled',i<val));
-  document.getElementById('rating-label-'+section).textContent=val+' / 5 — '+ratingLabels[val];
+  const sel=document.getElementById('score-'+section); if(sel) sel.value=val||'';
+  const lbl=document.getElementById('rating-label-'+section); if(lbl) lbl.textContent=val>0?val+' / 5 — '+SCORE_LBL[val]:'Not rated';
   updateFormProgress();
 }
 function updateFormProgress(){
@@ -1223,15 +1299,15 @@ async function openMgrReview(empCode){
   const av=p.full_name.split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase();
   document.getElementById('mgr-emp-profile-card').innerHTML=`<div class="emp-profile-card"><div class="emp-avatar">${av}</div><div><div class="emp-name">${p.full_name}</div><div class="emp-meta">${p.department||'—'} · Code: ${p.manager_code||'—'}</div><div class="emp-meta">${p.email||''}</div></div><div class="emp-status-wrap"><span class="badge ${getBadge(item.status)}">${item.status}</span><div style="font-size:12px;color:var(--gray-text);margin-top:6px;">Submitted: ${sub?fmtDate(sub.submitted_at):'—'}</div></div></div>`;
   ['s1','s2','s3','s4','s5','s6','s7'].forEach(s=>{const el=document.getElementById('mgr-'+s+'-text');if(el)el.value=sd[s]||'(Not filled by employee)';});
-  ['s1','s2','s3','s4','s5'].forEach(s=>{const r=selfR[s]||0;const el=document.getElementById('mgr-'+s+'-self-rating');if(el)el.textContent=r>0?'★'.repeat(r)+'☆'.repeat(5-r):'—';});
+  ['s1','s2','s3','s4','s5'].forEach(s=>{const r=selfR[s]||0;const el=document.getElementById('mgr-'+s+'-self-rating');if(el)el.textContent=r>0?r+' / 5 — '+(SCORE_LBL[r]||''):'—';});
   const msr=sub?(sub.manager_section_ratings||{}):{},msc=sub?(sub.manager_section_comments||{}):{};
   ['s1','s2','s3','s4','s5'].forEach(s=>{
     if(msr[s]){state.mgrRatings[s]=msr[s];setMgrRating(s,msr[s]);}
-    else{const stars=document.getElementById('mgr-stars-'+s);if(stars)stars.querySelectorAll('.star').forEach(st=>st.classList.remove('filled'));const lbl=document.getElementById('mgr-rating-label-'+s);if(lbl)lbl.textContent='Not rated';}
+    else{const sel=document.getElementById('mgr-score-'+s);if(sel)sel.value='';const lbl=document.getElementById('mgr-rating-label-'+s);if(lbl)lbl.textContent='Not rated';}
   });
   ['s1','s2','s3','s4','s5','s6','s7'].forEach(s=>{const el=document.getElementById('mgr-'+s+'-comment');if(el)el.value=msc[s]||'';});
   if(sub&&sub.manager_overall_rating){state.mgrRatings.overall=sub.manager_overall_rating;setMgrRating('overall',sub.manager_overall_rating);}
-  else{const stars=document.getElementById('mgr-stars-overall');if(stars)stars.querySelectorAll('.star').forEach(st=>st.classList.remove('filled'));}
+  else{const sel=document.getElementById('mgr-score-overall');if(sel)sel.value='';}
   const rec=document.getElementById('mgr-recommendation');if(rec)rec.value=(sub&&sub.manager_recommendation)||'';
   const oc=document.getElementById('mgr-overall-comment');if(oc)oc.value=(sub&&sub.manager_overall_comment)||'';
   const status=item.status;
@@ -1244,8 +1320,8 @@ async function openMgrReview(empCode){
 }
 function setMgrRating(section,val){
   state.mgrRatings[section]=val;
-  const stars=document.getElementById('mgr-stars-'+section);if(stars)stars.querySelectorAll('.star').forEach((s,i)=>s.classList.toggle('filled',i<val));
-  const lbl=document.getElementById('mgr-rating-label-'+section);if(lbl)lbl.textContent=val+' / 5 — '+ratingLabels[val];
+  const sel=document.getElementById('mgr-score-'+section); if(sel) sel.value=val||'';
+  const lbl=document.getElementById('mgr-rating-label-'+section); if(lbl) lbl.textContent=val>0?val+' / 5 — '+SCORE_LBL[val]:'Not rated';
 }
 function collectMgrReview(){
   const sc={},sr=Object.assign({},state.mgrRatings);
