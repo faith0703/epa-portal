@@ -1,0 +1,1547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ePA Portal — Performance Appraisal</title>
+<style>
+  :root {
+    --blue: #0055A5;
+    --blue-dark: #003f7f;
+    --blue-light: #e8f0fb;
+    --blue-mid: #1a6cc4;
+    --accent: #00a86b;
+    --accent-dark: #007a50;
+    --orange: #e8720c;
+    --red: #d32f2f;
+    --gray-bg: #f4f6f9;
+    --gray-border: #d1d9e0;
+    --gray-text: #6b7a8d;
+    --white: #ffffff;
+    --text: #1a2332;
+    --shadow: 0 2px 12px rgba(0,0,0,0.10);
+    --shadow-lg: 0 6px 24px rgba(0,0,0,0.13);
+    --radius: 10px;
+    --radius-sm: 6px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; background: var(--gray-bg); color: var(--text); min-height: 100vh; }
+
+  /* ── TOPBAR ── */
+  .topbar {
+    background: var(--blue);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 28px;
+    height: 58px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+    position: sticky; top: 0; z-index: 100;
+  }
+  .topbar-logo { font-size: 20px; font-weight: 700; letter-spacing: 0.5px; }
+  .topbar-logo span { color: #7ec8f7; }
+  .topbar-right { display: flex; align-items: center; gap: 12px; }
+  .topbar-user { font-size: 13px; opacity: .85; }
+  .topbar-role-badge {
+    background: rgba(255,255,255,0.18);
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 20px;
+    padding: 3px 12px;
+    font-size: 12px;
+    font-weight: 600;
+  }
+  .btn-switch {
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.4);
+    color: #fff;
+    border-radius: 6px;
+    padding: 5px 13px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: background .2s;
+  }
+  .btn-switch:hover { background: rgba(255,255,255,0.28); }
+  .btn-logout { background: rgba(255,80,80,0.2); border-color: rgba(255,150,150,0.4); }
+  .btn-logout:hover { background: rgba(255,80,80,0.35); }
+
+  /* ── SCREENS ── */
+  .screen { display: none; min-height: calc(100vh - 58px); }
+  .screen.active { display: block; }
+
+  /* ── LOGIN SCREEN ── */
+  #scrLogin { display: none; align-items: center; justify-content: center; background: linear-gradient(135deg, #003f7f 0%, #0055A5 60%, #1a6cc4 100%); min-height: 100vh; }
+  #scrLogin.active { display: flex; }
+  .login-card { background: var(--white); border-radius: 18px; box-shadow: 0 12px 48px rgba(0,0,0,0.28); padding: 40px 36px; width: 100%; max-width: 430px; }
+  .login-logo { text-align: center; margin-bottom: 28px; }
+  .login-logo-icon { font-size: 52px; display: block; margin-bottom: 10px; }
+  .login-logo-title { font-size: 26px; font-weight: 800; color: var(--blue-dark); }
+  .login-logo-sub { font-size: 13px; color: var(--gray-text); margin-top: 5px; }
+  .login-cycle-badge { display: inline-block; background: var(--blue-light); color: var(--blue); font-size: 11px; font-weight: 700; padding: 3px 12px; border-radius: 20px; margin-top: 8px; }
+  .login-field { margin-bottom: 14px; }
+  .login-field label { display: block; font-size: 11px; font-weight: 700; color: var(--gray-text); text-transform: uppercase; letter-spacing: .5px; margin-bottom: 5px; }
+  .login-field input { width: 100%; padding: 11px 14px; border: 1.5px solid var(--gray-border); border-radius: var(--radius-sm); font-size: 14px; color: var(--text); outline: none; transition: border-color .15s; font-family: inherit; }
+  .login-field input:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(0,85,165,0.10); }
+  .login-btn { width: 100%; background: var(--blue); color: #fff; border: none; border-radius: var(--radius-sm); padding: 13px; font-size: 15px; font-weight: 700; cursor: pointer; transition: background .18s; margin-top: 6px; }
+  .login-btn:hover { background: var(--blue-dark); }
+  .login-demo { margin-top: 22px; background: var(--gray-bg); border-radius: var(--radius-sm); padding: 14px; }
+  .login-demo-title { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; color: var(--gray-text); margin-bottom: 10px; }
+  .login-demo-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+  .login-demo-item { background: var(--white); border-radius: 6px; padding: 7px 6px; font-size: 11px; text-align: center; border: 1px solid var(--gray-border); cursor: pointer; transition: all .15s; }
+  .login-demo-item:hover { border-color: var(--blue); background: var(--blue-light); }
+  .login-demo-item .demo-code { font-weight: 800; display: block; color: var(--blue); font-size: 12px; }
+  .login-demo-item .demo-role { color: var(--gray-text); display: block; margin-top: 2px; font-size: 10px; }
+  .login-demo-item .demo-name { color: var(--text); display: block; margin-top: 1px; font-size: 10px; font-weight: 500; }
+  .login-note { font-size: 11px; color: var(--gray-text); text-align: center; margin-top: 14px; }
+
+  /* ── ROLE PICKER ── */
+  #scrRolePicker { display: none; align-items: center; justify-content: center; background: var(--gray-bg); }
+  #scrRolePicker.active { display: flex; flex-direction: column; }
+  .role-card-wrap { display: flex; gap: 24px; flex-wrap: wrap; justify-content: center; margin-top: 12px; }
+  .role-card {
+    background: var(--white);
+    border-radius: 14px;
+    box-shadow: var(--shadow);
+    padding: 36px 32px;
+    width: 220px;
+    text-align: center;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: all .2s;
+  }
+  .role-card:hover { border-color: var(--blue); transform: translateY(-3px); box-shadow: var(--shadow-lg); }
+  .role-card .role-icon { font-size: 44px; margin-bottom: 14px; }
+  .role-card .role-title { font-size: 16px; font-weight: 700; color: var(--blue); }
+  .role-card .role-desc { font-size: 12px; color: var(--gray-text); margin-top: 6px; }
+  .picker-title { font-size: 26px; font-weight: 700; color: var(--blue-dark); margin-bottom: 8px; }
+  .picker-sub { font-size: 14px; color: var(--gray-text); margin-bottom: 32px; }
+  .picker-demo-note { font-size: 11px; color: var(--gray-text); margin-top: 24px; background: var(--blue-light); padding: 8px 16px; border-radius: 20px; }
+
+  /* ── MAIN LAYOUT ── */
+  .main-layout { display: flex; min-height: calc(100vh - 58px); }
+  .sidebar {
+    width: 230px;
+    background: var(--white);
+    border-right: 1px solid var(--gray-border);
+    padding: 24px 0;
+    flex-shrink: 0;
+  }
+  .sidebar-section { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--gray-text); padding: 0 20px 8px; margin-top: 12px; }
+  .sidebar-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 20px;
+    font-size: 14px; color: var(--text);
+    cursor: pointer; border-left: 3px solid transparent;
+    transition: all .15s;
+  }
+  .sidebar-item:hover { background: var(--blue-light); color: var(--blue); }
+  .sidebar-item.active { background: var(--blue-light); color: var(--blue); border-left-color: var(--blue); font-weight: 600; }
+  .sidebar-item .si-icon { font-size: 17px; width: 22px; text-align: center; }
+  .content { flex: 1; padding: 32px 36px; overflow-y: auto; }
+
+  /* ── PAGE HEADER ── */
+  .page-header { margin-bottom: 28px; }
+  .page-header h1 { font-size: 22px; font-weight: 700; color: var(--blue-dark); }
+  .page-header p { font-size: 14px; color: var(--gray-text); margin-top: 4px; }
+
+  /* ── CARDS / STATS ── */
+  .stats-row { display: flex; gap: 18px; margin-bottom: 28px; flex-wrap: wrap; }
+  .stat-card {
+    background: var(--white);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 20px 24px;
+    flex: 1; min-width: 140px;
+    border-top: 4px solid var(--blue);
+  }
+  .stat-card.green { border-top-color: var(--accent); }
+  .stat-card.orange { border-top-color: var(--orange); }
+  .stat-card.red { border-top-color: var(--red); }
+  .stat-num { font-size: 32px; font-weight: 700; color: var(--blue); }
+  .stat-card.green .stat-num { color: var(--accent); }
+  .stat-card.orange .stat-num { color: var(--orange); }
+  .stat-card.red .stat-num { color: var(--red); }
+  .stat-label { font-size: 12px; color: var(--gray-text); margin-top: 4px; font-weight: 500; }
+
+  /* ── TABLE ── */
+  .card {
+    background: var(--white);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    margin-bottom: 24px;
+  }
+  .card-header {
+    padding: 16px 22px;
+    border-bottom: 1px solid var(--gray-border);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .card-title { font-size: 15px; font-weight: 700; color: var(--text); }
+  table { width: 100%; border-collapse: collapse; }
+  th { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .6px; color: var(--gray-text); padding: 10px 18px; background: var(--gray-bg); text-align: left; }
+  td { padding: 13px 18px; font-size: 13.5px; border-top: 1px solid var(--gray-border); color: var(--text); vertical-align: middle; }
+  tr:hover td { background: var(--blue-light); }
+  tr.clickable { cursor: pointer; }
+
+  /* ── BADGES ── */
+  .badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .3px; }
+  .badge-draft { background: #f0f0f0; color: #666; }
+  .badge-submitted { background: #e3f0ff; color: var(--blue); }
+  .badge-review { background: #fff3e0; color: var(--orange); }
+  .badge-approved { background: #e8f5e9; color: var(--accent-dark); }
+  .badge-returned { background: #fdecea; color: var(--red); }
+
+  /* ── BUTTONS ── */
+  .btn { display: inline-flex; align-items: center; gap: 6px; padding: 9px 20px; border-radius: var(--radius-sm); font-size: 13.5px; font-weight: 600; cursor: pointer; border: none; transition: all .18s; text-decoration: none; }
+  .btn-primary { background: var(--blue); color: #fff; }
+  .btn-primary:hover { background: var(--blue-dark); }
+  .btn-success { background: var(--accent); color: #fff; }
+  .btn-success:hover { background: var(--accent-dark); }
+  .btn-danger { background: var(--red); color: #fff; }
+  .btn-danger:hover { background: #b71c1c; }
+  .btn-outline { background: transparent; color: var(--blue); border: 1.5px solid var(--blue); }
+  .btn-outline:hover { background: var(--blue-light); }
+  .btn-ghost { background: transparent; color: var(--gray-text); border: 1.5px solid var(--gray-border); }
+  .btn-ghost:hover { background: var(--gray-bg); color: var(--text); }
+  .btn-sm { padding: 5px 12px; font-size: 12px; }
+
+  /* ── FORM ── */
+  .form-section { margin-bottom: 28px; }
+  .form-section-title {
+    font-size: 14px; font-weight: 700; color: var(--blue);
+    margin-bottom: 16px; padding-bottom: 8px;
+    border-bottom: 2px solid var(--blue-light);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .form-row { display: flex; gap: 18px; margin-bottom: 14px; flex-wrap: wrap; }
+  .form-group { flex: 1; min-width: 200px; }
+  .form-group.full { flex: 0 0 100%; }
+  label { display: block; font-size: 12px; font-weight: 600; color: var(--gray-text); margin-bottom: 5px; text-transform: uppercase; letter-spacing: .4px; }
+  input[type=text], input[type=date], select, textarea {
+    width: 100%; padding: 9px 12px;
+    border: 1.5px solid var(--gray-border); border-radius: var(--radius-sm);
+    font-size: 13.5px; color: var(--text);
+    background: var(--white); outline: none;
+    transition: border-color .15s;
+    font-family: inherit;
+  }
+  input:focus, select:focus, textarea:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(0,85,165,0.10); }
+  input[readonly], textarea[readonly] { background: var(--gray-bg); color: var(--gray-text); cursor: default; }
+  textarea { resize: vertical; min-height: 90px; }
+
+  /* ── STAR RATING ── */
+  .rating-wrap { display: flex; align-items: center; gap: 12px; }
+  .stars { display: flex; gap: 4px; }
+  .star { font-size: 24px; cursor: pointer; color: #ddd; transition: color .15s; user-select: none; }
+  .star.filled { color: #f5a623; }
+  .star:hover { color: #f5a623; }
+  .rating-label { font-size: 13px; color: var(--gray-text); min-width: 90px; }
+
+  /* ── PROGRESS BAR ── */
+  .progress-bar-wrap { margin: 6px 0 18px; }
+  .progress-bar-bg { background: var(--gray-border); border-radius: 8px; height: 8px; overflow: hidden; }
+  .progress-bar-fill { background: var(--blue); height: 100%; border-radius: 8px; transition: width .4s; }
+  .progress-label { font-size: 12px; color: var(--gray-text); margin-top: 4px; display: flex; justify-content: space-between; }
+
+  /* ── PA STATUS TIMELINE ── */
+  .status-timeline { display: flex; align-items: center; gap: 0; margin: 18px 0 28px; }
+  .tl-step { display: flex; flex-direction: column; align-items: center; flex: 1; }
+  .tl-dot { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; z-index: 1; }
+  .tl-dot.done { background: var(--accent); color: #fff; }
+  .tl-dot.active-step { background: var(--blue); color: #fff; }
+  .tl-dot.pending-step { background: var(--gray-border); color: var(--gray-text); }
+  .tl-label { font-size: 11px; color: var(--gray-text); margin-top: 6px; font-weight: 600; text-align: center; }
+  .tl-label.active-step { color: var(--blue); }
+  .tl-label.done { color: var(--accent-dark); }
+  .tl-line { flex: 1; height: 3px; background: var(--gray-border); margin-top: -19px; }
+  .tl-line.done { background: var(--accent); }
+
+  /* ── INFO BOX ── */
+  .info-box { background: var(--blue-light); border-left: 4px solid var(--blue); border-radius: var(--radius-sm); padding: 12px 16px; font-size: 13px; color: var(--blue-dark); margin-bottom: 20px; }
+  .warning-box { background: #fff8e1; border-left: 4px solid var(--orange); border-radius: var(--radius-sm); padding: 12px 16px; font-size: 13px; color: #7a4500; margin-bottom: 20px; }
+  .success-box { background: #e8f5e9; border-left: 4px solid var(--accent); border-radius: var(--radius-sm); padding: 12px 16px; font-size: 13px; color: var(--accent-dark); margin-bottom: 20px; }
+
+  /* ── MODAL ── */
+  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 500; align-items: center; justify-content: center; }
+  .modal-overlay.show { display: flex; }
+  .modal { background: var(--white); border-radius: 14px; box-shadow: var(--shadow-lg); padding: 32px; max-width: 480px; width: 90%; text-align: center; }
+  .modal-icon { font-size: 52px; margin-bottom: 14px; }
+  .modal-title { font-size: 20px; font-weight: 700; color: var(--text); margin-bottom: 8px; }
+  .modal-msg { font-size: 14px; color: var(--gray-text); margin-bottom: 24px; }
+  .modal-actions { display: flex; gap: 12px; justify-content: center; }
+
+  /* ── EMPLOYEE PROFILE CARD ── */
+  .emp-profile-card { background: var(--white); border-radius: var(--radius); box-shadow: var(--shadow); padding: 24px; margin-bottom: 24px; display: flex; align-items: center; gap: 20px; }
+  .emp-avatar { width: 56px; height: 56px; border-radius: 50%; background: var(--blue); color: #fff; font-size: 22px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .emp-name { font-size: 17px; font-weight: 700; color: var(--text); }
+  .emp-meta { font-size: 13px; color: var(--gray-text); margin-top: 2px; }
+  .emp-status-wrap { margin-left: auto; text-align: right; }
+
+  /* ── BACK LINK ── */
+  .back-link { display: inline-flex; align-items: center; gap: 6px; color: var(--blue); font-size: 13px; font-weight: 600; cursor: pointer; margin-bottom: 20px; }
+  .back-link:hover { text-decoration: underline; }
+
+  /* ── TOAST ── */
+  #toast {
+    position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%);
+    background: #222; color: #fff; padding: 12px 24px; border-radius: 30px;
+    font-size: 14px; font-weight: 500; z-index: 999;
+    opacity: 0; transition: opacity .3s; pointer-events: none;
+  }
+  #toast.show { opacity: 1; }
+
+  /* ── SCROLLBAR ── */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--gray-border); border-radius: 3px; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 700px) {
+    .sidebar { display: none; }
+    .content { padding: 20px 16px; }
+    .stats-row { gap: 10px; }
+    .role-card-wrap { flex-direction: column; align-items: center; }
+    .login-demo-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="topbar-logo">i<span>-</span>Admin &nbsp;<span style="font-weight:300;opacity:.6;font-size:14px">| ePA Portal</span></div>
+  <div class="topbar-right">
+    <span class="topbar-user" id="topbar-user-name"></span>
+    <span class="topbar-role-badge" id="topbar-role-label" style="display:none">—</span>
+    <button class="btn-switch" id="btn-switch-role" onclick="goRolePicker()" style="display:none">Switch Role</button>
+    <button class="btn-switch btn-logout" id="btn-logout" onclick="doLogout()" style="display:none">Log Out</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ LOGIN -->
+<div id="scrLogin" class="screen">
+  <div class="login-card">
+    <div class="login-logo">
+      <span class="login-logo-icon">📋</span>
+      <div class="login-logo-title">ePA Portal</div>
+      <div class="login-logo-sub">Electronic Performance Appraisal System</div>
+      <span class="login-cycle-badge">Cycle 2026</span>
+    </div>
+    <div class="login-field">
+      <label>Employee ID / Access Code</label>
+      <input type="text" id="login-code" placeholder="e.g. EMP001, MGR001, ADMIN" autocomplete="off" spellcheck="false">
+    </div>
+    <div class="login-field">
+      <label>Your Name <span style="font-weight:400;text-transform:none;letter-spacing:0">(optional — leave blank to use registered name)</span></label>
+      <input type="text" id="login-name" placeholder="Your full name">
+    </div>
+    <button class="login-btn" onclick="doLogin()">Sign In →</button>
+    <div class="login-demo">
+      <div class="login-demo-title">Demo Credentials — click to autofill</div>
+      <div class="login-demo-grid">
+        <div class="login-demo-item" onclick="autofillLogin('EMP001')">
+          <span class="demo-code">EMP001</span>
+          <span class="demo-role">Employee</span>
+          <span class="demo-name">Ahmad Faizal</span>
+        </div>
+        <div class="login-demo-item" onclick="autofillLogin('EMP002')">
+          <span class="demo-code">EMP002</span>
+          <span class="demo-role">Employee</span>
+          <span class="demo-name">Priya Ramasamy</span>
+        </div>
+        <div class="login-demo-item" onclick="autofillLogin('EMP003')">
+          <span class="demo-code">EMP003</span>
+          <span class="demo-role">Employee</span>
+          <span class="demo-name">Jason Lee</span>
+        </div>
+        <div class="login-demo-item" onclick="autofillLogin('EMP004')">
+          <span class="demo-code">EMP004</span>
+          <span class="demo-role">Employee</span>
+          <span class="demo-name">Nurul Ain</span>
+        </div>
+        <div class="login-demo-item" onclick="autofillLogin('MGR001')">
+          <span class="demo-code">MGR001</span>
+          <span class="demo-role">Manager</span>
+          <span class="demo-name">Weng Choon</span>
+        </div>
+        <div class="login-demo-item" onclick="autofillLogin('ADMIN')">
+          <span class="demo-code">ADMIN</span>
+          <span class="demo-role">HR Admin</span>
+          <span class="demo-name">HR Team</span>
+        </div>
+      </div>
+    </div>
+    <div class="login-note">💾 Your progress is saved automatically in this browser</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ ROLE PICKER -->
+<div id="scrRolePicker" class="screen">
+  <div class="picker-title" id="picker-welcome">Welcome! 👋</div>
+  <div class="picker-sub">Select how you'd like to proceed today.</div>
+  <div class="role-card-wrap">
+    <div class="role-card" onclick="selectRole('employee')">
+      <div class="role-icon">👤</div>
+      <div class="role-title">Employee</div>
+      <div class="role-desc">View &amp; submit your Performance Appraisal</div>
+    </div>
+    <div class="role-card" onclick="selectRole('manager')">
+      <div class="role-icon">👥</div>
+      <div class="role-title">Manager</div>
+      <div class="role-desc">Review your team's PA submissions</div>
+    </div>
+    <div class="role-card" onclick="selectRole('hr')">
+      <div class="role-icon">🛡️</div>
+      <div class="role-title">HR Admin</div>
+      <div class="role-desc">Oversee all PA records &amp; approvals</div>
+    </div>
+  </div>
+  <div class="picker-demo-note">🧪 Demo mode — all roles accessible for testing</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ EMPLOYEE HOME -->
+<div id="scrEmployeeHome" class="screen">
+  <div class="main-layout">
+    <div class="sidebar">
+      <div class="sidebar-section">Employee</div>
+      <div class="sidebar-item active" onclick="empNav('empDashboard')"><span class="si-icon">🏠</span> Dashboard</div>
+      <div class="sidebar-item" onclick="empNav('empForm')"><span class="si-icon">📝</span> My PA Form</div>
+      <div class="sidebar-item" onclick="empNav('empHistory')"><span class="si-icon">📋</span> History</div>
+    </div>
+    <div class="content">
+
+      <!-- EMP DASHBOARD -->
+      <div id="empDashboard">
+        <div class="page-header">
+          <h1 id="emp-dash-title">My Dashboard</h1>
+          <p>Performance Appraisal — Cycle 2026</p>
+        </div>
+
+        <div class="card" style="padding:24px;">
+          <div class="card-title" style="margin-bottom:18px;">📍 Your PA Progress</div>
+          <div class="status-timeline">
+            <div class="tl-step">
+              <div class="tl-dot done">✓</div>
+              <div class="tl-label done">Draft</div>
+            </div>
+            <div class="tl-line done"></div>
+            <div class="tl-step">
+              <div class="tl-dot active-step" id="tl-submitted">2</div>
+              <div class="tl-label active-step" id="tl-submitted-lbl">Submitted</div>
+            </div>
+            <div class="tl-line" id="tl-line-review"></div>
+            <div class="tl-step">
+              <div class="tl-dot pending-step" id="tl-review">3</div>
+              <div class="tl-label" id="tl-review-lbl">Under Review</div>
+            </div>
+            <div class="tl-line" id="tl-line-approved"></div>
+            <div class="tl-step">
+              <div class="tl-dot pending-step" id="tl-approved">4</div>
+              <div class="tl-label" id="tl-approved-lbl">Approved</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="stats-row">
+          <div class="stat-card">
+            <div class="stat-num" id="emp-completion">0%</div>
+            <div class="stat-label">Form Completion</div>
+          </div>
+          <div class="stat-card orange">
+            <div class="stat-num" id="emp-status-stat">Draft</div>
+            <div class="stat-label">Current Status</div>
+          </div>
+          <div class="stat-card green">
+            <div class="stat-num">30 Jun</div>
+            <div class="stat-label">Submission Deadline</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header"><span class="card-title">Quick Actions</span></div>
+          <div style="padding:20px;display:flex;gap:12px;flex-wrap:wrap;">
+            <button class="btn btn-primary" onclick="empNav('empForm')">📝 Open My PA Form</button>
+            <button class="btn btn-ghost" onclick="empNav('empHistory')">📋 View History</button>
+          </div>
+        </div>
+
+        <div class="info-box">
+          💡 <strong>Reminder:</strong> Your manager will review your submission after you submit. Ensure all sections are completed before the deadline.
+        </div>
+      </div>
+
+      <!-- EMP FORM -->
+      <div id="empForm" style="display:none;">
+        <span class="back-link" onclick="empNav('empDashboard')">← Back to Dashboard</span>
+        <div class="page-header">
+          <h1>My Performance Appraisal Form</h1>
+          <p>Cycle 2026 — Complete all sections before submitting</p>
+        </div>
+
+        <div class="progress-bar-wrap">
+          <div class="progress-bar-bg"><div class="progress-bar-fill" id="form-progress-bar" style="width:0%"></div></div>
+          <div class="progress-label"><span>Form Completion</span><span id="form-progress-pct">0%</span></div>
+        </div>
+
+        <div id="emp-submitted-notice" style="display:none;">
+          <div class="success-box">✅ Your PA has been submitted. You may still update and resubmit before your manager begins review.</div>
+        </div>
+        <div id="emp-returned-notice" style="display:none;">
+          <div class="warning-box">⚠️ Your PA has been <strong>returned</strong> by your manager with comments. Please review and resubmit.</div>
+        </div>
+
+        <div class="card" style="padding:24px;">
+          <div class="form-section-title">📘 S1 — Job Knowledge &amp; Technical Skills</div>
+          <div class="form-row"><div class="form-group full">
+            <label>Self-Assessment</label>
+            <textarea id="s1-text" placeholder="Describe your technical skills and domain knowledge relevant to your role..."></textarea>
+          </div></div>
+          <div class="form-row"><div class="form-group">
+            <label>Self Rating</label>
+            <div class="rating-wrap">
+              <div class="stars" id="stars-s1">
+                <span class="star" onclick="setRating('s1',1)">★</span><span class="star" onclick="setRating('s1',2)">★</span>
+                <span class="star" onclick="setRating('s1',3)">★</span><span class="star" onclick="setRating('s1',4)">★</span>
+                <span class="star" onclick="setRating('s1',5)">★</span>
+              </div>
+              <span class="rating-label" id="rating-label-s1">Not rated</span>
+            </div>
+          </div></div>
+        </div>
+
+        <div class="card" style="padding:24px;">
+          <div class="form-section-title">🎯 S2 — Work Quality &amp; Accuracy</div>
+          <div class="form-row"><div class="form-group full">
+            <label>Self-Assessment</label>
+            <textarea id="s2-text" placeholder="Describe the quality and accuracy of your work outputs..."></textarea>
+          </div></div>
+          <div class="form-row"><div class="form-group">
+            <label>Self Rating</label>
+            <div class="rating-wrap">
+              <div class="stars" id="stars-s2">
+                <span class="star" onclick="setRating('s2',1)">★</span><span class="star" onclick="setRating('s2',2)">★</span>
+                <span class="star" onclick="setRating('s2',3)">★</span><span class="star" onclick="setRating('s2',4)">★</span>
+                <span class="star" onclick="setRating('s2',5)">★</span>
+              </div>
+              <span class="rating-label" id="rating-label-s2">Not rated</span>
+            </div>
+          </div></div>
+        </div>
+
+        <div class="card" style="padding:24px;">
+          <div class="form-section-title">⚡ S3 — Productivity &amp; Efficiency</div>
+          <div class="form-row"><div class="form-group full">
+            <label>Self-Assessment</label>
+            <textarea id="s3-text" placeholder="Describe how you manage your workload and meet deadlines..."></textarea>
+          </div></div>
+          <div class="form-row"><div class="form-group">
+            <label>Self Rating</label>
+            <div class="rating-wrap">
+              <div class="stars" id="stars-s3">
+                <span class="star" onclick="setRating('s3',1)">★</span><span class="star" onclick="setRating('s3',2)">★</span>
+                <span class="star" onclick="setRating('s3',3)">★</span><span class="star" onclick="setRating('s3',4)">★</span>
+                <span class="star" onclick="setRating('s3',5)">★</span>
+              </div>
+              <span class="rating-label" id="rating-label-s3">Not rated</span>
+            </div>
+          </div></div>
+        </div>
+
+        <div class="card" style="padding:24px;">
+          <div class="form-section-title">🤝 S4 — Communication &amp; Teamwork</div>
+          <div class="form-row"><div class="form-group full">
+            <label>Self-Assessment</label>
+            <textarea id="s4-text" placeholder="Describe your collaboration and communication with colleagues and clients..."></textarea>
+          </div></div>
+          <div class="form-row"><div class="form-group">
+            <label>Self Rating</label>
+            <div class="rating-wrap">
+              <div class="stars" id="stars-s4">
+                <span class="star" onclick="setRating('s4',1)">★</span><span class="star" onclick="setRating('s4',2)">★</span>
+                <span class="star" onclick="setRating('s4',3)">★</span><span class="star" onclick="setRating('s4',4)">★</span>
+                <span class="star" onclick="setRating('s4',5)">★</span>
+              </div>
+              <span class="rating-label" id="rating-label-s4">Not rated</span>
+            </div>
+          </div></div>
+        </div>
+
+        <div class="card" style="padding:24px;">
+          <div class="form-section-title">💡 S5 — Initiative &amp; Problem Solving</div>
+          <div class="form-row"><div class="form-group full">
+            <label>Self-Assessment</label>
+            <textarea id="s5-text" placeholder="Describe initiatives you have taken and how you resolve challenges..."></textarea>
+          </div></div>
+          <div class="form-row"><div class="form-group">
+            <label>Self Rating</label>
+            <div class="rating-wrap">
+              <div class="stars" id="stars-s5">
+                <span class="star" onclick="setRating('s5',1)">★</span><span class="star" onclick="setRating('s5',2)">★</span>
+                <span class="star" onclick="setRating('s5',3)">★</span><span class="star" onclick="setRating('s5',4)">★</span>
+                <span class="star" onclick="setRating('s5',5)">★</span>
+              </div>
+              <span class="rating-label" id="rating-label-s5">Not rated</span>
+            </div>
+          </div></div>
+        </div>
+
+        <div class="card" style="padding:24px;">
+          <div class="form-section-title">🏆 S6 — Key Achievements This Year</div>
+          <div class="form-row"><div class="form-group full">
+            <label>Describe your key achievements (free text)</label>
+            <textarea id="s6-text" style="min-height:120px;" placeholder="List your major accomplishments, projects delivered, and contributions this year..."></textarea>
+          </div></div>
+        </div>
+
+        <div class="card" style="padding:24px;">
+          <div class="form-section-title">🌱 S7 — Development Goals &amp; Areas for Improvement</div>
+          <div class="form-row"><div class="form-group full">
+            <label>Your development plan for the coming year (free text)</label>
+            <textarea id="s7-text" style="min-height:120px;" placeholder="What skills do you want to develop? What areas would you like to improve?..."></textarea>
+          </div></div>
+        </div>
+
+        <div style="display:flex;gap:12px;margin-bottom:32px;flex-wrap:wrap;">
+          <button class="btn btn-ghost" onclick="saveForm()">💾 Save Draft</button>
+          <button class="btn btn-primary" id="emp-submit-btn" onclick="submitForm()">🚀 Submit PA</button>
+        </div>
+      </div>
+
+      <!-- EMP HISTORY -->
+      <div id="empHistory" style="display:none;">
+        <div class="page-header"><h1>PA History</h1><p>Past performance appraisal cycles</p></div>
+        <div class="card">
+          <table>
+            <thead><tr><th>Cycle</th><th>Submitted</th><th>Manager</th><th>Status</th><th>Final Rating</th></tr></thead>
+            <tbody>
+              <tr><td>2025</td><td>15 Apr 2025</td><td>Sarah Tan</td><td><span class="badge badge-approved">Approved</span></td><td>⭐⭐⭐⭐ (4.0)</td></tr>
+              <tr><td>2024</td><td>20 Apr 2024</td><td>Sarah Tan</td><td><span class="badge badge-approved">Approved</span></td><td>⭐⭐⭐⭐ (3.8)</td></tr>
+              <tr><td>2023</td><td>18 Apr 2023</td><td>David Lim</td><td><span class="badge badge-approved">Approved</span></td><td>⭐⭐⭐ (3.5)</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ MANAGER HOME -->
+<div id="scrManagerHome" class="screen">
+  <div class="main-layout">
+    <div class="sidebar">
+      <div class="sidebar-section">Manager</div>
+      <div class="sidebar-item active" onclick="mgrNav('mgrDashboard')"><span class="si-icon">🏠</span> Dashboard</div>
+      <div class="sidebar-item" onclick="mgrNav('mgrTeam')"><span class="si-icon">👥</span> My Team</div>
+    </div>
+    <div class="content">
+      <div id="mgrDashboard">
+        <div class="page-header"><h1>Manager Dashboard</h1><p>Performance Appraisal Cycle 2026 — Your Team</p></div>
+        <div class="stats-row">
+          <div class="stat-card"><div class="stat-num">4</div><div class="stat-label">Team Members</div></div>
+          <div class="stat-card green"><div class="stat-num" id="mgr-approved-count">0</div><div class="stat-label">Approved</div></div>
+          <div class="stat-card orange"><div class="stat-num" id="mgr-pending-count">0</div><div class="stat-label">Pending Review</div></div>
+          <div class="stat-card red"><div class="stat-num" id="mgr-draft-count">0</div><div class="stat-label">Not Yet Submitted</div></div>
+        </div>
+        <div class="info-box" id="mgr-action-info">📌 Loading team status...</div>
+        <div class="card">
+          <div class="card-header"><span class="card-title">Team PA Status</span><button class="btn btn-outline btn-sm" onclick="mgrNav('mgrTeam')">View All →</button></div>
+          <table><thead><tr><th>Employee</th><th>Department</th><th>Status</th><th>Submitted</th><th>Action</th></tr></thead>
+          <tbody id="mgr-team-preview"></tbody></table>
+        </div>
+      </div>
+
+      <div id="mgrTeam" style="display:none;">
+        <div class="page-header"><h1>My Team</h1><p>Click on an employee to review their PA</p></div>
+        <div class="card">
+          <table><thead><tr><th>Employee</th><th>Department</th><th>Status</th><th>Submitted On</th><th>Action</th></tr></thead>
+          <tbody id="mgr-team-full"></tbody></table>
+        </div>
+      </div>
+
+      <div id="mgrReview" style="display:none;">
+        <span class="back-link" onclick="mgrNav('mgrTeam')">← Back to Team</span>
+        <div id="mgr-emp-profile-card"></div>
+        <div class="info-box" id="mgr-review-info">📋 Review the employee's self-assessment below and provide your manager rating and comments for each section.</div>
+        <div id="mgr-approved-notice" style="display:none;"><div class="success-box">✅ This PA has been <strong>Approved</strong>. No further action required.</div></div>
+        <div id="mgr-returned-notice" style="display:none;"><div class="warning-box">⚠️ This PA was <strong>Returned</strong> to the employee for revision.</div></div>
+
+        <div class="card" style="padding:24px;">
+          <div class="form-section-title">📘 S1 — Job Knowledge &amp; Technical Skills</div>
+          <div class="form-row"><div class="form-group full"><label>Employee's Self-Assessment</label><textarea readonly id="mgr-s1-text"></textarea></div></div>
+          <div class="form-row">
+            <div class="form-group"><label>Employee Self-Rating</label><div id="mgr-s1-self-rating" style="font-size:20px;color:#f5a623;"></div></div>
+            <div class="form-group"><label>Manager Rating</label>
+              <div class="rating-wrap"><div class="stars" id="mgr-stars-s1">
+                <span class="star" onclick="setMgrRating('s1',1)">★</span><span class="star" onclick="setMgrRating('s1',2)">★</span>
+                <span class="star" onclick="setMgrRating('s1',3)">★</span><span class="star" onclick="setMgrRating('s1',4)">★</span>
+                <span class="star" onclick="setMgrRating('s1',5)">★</span>
+              </div><span class="rating-label" id="mgr-rating-label-s1">Not rated</span></div>
+            </div>
+          </div>
+          <div class="form-row"><div class="form-group full"><label>Manager Comments</label><textarea id="mgr-s1-comment" placeholder="Add your comments for this section..."></textarea></div></div>
+        </div>
+
+        <div class="card" style="padding:24px;">
+          <div class="form-section-title">🎯 S2 — Work Quality &amp; Accuracy</div>
+          <div class="form-row"><div class="form-group full"><label>Employee's Self-Assessment</label><textarea readonly id="mgr-s2-text"></textarea></div></div>
+          <div class="form-row">
+            <div class="form-group"><label>Employee Self-Rating</label><div id="mgr-s2-self-rating" style="font-size:20px;color:#f5a623;"></div></div>
+            <div class="form-group"><label>Manager Rating</label>
+              <div class="rating-wrap"><div class="stars" id="mgr-stars-s2">
+                <span class="star" onclick="setMgrRating('s2',1)">★</span><span class="star" onclick="setMgrRating('s2',2)">★</span>
+                <span class="star" onclick="setMgrRating('s2',3)">★</span><span class="star" onclick="setMgrRating('s2',4)">★</span>
+                <span class="star" onclick="setMgrRating('s2',5)">★</span>
+              </div><span class="rating-label" id="mgr-rating-label-s2">Not rated</span></div>
+            </div>
+          </div>
+          <div class="form-row"><div class="form-group full"><label>Manager Comments</label><textarea id="mgr-s2-comment" placeholder="Add your comments for this section..."></textarea></div></div>
+        </div>
+
+        <div class="card" style="padding:24px;">
+          <div class="form-section-title">⚡ S3 — Productivity &amp; Efficiency</div>
+          <div class="form-row"><div class="form-group full"><label>Employee's Self-Assessment</label><textarea readonly id="mgr-s3-text"></textarea></div></div>
+          <div class="form-row">
+            <div class="form-group"><label>Employee Self-Rating</label><div id="mgr-s3-self-rating" style="font-size:20px;color:#f5a623;"></div></div>
+            <div class="form-group"><label>Manager Rating</label>
+              <div class="rating-wrap"><div class="stars" id="mgr-stars-s3">
+                <span class="star" onclick="setMgrRating('s3',1)">★</span><span class="star" onclick="setMgrRating('s3',2)">★</span>
+                <span class="star" onclick="setMgrRating('s3',3)">★</span><span class="star" onclick="setMgrRating('s3',4)">★</span>
+                <span class="star" onclick="setMgrRating('s3',5)">★</span>
+              </div><span class="rating-label" id="mgr-rating-label-s3">Not rated</span></div>
+            </div>
+          </div>
+          <div class="form-row"><div class="form-group full"><label>Manager Comments</label><textarea id="mgr-s3-comment" placeholder="Add your comments for this section..."></textarea></div></div>
+        </div>
+
+        <div class="card" style="padding:24px;">
+          <div class="form-section-title">🤝 S4 — Communication &amp; Teamwork</div>
+          <div class="form-row"><div class="form-group full"><label>Employee's Self-Assessment</label><textarea readonly id="mgr-s4-text"></textarea></div></div>
+          <div class="form-row">
+            <div class="form-group"><label>Employee Self-Rating</label><div id="mgr-s4-self-rating" style="font-size:20px;color:#f5a623;"></div></div>
+            <div class="form-group"><label>Manager Rating</label>
+              <div class="rating-wrap"><div class="stars" id="mgr-stars-s4">
+                <span class="star" onclick="setMgrRating('s4',1)">★</span><span class="star" onclick="setMgrRating('s4',2)">★</span>
+                <span class="star" onclick="setMgrRating('s4',3)">★</span><span class="star" onclick="setMgrRating('s4',4)">★</span>
+                <span class="star" onclick="setMgrRating('s4',5)">★</span>
+              </div><span class="rating-label" id="mgr-rating-label-s4">Not rated</span></div>
+            </div>
+          </div>
+          <div class="form-row"><div class="form-group full"><label>Manager Comments</label><textarea id="mgr-s4-comment" placeholder="Add your comments for this section..."></textarea></div></div>
+        </div>
+
+        <div class="card" style="padding:24px;">
+          <div class="form-section-title">💡 S5 — Initiative &amp; Problem Solving</div>
+          <div class="form-row"><div class="form-group full"><label>Employee's Self-Assessment</label><textarea readonly id="mgr-s5-text"></textarea></div></div>
+          <div class="form-row">
+            <div class="form-group"><label>Employee Self-Rating</label><div id="mgr-s5-self-rating" style="font-size:20px;color:#f5a623;"></div></div>
+            <div class="form-group"><label>Manager Rating</label>
+              <div class="rating-wrap"><div class="stars" id="mgr-stars-s5">
+                <span class="star" onclick="setMgrRating('s5',1)">★</span><span class="star" onclick="setMgrRating('s5',2)">★</span>
+                <span class="star" onclick="setMgrRating('s5',3)">★</span><span class="star" onclick="setMgrRating('s5',4)">★</span>
+                <span class="star" onclick="setMgrRating('s5',5)">★</span>
+              </div><span class="rating-label" id="mgr-rating-label-s5">Not rated</span></div>
+            </div>
+          </div>
+          <div class="form-row"><div class="form-group full"><label>Manager Comments</label><textarea id="mgr-s5-comment" placeholder="Add your comments for this section..."></textarea></div></div>
+        </div>
+
+        <div class="card" style="padding:24px;">
+          <div class="form-section-title">🏆 S6 — Key Achievements</div>
+          <div class="form-row"><div class="form-group full"><label>Employee's Response</label><textarea readonly id="mgr-s6-text" style="min-height:100px;"></textarea></div></div>
+          <div class="form-row"><div class="form-group full"><label>Manager Comments</label><textarea id="mgr-s6-comment" placeholder="Add your comments..."></textarea></div></div>
+        </div>
+
+        <div class="card" style="padding:24px;">
+          <div class="form-section-title">🌱 S7 — Development Goals</div>
+          <div class="form-row"><div class="form-group full"><label>Employee's Response</label><textarea readonly id="mgr-s7-text" style="min-height:100px;"></textarea></div></div>
+          <div class="form-row"><div class="form-group full"><label>Manager Comments</label><textarea id="mgr-s7-comment" placeholder="Add your comments and recommended development priorities..."></textarea></div></div>
+        </div>
+
+        <div class="card" style="padding:24px;">
+          <div class="form-section-title">📊 Overall Manager Assessment</div>
+          <div class="form-row">
+            <div class="form-group"><label>Overall Manager Rating</label>
+              <div class="rating-wrap"><div class="stars" id="mgr-stars-overall">
+                <span class="star" onclick="setMgrRating('overall',1)">★</span><span class="star" onclick="setMgrRating('overall',2)">★</span>
+                <span class="star" onclick="setMgrRating('overall',3)">★</span><span class="star" onclick="setMgrRating('overall',4)">★</span>
+                <span class="star" onclick="setMgrRating('overall',5)">★</span>
+              </div><span class="rating-label" id="mgr-rating-label-overall">Not rated</span></div>
+            </div>
+            <div class="form-group"><label>Recommended Action</label>
+              <select id="mgr-recommendation">
+                <option value="">— Select —</option>
+                <option value="Confirm">Confirm Performance</option>
+                <option value="PIP">Performance Improvement Plan</option>
+                <option value="Promote">Recommend for Promotion</option>
+                <option value="Commend">Letter of Commendation</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row"><div class="form-group full"><label>Overall Comments to Employee</label>
+            <textarea id="mgr-overall-comment" style="min-height:100px;" placeholder="Provide overall feedback to the employee..."></textarea>
+          </div></div>
+        </div>
+
+        <div id="mgr-action-btns" style="display:flex;gap:12px;margin-bottom:32px;flex-wrap:wrap;">
+          <button class="btn btn-success" onclick="approvePA()">✅ Approve PA</button>
+          <button class="btn btn-danger" onclick="returnPA()">↩️ Return to Employee</button>
+          <button class="btn btn-ghost" onclick="mgrNav('mgrTeam')">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ HR HOME -->
+<div id="scrHRHome" class="screen">
+  <div class="main-layout">
+    <div class="sidebar">
+      <div class="sidebar-section">HR Admin</div>
+      <div class="sidebar-item active" onclick="hrNav('hrDashboard')"><span class="si-icon">🏠</span> Dashboard</div>
+      <div class="sidebar-item" onclick="hrNav('hrAll')"><span class="si-icon">📋</span> All Submissions</div>
+      <div class="sidebar-item" onclick="hrNav('hrReports')"><span class="si-icon">📊</span> Reports</div>
+    </div>
+    <div class="content">
+      <div id="hrDashboard">
+        <div class="page-header"><h1>HR Admin Dashboard</h1><p>PA Tracker — Cycle 2026 Overview</p></div>
+        <div class="stats-row">
+          <div class="stat-card"><div class="stat-num" id="hr-total">8</div><div class="stat-label">Total Employees</div></div>
+          <div class="stat-card green"><div class="stat-num" id="hr-approved">0</div><div class="stat-label">Approved</div></div>
+          <div class="stat-card orange"><div class="stat-num" id="hr-review">0</div><div class="stat-label">Under Review</div></div>
+          <div class="stat-card"><div class="stat-num" id="hr-submitted">0</div><div class="stat-label">Submitted</div></div>
+          <div class="stat-card red"><div class="stat-num" id="hr-draft">0</div><div class="stat-label">Draft / Not Started</div></div>
+        </div>
+        <div class="card" style="padding:24px;margin-bottom:24px;">
+          <div class="card-title" style="margin-bottom:16px;">📈 Overall Cycle Completion</div>
+          <div class="progress-bar-wrap">
+            <div class="progress-bar-bg"><div class="progress-bar-fill" id="hr-completion-bar" style="width:0%"></div></div>
+            <div class="progress-label"><span id="hr-completion-text">Loading...</span><span id="hr-completion-pct">0%</span></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><span class="card-title">Recent Activity</span><button class="btn btn-outline btn-sm" onclick="hrNav('hrAll')">View All →</button></div>
+          <table><thead><tr><th>Employee</th><th>Manager</th><th>Dept</th><th>Status</th><th>Last Updated</th></tr></thead>
+          <tbody id="hr-recent-table"></tbody></table>
+        </div>
+      </div>
+
+      <div id="hrAll" style="display:none;">
+        <div class="page-header"><h1>All PA Submissions</h1><p>Full list — click a record to view details</p></div>
+        <div class="card" style="padding:16px 20px;margin-bottom:20px;">
+          <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center;">
+            <div><label style="font-size:11px;">Filter by Status</label>
+              <select id="hr-filter-status" onchange="applyHRFilter()" style="width:160px;margin-top:4px;">
+                <option value="">All Status</option>
+                <option value="Draft">Draft</option>
+                <option value="Submitted">Submitted</option>
+                <option value="Under Review">Under Review</option>
+                <option value="Approved">Approved</option>
+                <option value="Returned">Returned</option>
+              </select>
+            </div>
+            <div><label style="font-size:11px;">Filter by Department</label>
+              <select id="hr-filter-dept" onchange="applyHRFilter()" style="width:160px;margin-top:4px;">
+                <option value="">All Departments</option>
+                <option value="HR Operations">HR Operations</option>
+                <option value="Payroll">Payroll</option>
+                <option value="Technology">Technology</option>
+                <option value="Finance">Finance</option>
+              </select>
+            </div>
+            <div style="margin-left:auto;margin-top:18px;">
+              <button class="btn btn-ghost btn-sm" onclick="exportCSV()">⬇️ Export CSV</button>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <table><thead><tr><th>Employee</th><th>Department</th><th>Manager</th><th>Status</th><th>Submitted</th><th>Action</th></tr></thead>
+          <tbody id="hr-all-table"></tbody></table>
+        </div>
+      </div>
+
+      <div id="hrDetail" style="display:none;">
+        <span class="back-link" onclick="hrNav('hrAll')">← Back to All Submissions</span>
+        <div id="hr-detail-profile"></div>
+        <div class="info-box">👁️ HR view — read only. Changes must be made by the employee or their manager.</div>
+        <div class="card" style="padding:24px;">
+          <div class="form-section-title">📘 S1 — Job Knowledge &amp; Technical Skills</div>
+          <label>Employee Self-Assessment</label><textarea readonly id="hr-s1-text" style="margin-top:6px;"></textarea>
+          <div style="margin-top:8px;font-size:13px;color:var(--gray-text);">Self-Rating: <span id="hr-s1-rating" style="color:#f5a623;"></span></div>
+        </div>
+        <div class="card" style="padding:24px;">
+          <div class="form-section-title">🎯 S2 — Work Quality &amp; Accuracy</div>
+          <label>Employee Self-Assessment</label><textarea readonly id="hr-s2-text" style="margin-top:6px;"></textarea>
+          <div style="margin-top:8px;font-size:13px;color:var(--gray-text);">Self-Rating: <span id="hr-s2-rating" style="color:#f5a623;"></span></div>
+        </div>
+        <div class="card" style="padding:24px;">
+          <div class="form-section-title">🏆 S6 — Key Achievements</div>
+          <label>Employee Response</label><textarea readonly id="hr-s6-text" style="margin-top:6px;min-height:100px;"></textarea>
+        </div>
+        <div class="card" style="padding:24px;">
+          <div class="form-section-title">🌱 S7 — Development Goals</div>
+          <label>Employee Response</label><textarea readonly id="hr-s7-text" style="margin-top:6px;min-height:100px;"></textarea>
+        </div>
+      </div>
+
+      <div id="hrReports" style="display:none;">
+        <div class="page-header"><h1>Reports</h1><p>PA Cycle 2026 — Summary Analytics</p></div>
+        <div class="stats-row">
+          <div class="stat-card"><div class="stat-num" id="rpt-avg-self">—</div><div class="stat-label">Avg Self-Rating</div></div>
+          <div class="stat-card green"><div class="stat-num">3.7</div><div class="stat-label">Avg Manager Rating</div></div>
+          <div class="stat-card orange"><div class="stat-num" id="rpt-days">—</div><div class="stat-label">Days to Deadline</div></div>
+        </div>
+        <div class="card" style="padding:24px;">
+          <div class="card-title" style="margin-bottom:16px;">📊 Status by Department</div>
+          <table>
+            <thead><tr><th>Department</th><th>Total</th><th>Submitted+</th><th>Approved</th><th>Completion</th></tr></thead>
+            <tbody id="rpt-dept-table"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODALS -->
+<div class="modal-overlay" id="modal-submit">
+  <div class="modal">
+    <div class="modal-icon">🚀</div>
+    <div class="modal-title">Submit Your PA?</div>
+    <div class="modal-msg">Once submitted, your manager will be notified to begin their review. You can still update and resubmit before they start.</div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal('modal-submit')">Cancel</button>
+      <button class="btn btn-primary" onclick="confirmSubmit()">Yes, Submit</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-approve">
+  <div class="modal">
+    <div class="modal-icon">✅</div>
+    <div class="modal-title">Approve this PA?</div>
+    <div class="modal-msg">The employee will be notified that their PA has been approved. This action will be recorded.</div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal('modal-approve')">Cancel</button>
+      <button class="btn btn-success" onclick="confirmApprove()">Yes, Approve</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-return">
+  <div class="modal">
+    <div class="modal-icon">↩️</div>
+    <div class="modal-title">Return PA to Employee?</div>
+    <div class="modal-msg">The employee will be notified to revise and resubmit their PA. Please ensure you have added comments explaining what needs to be updated.</div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal('modal-return')">Cancel</button>
+      <button class="btn btn-danger" onclick="confirmReturn()">Yes, Return</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-saved">
+  <div class="modal">
+    <div class="modal-icon">💾</div>
+    <div class="modal-title">Draft Saved!</div>
+    <div class="modal-msg">Your progress has been saved to this browser. You can continue editing at any time before the deadline.</div>
+    <div class="modal-actions"><button class="btn btn-primary" onclick="closeModal('modal-saved')">OK</button></div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ══════════════════════════════════════════════
+// LOCALSTORAGE LAYER
+// (swap lsGet/lsSet for API calls to go multi-user)
+// ══════════════════════════════════════════════
+function lsGet(k) { try { return JSON.parse(localStorage.getItem('epa_' + k)); } catch(e) { return null; } }
+function lsSet(k, v) { try { localStorage.setItem('epa_' + k, JSON.stringify(v)); } catch(e) {} }
+
+// ══════════════════════════════════════════════
+// DEMO USERS
+// ══════════════════════════════════════════════
+const DEMO_USERS = [
+  { code:'EMP001', name:'Ahmad Faizal bin Aziz',  role:'employee', empId:1 },
+  { code:'EMP002', name:'Priya a/p Ramasamy',      role:'employee', empId:2 },
+  { code:'EMP003', name:'Jason Lee Kah Meng',       role:'employee', empId:3 },
+  { code:'EMP004', name:'Nurul Ain binti Harun',    role:'employee', empId:4 },
+  { code:'EMP005', name:'Weng Choon Wong',          role:'employee', empId:5 },
+  { code:'MGR001', name:'Weng Choon Wong',          role:'manager',  empId:5 },
+  { code:'ADMIN',  name:'HR Administrator',         role:'hr',       empId:null },
+];
+
+// ══════════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════════
+const state = {
+  currentUser: null,
+  currentRole: null,
+  currentEmp: null,
+  empFormStatus: 'Draft',
+  ratings: { s1:0, s2:0, s3:0, s4:0, s5:0 },
+  mgrRatings: { s1:0, s2:0, s3:0, s4:0, s5:0, overall:0 },
+};
+
+// ══════════════════════════════════════════════
+// EMPLOYEE DATA
+// ══════════════════════════════════════════════
+const employees = [
+  { id:1, name:'Ahmad Faizal bin Aziz',   email:'ahmad.faizal@i-admin.com',  dept:'Payroll',      manager:'Weng Choon Wong', avatar:'AF', status:'Draft',        submitted:'—',          s1:'',s2:'',s3:'',s4:'',s5:'',s6:'',s7:'', selfRatings:{s1:0,s2:0,s3:0,s4:0,s5:0} },
+  { id:2, name:'Priya a/p Ramasamy',      email:'priya.ramasamy@i-admin.com', dept:'Payroll',      manager:'Weng Choon Wong', avatar:'PR', status:'Submitted',    submitted:'22 May 2026', s1:'I have 3 years experience in Malaysian payroll. I process EPF, SOCSO and PCB submissions monthly for 8 clients with zero late filings.',s2:'My error rate is below 1% for the past year. I double-check all calculations before payroll is released.',s3:'I manage my 8 clients efficiently and always meet deadlines. Occasionally need support during peak months.',s4:'I communicate proactively with clients and escalate issues early. Good team player.',s5:'I identified a duplicate payment risk in one client\'s data and raised it before payroll was run.',s6:'Successfully transitioned 2 new clients onto ePayslip platform within SLA.',s7:'I want to improve my Excel skills and learn Power Automate for payroll automation.', selfRatings:{s1:4,s2:4,s3:3,s4:4,s5:4} },
+  { id:3, name:'Jason Lee Kah Meng',      email:'jason.lee@i-admin.com',      dept:'Technology',   manager:'Weng Choon Wong', avatar:'JL', status:'Approved',     submitted:'10 May 2026', s1:'Strong technical background in SharePoint and Power Platform. Supported multiple automation projects.',s2:'Delivered all projects on time with minimal rework. Code review pass rate >90%.',s3:'Handle 3–4 concurrent projects. Consistently meet sprint commitments.',s4:'Work closely with HR and Finance teams. Good at translating business requirements to technical specs.',s5:'Proposed and implemented automated testing for Power Automate flows reducing QA time by 40%.',s6:'Delivered WS3 HTML payroll calculator and WS7 Power Apps PA Tracker ahead of schedule.',s7:'Plan to pursue PL-400 Power Platform Developer certification in Q3 2026.', selfRatings:{s1:5,s2:4,s3:4,s4:4,s5:5} },
+  { id:4, name:'Nurul Ain binti Harun',   email:'nurul.ain@i-admin.com',      dept:'HR Operations',manager:'Weng Choon Wong', avatar:'NA', status:'Under Review', submitted:'18 May 2026', s1:'Specialised in HR operations including onboarding, offboarding and statutory compliance for Malaysia.',s2:'All HR letters and documents issued on time. No compliance lapses in 2026.',s3:'Efficient in handling multiple employee queries daily. Response time under 24 hours.',s4:'Bridge between HR and operations team. Run monthly HR briefings for new staff.',s5:'Developed an onboarding tracker that reduced new joiner errors by 50%.',s6:'Completed HRDF PSMB registration for 3 entities. Led internship programme with 4 interns.',s7:'Want to deepen knowledge in employment law and explore HRIS implementation.', selfRatings:{s1:4,s2:5,s3:4,s4:5,s5:4} },
+];
+
+const allEmployees = [
+  ...employees,
+  { id:5, name:'Weng Choon Wong',     email:'wengchoon.wong@i-admin.com', dept:'HR Operations', manager:'Sarah Tan',       avatar:'WC', status:'Submitted',  submitted:'23 May 2026', s1:'',s2:'',s3:'',s4:'',s5:'',s6:'',s7:'', selfRatings:{s1:4,s2:5,s3:3,s4:4,s5:0} },
+  { id:6, name:'Sarah Tan Wei Ling',  email:'sarah.tan@i-admin.com',      dept:'Finance',       manager:'James Ong',       avatar:'ST', status:'Draft',       submitted:'—',           s1:'',s2:'',s3:'',s4:'',s5:'',s6:'',s7:'', selfRatings:{s1:0,s2:0,s3:0,s4:0,s5:0} },
+  { id:7, name:'Raj Kumar s/o Pillai',email:'raj.kumar@i-admin.com',      dept:'Payroll',       manager:'Weng Choon Wong', avatar:'RK', status:'Under Review',submitted:'20 May 2026', s1:'',s2:'',s3:'',s4:'',s5:'',s6:'',s7:'', selfRatings:{s1:3,s2:4,s3:3,s4:3,s5:3} },
+  { id:8, name:'Melissa Chong Hui Min',email:'melissa.chong@i-admin.com', dept:'Technology',    manager:'Weng Choon Wong', avatar:'MC', status:'Approved',    submitted:'12 May 2026', s1:'',s2:'',s3:'',s4:'',s5:'',s6:'',s7:'', selfRatings:{s1:4,s2:4,s3:5,s4:4,s5:4} },
+];
+
+const ratingLabels = ['','Poor','Below Average','Satisfactory','Good','Excellent'];
+
+// ══════════════════════════════════════════════
+// INIT DATA — restore localStorage overrides
+// ══════════════════════════════════════════════
+function initData() {
+  const savedStatuses = lsGet('statuses') || {};
+  const savedForms    = lsGet('forms')    || {};
+  allEmployees.forEach(emp => {
+    if (savedStatuses[emp.id]) {
+      emp.status    = savedStatuses[emp.id].status;
+      emp.submitted = savedStatuses[emp.id].submitted || emp.submitted;
+    }
+    if (savedForms[emp.id]) {
+      const f = savedForms[emp.id];
+      ['s1','s2','s3','s4','s5','s6','s7'].forEach(s => { if (f[s] !== undefined) emp[s] = f[s]; });
+      if (f.selfRatings) emp.selfRatings = Object.assign({}, emp.selfRatings, f.selfRatings);
+    }
+  });
+}
+
+// ══════════════════════════════════════════════
+// LOGIN / LOGOUT
+// ══════════════════════════════════════════════
+function autofillLogin(code) {
+  document.getElementById('login-code').value = code;
+  document.getElementById('login-code').focus();
+}
+
+function doLogin() {
+  const code = (document.getElementById('login-code').value || '').trim().toUpperCase();
+  const nameOverride = (document.getElementById('login-name').value || '').trim();
+  if (!code) { alert('Please enter your Employee ID or access code.'); return; }
+  const user = DEMO_USERS.find(u => u.code === code);
+  if (!user) { alert('Access code not recognised.\n\nValid codes: EMP001–EMP005, MGR001, ADMIN'); return; }
+  state.currentUser = Object.assign({}, user, { displayName: nameOverride || user.name });
+  lsSet('session', state.currentUser);
+  applyLogin();
+}
+
+function applyLogin() {
+  const user = state.currentUser;
+  if (!user) return;
+  document.getElementById('topbar-user-name').textContent = user.displayName || user.name;
+  document.getElementById('topbar-role-label').style.display = '';
+  document.getElementById('btn-switch-role').style.display = '';
+  document.getElementById('btn-logout').style.display = '';
+  const firstName = (user.displayName || user.name).split(' ')[0];
+  document.getElementById('picker-welcome').textContent = 'Welcome, ' + firstName + ' 👋';
+  if (user.role === 'employee') { selectRole('employee'); }
+  else if (user.role === 'manager') { selectRole('manager'); }
+  else if (user.role === 'hr') { selectRole('hr'); }
+}
+
+function doLogout() {
+  state.currentUser = null;
+  state.currentRole = null;
+  localStorage.removeItem('epa_session');
+  document.getElementById('topbar-user-name').textContent = '';
+  document.getElementById('topbar-role-label').style.display = 'none';
+  document.getElementById('btn-switch-role').style.display = 'none';
+  document.getElementById('btn-logout').style.display = 'none';
+  showScreen('scrLogin');
+  toast('Logged out. Your data is saved.');
+}
+
+// ══════════════════════════════════════════════
+// NAVIGATION
+// ══════════════════════════════════════════════
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+function goRolePicker() {
+  document.getElementById('topbar-role-label').textContent = '—';
+  showScreen('scrRolePicker');
+}
+
+function selectRole(role) {
+  state.currentRole = role;
+  const labels = { employee:'Employee', manager:'Manager', hr:'HR Admin' };
+  document.getElementById('topbar-role-label').textContent = labels[role];
+  if (role === 'employee') {
+    showScreen('scrEmployeeHome');
+    loadEmployeeForm();
+    empNav('empDashboard');
+  } else if (role === 'manager') {
+    showScreen('scrManagerHome');
+    mgrNav('mgrDashboard');
+    renderMgrTeam();
+  } else if (role === 'hr') {
+    showScreen('scrHRHome');
+    hrNav('hrDashboard');
+    renderHRTables();
+  }
+}
+
+function empNav(section) {
+  ['empDashboard','empForm','empHistory'].forEach(s => document.getElementById(s).style.display = 'none');
+  document.getElementById(section).style.display = '';
+  document.querySelectorAll('#scrEmployeeHome .sidebar-item').forEach(el => el.classList.remove('active'));
+  const idx = { empDashboard:0, empForm:1, empHistory:2 };
+  document.querySelectorAll('#scrEmployeeHome .sidebar-item')[idx[section]].classList.add('active');
+  updateTimeline();
+  if (section === 'empForm') updateFormProgress();
+}
+
+function mgrNav(section) {
+  ['mgrDashboard','mgrTeam','mgrReview'].forEach(s => document.getElementById(s).style.display = 'none');
+  document.getElementById(section).style.display = '';
+  document.querySelectorAll('#scrManagerHome .sidebar-item').forEach(el => el.classList.remove('active'));
+  if (section !== 'mgrReview') {
+    const idx = { mgrDashboard:0, mgrTeam:1 };
+    document.querySelectorAll('#scrManagerHome .sidebar-item')[idx[section]].classList.add('active');
+  }
+  renderMgrTeam();
+}
+
+function hrNav(section) {
+  ['hrDashboard','hrAll','hrDetail','hrReports'].forEach(s => document.getElementById(s).style.display = 'none');
+  document.getElementById(section).style.display = '';
+  document.querySelectorAll('#scrHRHome .sidebar-item').forEach(el => el.classList.remove('active'));
+  const idx = { hrDashboard:0, hrAll:1, hrReports:2 };
+  if (idx[section] !== undefined) document.querySelectorAll('#scrHRHome .sidebar-item')[idx[section]].classList.add('active');
+  if (section === 'hrAll') renderHRAll();
+  if (section === 'hrReports') renderReports();
+}
+
+// ══════════════════════════════════════════════
+// EMPLOYEE FORM
+// ══════════════════════════════════════════════
+function loadEmployeeForm() {
+  const user = state.currentUser;
+  if (!user || !user.empId) return;
+  const emp = allEmployees.find(e => e.id === user.empId);
+  if (!emp) return;
+
+  // Update dash title
+  const firstName = (user.displayName || user.name).split(' ')[0];
+  const titleEl = document.getElementById('emp-dash-title');
+  if (titleEl) titleEl.textContent = firstName + "'s Dashboard";
+
+  // Fill form fields (always override HTML defaults)
+  ['s1','s2','s3','s4','s5','s6','s7'].forEach(s => {
+    const el = document.getElementById(s + '-text');
+    if (el) el.value = emp[s] || '';
+  });
+
+  // Reset + apply ratings
+  ['s1','s2','s3','s4','s5'].forEach(s => {
+    const val = emp.selfRatings[s] || 0;
+    state.ratings[s] = val;
+    const stars = document.getElementById('stars-' + s);
+    if (stars) stars.querySelectorAll('.star').forEach((st, i) => st.classList.toggle('filled', i < val));
+    const lbl = document.getElementById('rating-label-' + s);
+    if (lbl) lbl.textContent = val > 0 ? val + ' / 5 — ' + ratingLabels[val] : 'Not rated';
+  });
+
+  state.empFormStatus = emp.status || 'Draft';
+  const statusStat = document.getElementById('emp-status-stat');
+  if (statusStat) statusStat.textContent = state.empFormStatus;
+
+  const submitted = document.getElementById('emp-submitted-notice');
+  const returned  = document.getElementById('emp-returned-notice');
+  const submitBtn = document.getElementById('emp-submit-btn');
+  if (submitted) submitted.style.display = ['Submitted','Under Review','Approved'].includes(emp.status) ? '' : 'none';
+  if (returned)  returned.style.display  = emp.status === 'Returned' ? '' : 'none';
+  if (submitBtn) submitBtn.textContent   = ['Submitted','Under Review','Approved'].includes(emp.status) ? '🔄 Resubmit PA' : '🚀 Submit PA';
+
+  updateTimeline();
+  updateFormProgress();
+}
+
+function setRating(section, val) {
+  state.ratings[section] = val;
+  document.getElementById('stars-' + section).querySelectorAll('.star').forEach((s, i) => s.classList.toggle('filled', i < val));
+  document.getElementById('rating-label-' + section).textContent = val + ' / 5 — ' + ratingLabels[val];
+  updateFormProgress();
+}
+
+function updateFormProgress() {
+  const filled = ['s1','s2','s3','s4','s5'].filter(s => state.ratings[s] > 0).length;
+  const texts  = ['s1','s2','s3','s4','s5','s6','s7'].filter(s => { const el = document.getElementById(s+'-text'); return el && el.value.trim().length > 0; }).length;
+  const pct = Math.min(100, Math.round(((filled * 2 + texts) / 17) * 100));
+  document.getElementById('form-progress-bar').style.width = pct + '%';
+  document.getElementById('form-progress-pct').textContent = pct + '%';
+  document.getElementById('emp-completion').textContent = pct + '%';
+}
+
+function collectFormData() {
+  const data = { selfRatings: Object.assign({}, state.ratings) };
+  ['s1','s2','s3','s4','s5','s6','s7'].forEach(s => {
+    const el = document.getElementById(s + '-text');
+    data[s] = el ? el.value : '';
+  });
+  return data;
+}
+
+function saveForm() {
+  const user = state.currentUser;
+  const formData = collectFormData();
+  if (user && user.empId) {
+    const emp = allEmployees.find(e => e.id === user.empId);
+    if (emp) {
+      ['s1','s2','s3','s4','s5','s6','s7'].forEach(s => { emp[s] = formData[s]; });
+      emp.selfRatings = Object.assign({}, formData.selfRatings);
+    }
+    const savedForms = lsGet('forms') || {};
+    savedForms[user.empId] = formData;
+    lsSet('forms', savedForms);
+  }
+  showModal('modal-saved');
+}
+
+function submitForm() { showModal('modal-submit'); }
+
+function confirmSubmit() {
+  closeModal('modal-submit');
+  const user = state.currentUser;
+  const formData = collectFormData();
+  const now = new Date().toLocaleDateString('en-GB', {day:'numeric', month:'short', year:'numeric'});
+
+  if (user && user.empId) {
+    const emp = allEmployees.find(e => e.id === user.empId);
+    if (emp) {
+      ['s1','s2','s3','s4','s5','s6','s7'].forEach(s => { emp[s] = formData[s]; });
+      emp.selfRatings = Object.assign({}, formData.selfRatings);
+      emp.status    = 'Submitted';
+      emp.submitted = now;
+    }
+    const savedStatuses = lsGet('statuses') || {};
+    const savedForms    = lsGet('forms')    || {};
+    savedStatuses[user.empId] = { status:'Submitted', submitted: now };
+    savedForms[user.empId]    = formData;
+    lsSet('statuses', savedStatuses);
+    lsSet('forms', savedForms);
+  }
+
+  state.empFormStatus = 'Submitted';
+  document.getElementById('emp-submitted-notice').style.display = '';
+  document.getElementById('emp-submit-btn').textContent = '🔄 Resubmit PA';
+  document.getElementById('emp-status-stat').textContent = 'Submitted';
+  updateTimeline();
+  empNav('empDashboard');
+  toast('PA submitted! Your manager has been notified.');
+}
+
+function updateTimeline() {
+  const status = state.empFormStatus;
+  const steps  = ['Submitted','Under Review','Approved'];
+  const dots   = ['tl-submitted','tl-review','tl-approved'];
+  const lines  = ['tl-line-review','tl-line-approved'];
+  const idx    = steps.indexOf(status);
+  dots.forEach((id, i) => {
+    const dot = document.getElementById(id);
+    if (!dot) return;
+    if (i < idx)  { dot.className = 'tl-dot done';         dot.textContent = '✓'; }
+    else if (i === idx) { dot.className = 'tl-dot active-step'; dot.textContent = i+2; }
+    else          { dot.className = 'tl-dot pending-step'; dot.textContent = i+2; }
+  });
+  lines.forEach((id, i) => {
+    const el = document.getElementById(id);
+    if (el) el.className = 'tl-line' + (i < idx ? ' done' : '');
+  });
+}
+
+// ══════════════════════════════════════════════
+// MANAGER
+// ══════════════════════════════════════════════
+function setMgrRating(section, val) {
+  state.mgrRatings[section] = val;
+  document.getElementById('mgr-stars-' + section).querySelectorAll('.star').forEach((s, i) => s.classList.toggle('filled', i < val));
+  document.getElementById('mgr-rating-label-' + section).textContent = val + ' / 5 — ' + ratingLabels[val];
+}
+
+function renderMgrTeam() {
+  const bc = (s) => ({Draft:'badge-draft',Submitted:'badge-submitted','Under Review':'badge-review',Approved:'badge-approved',Returned:'badge-returned'}[s]||'badge-draft');
+  const row = (emp) => `
+    <tr class="clickable" onclick="openMgrReview(${emp.id})">
+      <td><strong>${emp.name}</strong><br><span style="font-size:12px;color:var(--gray-text)">${emp.email}</span></td>
+      <td>${emp.dept}</td>
+      <td><span class="badge ${bc(emp.status)}">${emp.status}</span></td>
+      <td>${emp.submitted}</td>
+      <td>${emp.status==='Submitted'||emp.status==='Under Review'
+        ? '<button class="btn btn-primary btn-sm" onclick="event.stopPropagation();openMgrReview('+emp.id+')">Review →</button>'
+        : '<span style="color:var(--gray-text);font-size:12px;">'+(emp.status==='Approved'?'✅ Done':'—')+'</span>'}</td>
+    </tr>`;
+  const html = employees.map(row).join('');
+  ['mgr-team-preview','mgr-team-full'].forEach(id => { const el = document.getElementById(id); if (el) el.innerHTML = html; });
+  document.getElementById('mgr-approved-count').textContent = employees.filter(e=>e.status==='Approved').length;
+  document.getElementById('mgr-pending-count').textContent  = employees.filter(e=>e.status==='Submitted'||e.status==='Under Review').length;
+  document.getElementById('mgr-draft-count').textContent    = employees.filter(e=>e.status==='Draft').length;
+  const pending = employees.filter(e=>e.status==='Submitted'||e.status==='Under Review').length;
+  const infoEl = document.getElementById('mgr-action-info');
+  if (infoEl) infoEl.textContent = pending > 0
+    ? '📌 Action needed: ' + pending + ' team member(s) awaiting your review. Please complete by 15 Jul 2026.'
+    : '✅ All team PA reviews are up to date.';
+}
+
+function openMgrReview(id) {
+  const emp = employees.find(e => e.id === id);
+  if (!emp) return;
+  state.currentEmp = emp;
+  state.mgrRatings = { s1:0, s2:0, s3:0, s4:0, s5:0, overall:0 };
+
+  document.getElementById('mgr-emp-profile-card').innerHTML = `
+    <div class="emp-profile-card">
+      <div class="emp-avatar">${emp.avatar}</div>
+      <div>
+        <div class="emp-name">${emp.name}</div>
+        <div class="emp-meta">${emp.dept} · Manager: ${emp.manager}</div>
+        <div class="emp-meta">${emp.email}</div>
+      </div>
+      <div class="emp-status-wrap">
+        <span class="badge ${getBadge(emp.status)}">${emp.status}</span>
+        <div style="font-size:12px;color:var(--gray-text);margin-top:6px;">Submitted: ${emp.submitted}</div>
+      </div>
+    </div>`;
+
+  ['s1','s2','s3','s4','s5','s6','s7'].forEach(s => {
+    const el = document.getElementById('mgr-' + s + '-text');
+    if (el) el.value = emp[s] || '(Not filled by employee)';
+  });
+  ['s1','s2','s3','s4','s5'].forEach(s => {
+    const r = emp.selfRatings[s];
+    const el = document.getElementById('mgr-' + s + '-self-rating');
+    if (el) el.textContent = r > 0 ? '★'.repeat(r) + '☆'.repeat(5-r) : '—';
+  });
+  // Reset mgr stars
+  ['s1','s2','s3','s4','s5','overall'].forEach(s => {
+    const stars = document.getElementById('mgr-stars-' + s);
+    if (stars) stars.querySelectorAll('.star').forEach(st => st.classList.remove('filled'));
+    const lbl = document.getElementById('mgr-rating-label-' + s);
+    if (lbl) lbl.textContent = 'Not rated';
+  });
+  const rec = document.getElementById('mgr-recommendation');
+  if (rec) rec.value = '';
+  const oc = document.getElementById('mgr-overall-comment');
+  if (oc) oc.value = '';
+
+  document.getElementById('mgr-action-btns').style.display    = (emp.status==='Approved'||emp.status==='Draft') ? 'none' : 'flex';
+  document.getElementById('mgr-approved-notice').style.display = emp.status==='Approved' ? '' : 'none';
+  document.getElementById('mgr-returned-notice').style.display = emp.status==='Returned' ? '' : 'none';
+  document.getElementById('mgr-review-info').style.display     = (emp.status==='Submitted'||emp.status==='Under Review') ? '' : 'none';
+
+  if (emp.status === 'Submitted') {
+    emp.status = 'Under Review';
+    const savedStatuses = lsGet('statuses') || {};
+    savedStatuses[emp.id] = { status:'Under Review', submitted: emp.submitted };
+    lsSet('statuses', savedStatuses);
+    renderMgrTeam();
+  }
+  mgrNav('mgrReview');
+}
+
+function approvePA() { showModal('modal-approve'); }
+function returnPA()  { showModal('modal-return');  }
+
+function confirmApprove() {
+  closeModal('modal-approve');
+  if (state.currentEmp) {
+    state.currentEmp.status = 'Approved';
+    const ss = lsGet('statuses') || {};
+    ss[state.currentEmp.id] = { status:'Approved', submitted: state.currentEmp.submitted };
+    lsSet('statuses', ss);
+    renderMgrTeam();
+    renderHRTables();
+  }
+  mgrNav('mgrTeam');
+  toast('PA Approved! Employee has been notified.');
+}
+
+function confirmReturn() {
+  closeModal('modal-return');
+  if (state.currentEmp) {
+    state.currentEmp.status = 'Returned';
+    const ss = lsGet('statuses') || {};
+    ss[state.currentEmp.id] = { status:'Returned', submitted: state.currentEmp.submitted };
+    lsSet('statuses', ss);
+    renderMgrTeam();
+    renderHRTables();
+  }
+  mgrNav('mgrTeam');
+  toast('PA returned to employee for revision.');
+}
+
+// ══════════════════════════════════════════════
+// HR ADMIN
+// ══════════════════════════════════════════════
+function renderHRTables() { renderHRRecent(); renderHRAll(); updateHRStats(); }
+function getBadge(s) { return {Draft:'badge-draft',Submitted:'badge-submitted','Under Review':'badge-review',Approved:'badge-approved',Returned:'badge-returned'}[s]||'badge-draft'; }
+
+function renderHRRecent() {
+  const tbl = document.getElementById('hr-recent-table');
+  if (!tbl) return;
+  tbl.innerHTML = allEmployees.slice(0,5).map(e => `
+    <tr class="clickable" onclick="openHRDetail(${e.id})">
+      <td><strong>${e.name}</strong></td><td>${e.manager}</td><td>${e.dept}</td>
+      <td><span class="badge ${getBadge(e.status)}">${e.status}</span></td><td>${e.submitted}</td>
+    </tr>`).join('');
+}
+
+function renderHRAll(filterStatus='', filterDept='') {
+  const tbl = document.getElementById('hr-all-table');
+  if (!tbl) return;
+  let data = allEmployees;
+  if (filterStatus) data = data.filter(e => e.status === filterStatus);
+  if (filterDept)   data = data.filter(e => e.dept   === filterDept);
+  tbl.innerHTML = data.map(e => `
+    <tr class="clickable" onclick="openHRDetail(${e.id})">
+      <td><strong>${e.name}</strong><br><span style="font-size:12px;color:var(--gray-text)">${e.email}</span></td>
+      <td>${e.dept}</td><td>${e.manager}</td>
+      <td><span class="badge ${getBadge(e.status)}">${e.status}</span></td>
+      <td>${e.submitted}</td>
+      <td><button class="btn btn-outline btn-sm" onclick="event.stopPropagation();openHRDetail(${e.id})">View</button></td>
+    </tr>`).join('');
+}
+
+function applyHRFilter() {
+  renderHRAll(document.getElementById('hr-filter-status').value, document.getElementById('hr-filter-dept').value);
+}
+
+function updateHRStats() {
+  const total    = allEmployees.length;
+  const approved = allEmployees.filter(e=>e.status==='Approved').length;
+  const review   = allEmployees.filter(e=>e.status==='Under Review').length;
+  const submitted= allEmployees.filter(e=>e.status==='Submitted').length;
+  const draft    = allEmployees.filter(e=>e.status==='Draft').length;
+  document.getElementById('hr-total').textContent     = total;
+  document.getElementById('hr-approved').textContent  = approved;
+  document.getElementById('hr-review').textContent    = review;
+  document.getElementById('hr-submitted').textContent = submitted;
+  document.getElementById('hr-draft').textContent     = draft;
+  const done = approved + review + submitted;
+  const pct  = Math.round((done / total) * 100);
+  const bar  = document.getElementById('hr-completion-bar');
+  const txt  = document.getElementById('hr-completion-text');
+  const pctEl= document.getElementById('hr-completion-pct');
+  if (bar)   bar.style.width  = pct + '%';
+  if (txt)   txt.textContent  = done + ' of ' + total + ' employees completed or in progress';
+  if (pctEl) pctEl.textContent= pct + '%';
+}
+
+function openHRDetail(id) {
+  const emp = allEmployees.find(e => e.id === id);
+  if (!emp) return;
+  document.getElementById('hr-detail-profile').innerHTML = `
+    <div class="emp-profile-card">
+      <div class="emp-avatar">${emp.avatar}</div>
+      <div>
+        <div class="emp-name">${emp.name}</div>
+        <div class="emp-meta">${emp.dept} · Manager: ${emp.manager}</div>
+        <div class="emp-meta">${emp.email}</div>
+      </div>
+      <div class="emp-status-wrap">
+        <span class="badge ${getBadge(emp.status)}">${emp.status}</span>
+        <div style="font-size:12px;color:var(--gray-text);margin-top:6px;">Submitted: ${emp.submitted}</div>
+      </div>
+    </div>`;
+  document.getElementById('hr-s1-text').value = emp.s1 || '(Not filled)';
+  document.getElementById('hr-s2-text').value = emp.s2 || '(Not filled)';
+  document.getElementById('hr-s6-text').value = emp.s6 || '(Not filled)';
+  document.getElementById('hr-s7-text').value = emp.s7 || '(Not filled)';
+  document.getElementById('hr-s1-rating').textContent = emp.selfRatings.s1>0 ? '★'.repeat(emp.selfRatings.s1)+'☆'.repeat(5-emp.selfRatings.s1) : '—';
+  document.getElementById('hr-s2-rating').textContent = emp.selfRatings.s2>0 ? '★'.repeat(emp.selfRatings.s2)+'☆'.repeat(5-emp.selfRatings.s2) : '—';
+  hrNav('hrDetail');
+}
+
+function renderReports() {
+  const depts = [...new Set(allEmployees.map(e=>e.dept))];
+  const deadline = new Date('2026-06-30');
+  const today    = new Date();
+  const days     = Math.max(0, Math.ceil((deadline - today) / 86400000));
+  const dEl = document.getElementById('rpt-days');
+  if (dEl) dEl.textContent = days;
+
+  const ratings = allEmployees.flatMap(e => Object.values(e.selfRatings).filter(v=>v>0));
+  const avg = ratings.length ? (ratings.reduce((a,b)=>a+b,0)/ratings.length).toFixed(1) : '—';
+  const aEl = document.getElementById('rpt-avg-self');
+  if (aEl) aEl.textContent = avg;
+
+  const tbl = document.getElementById('rpt-dept-table');
+  if (!tbl) return;
+  tbl.innerHTML = depts.map(dept => {
+    const emps    = allEmployees.filter(e=>e.dept===dept);
+    const total   = emps.length;
+    const subPlus = emps.filter(e=>['Submitted','Under Review','Approved'].includes(e.status)).length;
+    const appd    = emps.filter(e=>e.status==='Approved').length;
+    const pct     = Math.round((subPlus/total)*100);
+    const cls     = pct>=100 ? 'badge-approved' : pct>=50 ? 'badge-submitted' : pct>0 ? 'badge-review' : 'badge-draft';
+    return `<tr><td>${dept}</td><td>${total}</td><td>${subPlus}</td><td>${appd}</td><td><span class="badge ${cls}">${pct}%</span></td></tr>`;
+  }).join('');
+}
+
+function exportCSV() {
+  const rows = [['Name','Email','Department','Manager','Status','Submitted']];
+  allEmployees.forEach(e => rows.push([e.name,e.email,e.dept,e.manager,e.status,e.submitted]));
+  const csv = rows.map(r => r.map(v => '"'+String(v).replace(/"/g,'""')+'"').join(',')).join('\n');
+  const a = document.createElement('a');
+  a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
+  a.download = 'PA_Tracker_2026.csv';
+  a.click();
+  toast('CSV exported successfully!');
+}
+
+// ══════════════════════════════════════════════
+// MODAL + TOAST
+// ══════════════════════════════════════════════
+function showModal(id) { document.getElementById(id).classList.add('show'); }
+function closeModal(id) { document.getElementById(id).classList.remove('show'); }
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// ══════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', () => {
+  // Enter key on login inputs
+  ['login-code','login-name'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('keydown', e => { if (e.key==='Enter') doLogin(); });
+  });
+
+  initData();
+
+  const savedSession = lsGet('session');
+  if (savedSession) {
+    state.currentUser = savedSession;
+    updateTimeline();
+    renderMgrTeam();
+    renderHRTables();
+    applyLogin();
+  } else {
+    showScreen('scrLogin');
+  }
+});
+</script>
+</body>
+</html>
