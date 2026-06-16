@@ -609,8 +609,10 @@
               <table class="ctbl">
                 <thead><tr>
                   <th style="width:32%">Competency</th>
-                  <th style="width:28%">Explanation <span style="text-transform:none;letter-spacing:0;font-weight:400">(if applicable)</span></th>
+                  <th style="width:22%">Explanation <span style="text-transform:none;letter-spacing:0;font-weight:400">(if applicable)</span></th>
                   <th>Self Score</th>
+                  <th>Mgr Score</th>
+                  <th>Agreed Score</th>
                 </tr></thead>
                 <tbody id="ee-comp-body"></tbody>
               </table>
@@ -631,8 +633,10 @@
               <table class="ctbl">
                 <thead><tr>
                   <th style="width:32%">Management Competency</th>
-                  <th style="width:28%">Explanation <span style="text-transform:none;letter-spacing:0;font-weight:400">(if applicable)</span></th>
+                  <th style="width:22%">Explanation <span style="text-transform:none;letter-spacing:0;font-weight:400">(if applicable)</span></th>
                   <th>Self Score</th>
+                  <th>Mgr Score</th>
+                  <th>Agreed Score</th>
                 </tr></thead>
                 <tbody id="ee-mgmt-body"></tbody>
               </table>
@@ -758,9 +762,9 @@
           <table>
             <thead><tr><th>Cycle</th><th>Submitted</th><th>Manager</th><th>Status</th><th>Final Rating</th></tr></thead>
             <tbody>
-              <tr><td>2025</td><td>15 Apr 2025</td><td>Sarah Tan</td><td><span class="badge badge-approved">Approved</span></td><td>⭐⭐⭐⭐ (4.0)</td></tr>
-              <tr><td>2024</td><td>20 Apr 2024</td><td>Sarah Tan</td><td><span class="badge badge-approved">Approved</span></td><td>⭐⭐⭐⭐ (3.8)</td></tr>
-              <tr><td>2023</td><td>18 Apr 2023</td><td>David Lim</td><td><span class="badge badge-approved">Approved</span></td><td>⭐⭐⭐ (3.5)</td></tr>
+              <tr><td>2025</td><td>15 Apr 2025</td><td>Sarah Tan</td><td><span class="badge badge-approved">Approved</span></td><td>4.0</td></tr>
+              <tr><td>2024</td><td>20 Apr 2024</td><td>Sarah Tan</td><td><span class="badge badge-approved">Approved</span></td><td>3.8</td></tr>
+              <tr><td>2023</td><td>18 Apr 2023</td><td>David Lim</td><td><span class="badge badge-approved">Approved</span></td><td>3.5</td></tr>
             </tbody>
           </table>
         </div>
@@ -1010,23 +1014,32 @@
         <span class="back-link" onclick="hrNav('hrAll')">← Back to All Submissions</span>
         <div id="hr-detail-profile"></div>
         <div class="info-box">👁️ HR view — read only. Changes must be made by the employee or their manager.</div>
+        <!-- S2 Objectives summary -->
         <div class="card" style="padding:24px;">
-          <div class="form-section-title">📘 S1 — Job Knowledge &amp; Technical Skills</div>
-          <label>Employee Self-Assessment</label><textarea readonly id="hr-s1-text" style="margin-top:6px;"></textarea>
-          <div style="margin-top:8px;font-size:13px;color:var(--gray-text);">Self-Rating: <span id="hr-s1-rating"></span></div>
+          <div class="form-section-title">🎯 S2 — Rating of Objectives</div>
+          <div id="hr-detail-objectives">—</div>
         </div>
+        <!-- S3 Competencies summary -->
         <div class="card" style="padding:24px;">
-          <div class="form-section-title">🎯 S2 — Work Quality &amp; Accuracy</div>
-          <label>Employee Self-Assessment</label><textarea readonly id="hr-s2-text" style="margin-top:6px;"></textarea>
-          <div style="margin-top:8px;font-size:13px;color:var(--gray-text);">Self-Rating: <span id="hr-s2-rating" style="color:#f5a623;"></span></div>
+          <div class="form-section-title">📊 S3 — Rating of Competencies</div>
+          <div id="hr-detail-comps">—</div>
         </div>
+        <!-- S6 Satisfaction -->
         <div class="card" style="padding:24px;">
-          <div class="form-section-title">🏆 S6 — Key Achievements</div>
-          <label>Employee Response</label><textarea readonly id="hr-s6-text" style="margin-top:6px;min-height:100px;"></textarea>
+          <div class="form-section-title">😊 S6 — Employee Satisfaction</div>
+          <div id="hr-detail-satisfaction">—</div>
         </div>
+        <!-- S7 Expectations -->
         <div class="card" style="padding:24px;">
-          <div class="form-section-title">🌱 S7 — Development Goals</div>
-          <label>Employee Response</label><textarea readonly id="hr-s7-text" style="margin-top:6px;min-height:100px;"></textarea>
+          <div class="form-section-title">💬 S7 — Employee Expectations</div>
+          <label>Employee</label><textarea readonly id="hr-s7-text" style="margin-top:6px;min-height:72px;"></textarea>
+          <label style="margin-top:10px;display:block;">Supervisor Comment</label><textarea readonly id="hr-s7-sup" style="margin-top:6px;min-height:60px;"></textarea>
+        </div>
+        <!-- S8 Remarks -->
+        <div class="card" style="padding:24px;">
+          <div class="form-section-title">📝 S8 — Additional Remarks</div>
+          <label>Employee</label><textarea readonly id="hr-s8-ee" style="margin-top:6px;min-height:60px;"></textarea>
+          <label style="margin-top:10px;display:block;">Supervisor</label><textarea readonly id="hr-s8-sup" style="margin-top:6px;min-height:60px;"></textarea>
         </div>
       </div>
 
@@ -1163,21 +1176,22 @@ const OBJS = [
   {id:5,agree:'',review:'',w:20,self:null},
 ];
 const COMPS = [
-  {grp:'Resulted Oriented Competence',id:'c1',n:'Productivity',d:'Quantity & quality of work completed within expected timeframe. Meets required volume of work.'},
-  {grp:'',id:'c2',n:'Quality',d:'Accuracy, Neatness and thoroughness in accomplishing a task.'},
-  {grp:'',id:'c3',n:'Accountability',d:'Is punctual and can be relied upon to meet commitments. Takes responsibility for outcomes.'},
-  {grp:'Behavior Competencies',id:'c4',n:'Flexibility',d:'Understands & Adjust to changes in work environment or responsibilities.'},
-  {grp:'',id:'c5',n:'Teamwork',d:'Interacts effectively with team members to achieve common goals.'},
+  {grp:'Resulted Oriented Competence',id:'c1',n:'Productivity',d:'Quantity & quality of work completed with regard to timeliness, current responsibilities & workload. Completes assigned tasks within a specific timeframe.'},
+  {grp:'',id:'c2',n:'Quality',d:'Accuracy, Neatness and thoroughness with which the employee performs the job. Note, whether tasks are performed to completion & whether errors are minimised by the level correctness.'},
+  {grp:'',id:'c3',n:'Accountability',d:'Is punctual and can be relied upon to do what they say they are going to do.'},
+  {grp:'Behavior Competencies',id:'c4',n:'Flexibility',d:'Understands & Adjust to changes in priorities, circumstances, directions and personalities.'},
+  {grp:'',id:'c5',n:'Teamwork',d:'Interacts effectively with team members, contributes ideas & collaborates on identification of goals, development of plans and achievements of objectives.'},
   {grp:'',id:'c6',n:'Discipline',d:'Stick to the rules, the agreements and the timeframe.'},
-  {grp:'',id:'c7',n:'Initiatives',d:'Assumes greater responsibility. Identifies and recommends solutions or improvements.'},
+  {grp:'',id:'c7',n:'Initiatives',d:'Assumes greater responsibility. Identifies and recommends creative solutions to problems. Self initiates work and persists in a task to completion.'},
   {grp:'Specific Job Match Competencies',id:'c8',n:'Job Skills',d:'Meets the required job skills or even exceeds.'},
 ];
 const MGMT = [
-  {id:'m1',n:'Creation of High Performance Culture',d:'Builds an organisational culture that drives high performance and employee engagement.'},
-  {id:'m2',n:'Entrepreneurial Drive',d:'Strives to build better, more innovative business practices and results.'},
-  {id:'m3',n:'People Development',d:'Meets own development goal. Recognises and develops employees potential and performance.'},
+  {id:'m1',n:'Creation of High Performance Culture',d:'Builds an organisational culture that encourages individuals and teams to be flexible/adaptable and to experiment with new ways of doing things. Shows willingness to learn quickly and contribute continuously to improve quality of our solutions. Demands high performance and standards & ensures people receive the appropriate coaching/development. Also provides feedback, reinforcement and practical support so as to allow others to function at their best. Resolves differences in collaborative way seeking to find the best outcome for the organisation.'},
+  {id:'m2',n:'Entrepreneurial Drive',d:'Strives to build better, more innovative business. Commits significant resources to time, manpower, materials and to new ventures or projects. Takes a calculated risk & then works to minimize risks during implementation. Acts to see projects through successful conclusion. Searches for new or better ways to do things from outside the organisation and then applies them inside own organisation.'},
+  {id:'m3',n:'People Development',d:'Meets own development goal. Recognises and develops employees potential against agreed upon goals, provides employees with effective, timely performance feedback and appraisals. Acknowledges positive performance and takes appropriate action when performance requires improvement.'},
 ];
 const SC = {};
+let smileySel = null;
 
 const state = {
   currentUser: null, currentRole: null, currentEmp: null, activeCycle: null,
@@ -1213,20 +1227,20 @@ function fmtDate(iso) {
 
 function outcomeLabel(s) {
   if (!s) return '—';
-  if (s < 2) return OUT_LBL[1];
-  if (s < 3) return OUT_LBL[2];
-  if (s < 4) return OUT_LBL[3];
-  if (s <= 4.5) return OUT_LBL[4];
-  return OUT_LBL[5];
+  if (s >= 4.6) return '5 — ' + OUT_LBL[5];
+  if (s >= 4)   return '4 — ' + OUT_LBL[4];
+  if (s >= 3)   return '3 — ' + OUT_LBL[3];
+  if (s >= 2)   return '2 — ' + OUT_LBL[2];
+  return '1 — ' + OUT_LBL[1];
 }
 
 function scClass(v) {
   if (!v) return '';
-  if (v <= 1.5) return 's1';
-  if (v <= 2.5) return 's2';
-  if (v <= 3.5) return 's3';
-  if (v <= 4.5) return 's4';
-  return 's5';
+  if (v >= 4.6) return 's5';
+  if (v >= 4)   return 's4';
+  if (v >= 3)   return 's3';
+  if (v >= 2)   return 's2';
+  return 's1';
 }
 
 function scoreDD(fid, val, ro, lblType) {
@@ -1245,7 +1259,7 @@ function scoreDD(fid, val, ro, lblType) {
 }
 
 function onDD(fid, sel) {
-  const v = parseFloat(sel.value) || 0;
+  const v = sel.value ? parseFloat(sel.value) : null;
   SC[fid] = v;
   sel.className = 'score-sel ' + (v ? scClass(v) : '');
   calcMgrLive();
@@ -1392,33 +1406,42 @@ function updateWeightTotal() {
     if (el) total += parseFloat(el.value)||0;
   });
   const el = document.getElementById('wt-total');
-  if (el) el.textContent = total + '%';
+  if (el) {
+    el.textContent = total + '%';
+    el.style.background = total === 100 ? 'var(--blue-light)' : '#ffebee';
+    el.style.color      = total === 100 ? 'var(--blue)'       : 'var(--red)';
+  }
   const notice = document.getElementById('wt-notice');
+  const msg    = document.getElementById('wt-msg');
   if (notice) notice.style.display = (total !== 100) ? '' : 'none';
+  if (msg)    msg.textContent = `Weights total ${total}% — must equal 100%.`;
 }
 
 function setSmiley(v) {
-  ['sm-happy','sm-neutral','sm-sad'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.classList.toggle('active', el.id === 'sm-'+v);
+  smileySel = v;
+  const classes = {happy:'sel-happy', neutral:'sel-neutral', sad:'sel-sad'};
+  ['happy','neutral','sad'].forEach(s => {
+    const el = document.getElementById('sm-'+s);
+    if (el) el.className = 'smb' + (v === s ? ' ' + classes[s] : '');
   });
+  const labels = {happy:'Satisfied 😊', neutral:'Neutral 😐', sad:'Unsatisfied 😞'};
   const lbl = document.getElementById('smiley-lbl');
-  if (lbl) lbl.textContent = v === 'happy' ? 'Satisfied' : (v === 'neutral' ? 'Neutral' : 'Not Satisfied');
-  if (window._formState) window._formState.smiley = v;
+  if (lbl) lbl.textContent = labels[v] || 'Select your overall job satisfaction level';
 }
 
 function toggleMgmt() {
   const cb = document.getElementById('is-mgr-cb');
-  const card = document.getElementById('mgmt-comp-card');
-  if (card) card.style.display = (cb && cb.checked) ? '' : 'none';
+  const body = document.getElementById('mgmt-body');
+  if (body) body.style.display = (cb && cb.checked) ? 'block' : 'none';
 }
 
 function calcMgrLive() {
   // Objectives weighted avg (use agreed if set, else mgr)
+  // SC keys stored by onDD: 'obj{id}_mgr', 'obj{id}_agr' (mgr view selects)
   let wSum = 0, wsSum = 0, objCount = 0;
   OBJS.forEach(o => {
-    const agr = SC['mgr_obj'+o.id+'_agr'] || SC['obj'+o.id+'_agr'];
-    const mgr = SC['mgr_obj'+o.id+'_mgr'] || SC['obj'+o.id+'_mgr'];
+    const agr = SC['obj'+o.id+'_agr'];
+    const mgr = SC['obj'+o.id+'_mgr'];
     const score = agr || mgr;
     const wEl = document.getElementById('obj'+o.id+'_w');
     const w = parseFloat((wEl && wEl.value) || o.w || 20);
@@ -1427,10 +1450,11 @@ function calcMgrLive() {
   const objAvg = wSum > 0 ? (wsSum / wSum) : null;
 
   // Competency avg (agreed → mgr fallback)
+  // SC keys stored by onDD: 'mgr_{id}_mgr', 'mgr_{id}_agr'
   let cSum = 0, cCount = 0;
   COMPS.forEach(c => {
-    const agr = SC['mgr_'+c.id+'_agr'] || SC[c.id+'_agr'];
-    const mgr = SC['mgr_'+c.id+'_mgr'] || SC[c.id+'_mgr'];
+    const agr = SC['mgr_'+c.id+'_agr'];
+    const mgr = SC['mgr_'+c.id+'_mgr'];
     const score = agr || mgr;
     if (score) { cSum += score; cCount++; }
   });
@@ -1623,6 +1647,7 @@ function loadEmployeeForm(){
   buildNYRows(sd.ny_objectives||[]);
 
   // S6 — satisfaction
+  smileySel = sd.smiley || null;
   if(sd.smiley) setSmiley(sd.smiley);
   setV('sat_training', sd.sat_training);
   setV('sat_teamwork', sd.sat_teamwork);
@@ -1705,8 +1730,7 @@ function collectFormData(){
   data.ny_objectives=nyRows;
 
   // S6 satisfaction
-  const activeSmiley=document.querySelector('.smiley-btn.active');
-  data.smiley=activeSmiley?activeSmiley.id.replace('sm-',''):'';
+  data.smiley = smileySel || '';
   const satT=document.getElementById('sat_training'); data.sat_training=satT?satT.value:'';
   const satW=document.getElementById('sat_teamwork'); data.sat_teamwork=satW?satW.value:'';
 
@@ -1928,14 +1952,59 @@ function updateHRStats(){
 }
 function openHRDetail(empCode){
   const item=state.allData.find(i=>i.profile.employee_code===empCode);if(!item)return;
-  const p=item.profile,sub=item.submission,sd=sub?(sub.section_data||{}):{},selfR=sd.selfRatings||{};
+  const p=item.profile,sub=item.submission,sd=sub?(sub.section_data||{}):{};
+  const msc=sub?(sub.manager_section_comments||{}):{};
   const av=p.full_name.split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase();
   const mgr=state.allProfiles.find(x=>x.employee_code===p.manager_code);
   document.getElementById('hr-detail-profile').innerHTML=`<div class="emp-profile-card"><div class="emp-avatar">${av}</div><div><div class="emp-name">${p.full_name}</div><div class="emp-meta">${p.department||'—'} · Manager: ${mgr?mgr.full_name:(p.manager_code||'—')}</div><div class="emp-meta">${p.email||''}</div></div><div class="emp-status-wrap"><span class="badge ${getBadge(item.status)}">${item.status}</span><div style="font-size:12px;color:var(--gray-text);margin-top:6px;">Submitted: ${sub?fmtDate(sub.submitted_at):'—'}</div></div></div>`;
-  document.getElementById('hr-s1-text').value=sd.s1||'(Not filled)';document.getElementById('hr-s2-text').value=sd.s2||'(Not filled)';
-  document.getElementById('hr-s6-text').value=sd.s6||'(Not filled)';document.getElementById('hr-s7-text').value=sd.s7||'(Not filled)';
-  document.getElementById('hr-s1-rating').textContent=selfR.s1>0?'★'.repeat(selfR.s1)+'☆'.repeat(5-selfR.s1):'—';
-  document.getElementById('hr-s2-rating').textContent=selfR.s2>0?'★'.repeat(selfR.s2)+'☆'.repeat(5-selfR.s2):'—';
+
+  // S2 Objectives
+  const objs=sd.objectives||[];
+  const objScores=msc.obj_scores||{};
+  if(objs.length){
+    let objHtml='<table style="width:100%;border-collapse:collapse;font-size:13px;">';
+    objHtml+='<thead><tr style="background:var(--gray-bg);"><th style="padding:6px 10px;text-align:left;">Obj</th><th style="padding:6px 10px;text-align:left;">Description</th><th style="padding:6px 10px;text-align:center;">Wt</th><th style="padding:6px 10px;text-align:center;">Self</th><th style="padding:6px 10px;text-align:center;">Mgr</th><th style="padding:6px 10px;text-align:center;">Agreed</th></tr></thead><tbody>';
+    objs.forEach(o=>{
+      const self=o.self_score||'—', mgSc=objScores['obj'+o.id+'_mgr']||'—', agr=objScores['obj'+o.id+'_agr']||'—';
+      objHtml+=`<tr style="border-top:1px solid var(--gray-border);"><td style="padding:8px 10px;font-weight:600;">#${o.id}</td><td style="padding:8px 10px;">${o.agree||'(not set)'}<br><span style="font-size:11px;color:var(--gray-text);">${o.review||''}</span></td><td style="padding:8px 10px;text-align:center;">${o.weight||20}%</td><td style="padding:8px 10px;text-align:center;font-weight:600;">${self}</td><td style="padding:8px 10px;text-align:center;font-weight:600;">${mgSc}</td><td style="padding:8px 10px;text-align:center;font-weight:600;">${agr}</td></tr>`;
+    });
+    objHtml+='</tbody></table>';
+    document.getElementById('hr-detail-objectives').innerHTML=objHtml;
+  } else {
+    document.getElementById('hr-detail-objectives').textContent='(Not yet filled by employee)';
+  }
+
+  // S3 Competencies
+  const cSelf=sd.comp_self||{}, compScores=msc.comp_scores||{};
+  if(Object.keys(cSelf).length){
+    let compHtml='<table style="width:100%;border-collapse:collapse;font-size:13px;">';
+    compHtml+='<thead><tr style="background:var(--gray-bg);"><th style="padding:6px 10px;text-align:left;">Competency</th><th style="padding:6px 10px;text-align:center;">Self</th><th style="padding:6px 10px;text-align:center;">Mgr</th><th style="padding:6px 10px;text-align:center;">Agreed</th></tr></thead><tbody>';
+    COMPS.forEach(c=>{
+      const self=cSelf[c.id]||'—', mgSc=compScores['mgr_'+c.id+'_mgr']||'—', agr=compScores['mgr_'+c.id+'_agr']||'—';
+      compHtml+=`<tr style="border-top:1px solid var(--gray-border);"><td style="padding:8px 10px;">${c.n}</td><td style="padding:8px 10px;text-align:center;font-weight:600;">${self}</td><td style="padding:8px 10px;text-align:center;font-weight:600;">${mgSc}</td><td style="padding:8px 10px;text-align:center;font-weight:600;">${agr}</td></tr>`;
+    });
+    compHtml+='</tbody></table>';
+    document.getElementById('hr-detail-comps').innerHTML=compHtml;
+  } else {
+    document.getElementById('hr-detail-comps').textContent='(Not yet filled by employee)';
+  }
+
+  // S6 Satisfaction
+  const smileyLabels={happy:'Satisfied 😊',neutral:'Neutral 😐',sad:'Unsatisfied 😞'};
+  const satParts=[];
+  if(sd.smiley) satParts.push('<strong>Overall:</strong> '+( smileyLabels[sd.smiley]||sd.smiley));
+  if(sd.sat_training) satParts.push('<strong>Training/Conditions:</strong> '+sd.sat_training);
+  if(sd.sat_teamwork) satParts.push('<strong>Teamwork:</strong> '+sd.sat_teamwork);
+  document.getElementById('hr-detail-satisfaction').innerHTML=satParts.length?satParts.map(t=>`<div style="margin-bottom:8px;">${t}</div>`).join(''):'(Not filled)';
+
+  // S7 Expectations
+  const s7El=document.getElementById('hr-s7-text'); if(s7El) s7El.value=sd.ee_expectations||'(Not filled)';
+  const s7SupEl=document.getElementById('hr-s7-sup'); if(s7SupEl) s7SupEl.value=msc.s7_comment||'(Not yet completed by manager)';
+
+  // S8 Remarks
+  const s8EeEl=document.getElementById('hr-s8-ee'); if(s8EeEl) s8EeEl.value=sd.ee_add_remarks||'(Not filled)';
+  const s8SupEl=document.getElementById('hr-s8-sup'); if(s8SupEl) s8SupEl.value=msc.s8_remarks||'(Not yet completed by manager)';
+
   hrNav('hrDetail');
 }
 function renderReports(){
