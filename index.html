@@ -314,6 +314,91 @@
   .badge-inactive { background:#fef0e0;color:#c05c00;border:1px solid #f9c985; }
   .btn-danger-sm  { background:#d32f2f;color:#fff;border:none;padding:4px 10px;border-radius:4px;font-size:11px;cursor:pointer; }
   .btn-danger-sm:hover { background:#b71c1c; }
+
+  /* ── WIZARD TABS (v4 port) ── */
+  .wtabs{display:flex;background:#fff;border:1px solid var(--gray-border);border-radius:var(--radius);overflow:hidden;margin-bottom:20px;box-shadow:var(--shadow);}
+  .wtab{flex:1;padding:9px 4px;text-align:center;font-size:11px;font-weight:500;color:var(--gray-text);cursor:pointer;border-right:1px solid var(--gray-border);transition:all .18s;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .wtab:last-child{border-right:none;}
+  .wtab:hover{background:var(--gray-bg);color:var(--text);}
+  .wtab.active{background:var(--blue);color:#fff;font-weight:600;}
+  .wtab.done{color:var(--accent);background:#f0fff8;}
+  .wtab.done::before{content:'✓ ';}
+  /* ── SECTION PANELS ── */
+  .sp{display:none;} .sp.active{display:block;}
+  /* ── SUB-BAR ── */
+  .sub-bar{display:flex;align-items:center;justify-content:space-between;padding:13px 0;margin-top:4px;}
+  /* ── OBJECTIVES ── */
+  .obj-block{border:1px solid var(--gray-border);border-radius:8px;overflow:hidden;margin-bottom:14px;}
+  .obj-num{background:var(--blue-dark);color:#fff;padding:7px 14px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;display:flex;align-items:center;justify-content:space-between;}
+  .obj-body{background:var(--gray-bg);}
+  .obj-row-label{background:var(--blue-light);border-bottom:1px solid var(--gray-border);border-top:1px solid var(--gray-border);padding:5px 14px;font-size:11px;font-weight:600;color:var(--blue);text-transform:uppercase;letter-spacing:.05em;}
+  .obj-row-label.final{background:#fff8e1;color:#7a4500;border-color:#ffe082;}
+  .obj-desc-row{padding:10px 14px;border-bottom:1px solid var(--gray-border);display:grid;grid-template-columns:1fr 80px;gap:12px;align-items:start;}
+  .obj-score-row{padding:10px 14px;border-bottom:1px solid var(--gray-border);display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;}
+  .obj-score-row:last-child{border-bottom:none;}
+  .score-cell label{font-size:11px;font-weight:600;color:var(--gray-text);text-transform:uppercase;letter-spacing:.04em;display:block;margin-bottom:5px;}
+  /* ── COMPETENCY TABLE ── */
+  .ctbl{width:100%;border-collapse:collapse;}
+  .ctbl th{text-align:left;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--gray-text);padding:8px 12px;background:var(--gray-bg);border-bottom:1.5px solid var(--gray-border);white-space:nowrap;}
+  .ctbl td{padding:10px 12px;border-bottom:1px solid var(--gray-border);vertical-align:top;}
+  .ctbl tr:last-child td{border-bottom:none;}
+  .comp-group-header td{background:#f1f5f9;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--gray-text);padding:6px 12px;}
+  .comp-name{font-weight:600;font-size:13px;color:var(--text);}
+  .comp-desc{font-size:11.5px;color:var(--gray-text);margin-top:2px;line-height:1.5;}
+  /* ── DEV ACTIONS TABLE ── */
+  .devtbl{width:100%;border-collapse:collapse;}
+  .devtbl th{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--gray-text);padding:8px 10px;background:var(--gray-bg);border-bottom:1.5px solid var(--gray-border);text-align:left;}
+  .devtbl td{padding:6px 6px;border-bottom:1px solid var(--gray-border);vertical-align:middle;}
+  .devtbl tr:last-child td{border-bottom:none;}
+  .devtbl input[type=text],.devtbl input[type=date]{font-size:12.5px;padding:6px 9px;}
+  /* ── SMILEY PICKER ── */
+  .smiley-row{display:flex;gap:10px;margin-top:6px;}
+  .smb{width:52px;height:52px;border:2px solid var(--gray-border);border-radius:12px;background:#fff;cursor:pointer;font-size:24px;display:flex;align-items:center;justify-content:center;transition:all .18s;flex-shrink:0;}
+  .smb:hover{border-color:var(--blue);background:var(--blue-light);}
+  .smb.sel-happy{border-color:var(--accent);background:#e8f5e9;}
+  .smb.sel-neutral{border-color:var(--orange);background:#fff3e0;}
+  .smb.sel-sad{border-color:var(--red);background:#fdecea;}
+  /* ── SCORE DROPDOWN COLORS ── */
+  .score-sel.s1{border-color:#ffcdd2;background:#ffebee;color:#b71c1c;}
+  .score-sel.s2{border-color:#ffe082;background:#fff8e1;color:#7a4500;}
+  .score-sel.s3{border-color:#a5d6a7;background:#e8f5e9;color:#1b5e20;}
+  .score-sel.s4{border-color:#90caf9;background:#e3f2fd;color:#1565c0;}
+  .score-sel.s5{border-color:#ce93d8;background:#f3e5f5;color:#6a1b9a;}
+  .score-sel.ro{background:var(--gray-bg);pointer-events:none;opacity:.8;}
+  /* ── SCORE PILL (read-only display) ── */
+  .ps{display:inline-flex;align-items:center;justify-content:center;min-width:36px;height:26px;border-radius:5px;font-size:12px;font-weight:600;border:1.5px solid var(--gray-border);background:var(--gray-bg);color:var(--gray-text);padding:0 5px;font-family:monospace;}
+  .ps.s1{background:#ffebee;color:#b71c1c;border-color:#ffcdd2;}
+  .ps.s2{background:#fff8e1;color:#7a4500;border-color:#ffe082;}
+  .ps.s3{background:#e8f5e9;color:#1b5e20;border-color:#a5d6a7;}
+  .ps.s4{background:#e3f2fd;color:#1565c0;border-color:#90caf9;}
+  .ps.s5{background:#f3e5f5;color:#6a1b9a;border-color:#ce93d8;}
+  /* ── LIVE SCORE PANEL ── */
+  .score-panel{background:var(--blue-dark);border-radius:var(--radius);padding:16px 20px;margin-bottom:18px;color:#fff;display:flex;align-items:center;gap:20px;}
+  .sp-main{text-align:center;flex-shrink:0;min-width:80px;}
+  .sp-big{font-size:40px;font-weight:700;font-family:monospace;line-height:1;color:#7ec8f7;}
+  .sp-lbl{font-size:10px;opacity:.5;margin-top:2px;text-transform:uppercase;letter-spacing:.08em;}
+  .sp-right{flex:1;border-left:1px solid rgba(255,255,255,.15);padding-left:18px;}
+  .sp-rating{font-size:15px;font-weight:600;}
+  .sp-band{font-family:monospace;font-size:11px;background:rgba(255,255,255,.1);padding:2px 7px;border-radius:4px;margin-top:3px;display:inline-block;}
+  .sp-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;margin-top:10px;}
+  .sp-cell{background:rgba(255,255,255,.07);border-radius:7px;padding:7px 10px;}
+  .sp-cell .scl{font-size:10px;opacity:.45;text-transform:uppercase;letter-spacing:.05em;}
+  .sp-cell .scv{font-size:14px;font-weight:600;font-family:monospace;color:#7ec8f7;}
+  /* ── APPRAISAL OUTCOME ── */
+  .outcome-row{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--gray-border);}
+  .outcome-row:last-child{border-bottom:none;}
+  .outcome-lbl{font-size:13px;font-weight:500;color:var(--text);}
+  .outcome-val{font-family:monospace;font-size:14px;font-weight:600;color:var(--blue-dark);min-width:160px;text-align:right;}
+  .outcome-val.na{color:var(--gray-text);}
+  /* ── SIGN BOX ── */
+  .sign-row{display:flex;gap:14px;margin-top:14px;}
+  .sign-box{flex:1;border:1px dashed var(--gray-border);border-radius:8px;padding:16px;text-align:center;font-size:12px;color:var(--gray-text);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-height:72px;}
+  .sign-name{font-weight:600;color:var(--text);font-size:13px;}
+  .sign-role{font-size:11px;color:var(--gray-text);}
+  .sign-date{font-size:11px;color:var(--blue);}
+  /* ── WEIGHT PILL ── */
+  .wt-pill{font-family:monospace;font-size:12px;color:var(--blue);background:var(--blue-light);padding:3px 8px;border-radius:5px;}
+  @media(max-width:700px){.sign-row{flex-direction:column;}.score-panel{flex-direction:column;}.obj-score-row{grid-template-columns:1fr;}.wtabs{overflow-x:auto;}}
 </style>
 </head>
 <body>
@@ -455,12 +540,7 @@
         <span class="back-link" onclick="empNav('empDashboard')">← Back to Dashboard</span>
         <div class="page-header">
           <h1>My Performance Appraisal Form</h1>
-          <p>Cycle 2026 — Complete all sections before submitting</p>
-        </div>
-
-        <div class="progress-bar-wrap">
-          <div class="progress-bar-bg"><div class="progress-bar-fill" id="form-progress-bar" style="width:0%"></div></div>
-          <div class="progress-label"><span>Form Completion</span><span id="form-progress-pct">0%</span></div>
+          <p id="form-cycle-name-sub">Complete all sections before submitting</p>
         </div>
 
         <div id="emp-submitted-notice" style="display:none;">
@@ -470,155 +550,204 @@
           <div class="warning-box">⚠️ Your PA has been <strong>returned</strong> by your manager with comments. Please review and resubmit.</div>
         </div>
 
-        <div class="card" style="padding:24px;">
-          <div class="form-section-title">📘 S1 — Job Knowledge &amp; Technical Skills</div>
-          <div class="form-row"><div class="form-group full">
-            <label>Self-Assessment</label>
-            <textarea id="s1-text" placeholder="Describe your technical skills and domain knowledge relevant to your role..."></textarea>
-          </div></div>
-          <div class="form-row"><div class="form-group">
-            <label>Self Rating</label>
-            <div class="rating-wrap">
-              <select class="score-sel" id="score-s1" onchange="setRating('s1',parseFloat(this.value)||0)">
-                <option value="">— Select —</option>
-                <option value="1">1.0 — Poor</option>
-                <option value="1.5">1.5 — Below Average</option>
-                <option value="2">2.0 — Below Average</option>
-                <option value="2.5">2.5 — Approaching</option>
-                <option value="3">3.0 — Satisfactory</option>
-                <option value="3.5">3.5 — Above Average</option>
-                <option value="4">4.0 — Good</option>
-                <option value="4.5">4.5 — Very Good</option>
-                <option value="5">5.0 — Excellent</option>
-              </select>
-              <span class="rating-label" id="rating-label-s1">Not rated</span>
+        <!-- WIZARD TABS -->
+        <div class="wtabs" id="ee-tabs">
+          <div class="wtab active" onclick="goTab('ee',0)">S1 Personal</div>
+          <div class="wtab" onclick="goTab('ee',1)">S2 Objectives</div>
+          <div class="wtab" onclick="goTab('ee',2)">S3 Competencies</div>
+          <div class="wtab" onclick="goTab('ee',3)">S4 Dev Actions</div>
+          <div class="wtab" onclick="goTab('ee',4)">S5 Next Year</div>
+          <div class="wtab" onclick="goTab('ee',5)">S6 Satisfaction</div>
+          <div class="wtab" onclick="goTab('ee',6)">S7 Expectations</div>
+          <div class="wtab" onclick="goTab('ee',7)">S8 Remarks</div>
+          <div class="wtab" onclick="goTab('ee',8)">S9–10 Submit</div>
+        </div>
+
+        <!-- S1: PERSONAL DATA -->
+        <div class="sp active" id="ee-p0">
+          <div class="card" style="padding:0;">
+            <div class="card-header"><span class="card-title">1 — Personal Data</span><span style="font-size:12px;color:var(--gray-text)">Pre-filled from HR records · contact HR to correct any detail</span></div>
+            <div style="padding:20px;">
+              <div class="form-row">
+                <div class="form-group"><label>E/No</label><input type="text" id="p1-eno" readonly style="background:var(--gray-bg);color:var(--gray-text);cursor:default;"></div>
+                <div class="form-group"><label>Full Name</label><input type="text" id="p1-name" readonly style="background:var(--gray-bg);color:var(--gray-text);cursor:default;"></div>
+                <div class="form-group"><label>Department</label><input type="text" id="p1-dept" readonly style="background:var(--gray-bg);color:var(--gray-text);cursor:default;"></div>
+              </div>
+              <div class="form-row">
+                <div class="form-group"><label>Position</label><input type="text" id="p1-pos" readonly style="background:var(--gray-bg);color:var(--gray-text);cursor:default;"></div>
+                <div class="form-group"><label>Manager</label><input type="text" id="p1-mgr" readonly style="background:var(--gray-bg);color:var(--gray-text);cursor:default;"></div>
+                <div class="form-group"><label>Appraisal Cycle</label><input type="text" id="p1-cycle" readonly style="background:var(--gray-bg);color:var(--gray-text);cursor:default;"></div>
+              </div>
             </div>
-          </div></div>
+          </div>
+          <div class="sub-bar"><div></div><button class="btn btn-primary" onclick="goTab('ee',1)">Next: Objectives →</button></div>
         </div>
 
-        <div class="card" style="padding:24px;">
-          <div class="form-section-title">🎯 S2 — Work Quality &amp; Accuracy</div>
-          <div class="form-row"><div class="form-group full">
-            <label>Self-Assessment</label>
-            <textarea id="s2-text" placeholder="Describe the quality and accuracy of your work outputs..."></textarea>
-          </div></div>
-          <div class="form-row"><div class="form-group">
-            <label>Self Rating</label>
-            <div class="rating-wrap">
-              <select class="score-sel" id="score-s2" onchange="setRating('s2',parseFloat(this.value)||0)">
-                <option value="">— Select —</option>
-                <option value="1">1.0 — Poor</option>
-                <option value="1.5">1.5 — Below Average</option>
-                <option value="2">2.0 — Below Average</option>
-                <option value="2.5">2.5 — Approaching</option>
-                <option value="3">3.0 — Satisfactory</option>
-                <option value="3.5">3.5 — Above Average</option>
-                <option value="4">4.0 — Good</option>
-                <option value="4.5">4.5 — Very Good</option>
-                <option value="5">5.0 — Excellent</option>
-              </select>
-              <span class="rating-label" id="rating-label-s2">Not rated</span>
+        <!-- S2: RATING OF OBJECTIVES -->
+        <div class="sp" id="ee-p1">
+          <div class="card" style="padding:0;">
+            <div class="card-header"><span class="card-title">2 — Rating of Objectives</span><span style="font-size:12px;color:var(--gray-text)">5 objectives · Agreement on Setting + Final Review · Weight % · Self Score</span></div>
+            <div style="padding:20px;">
+              <div class="info-box"><strong>Score guide:</strong> 1 = Insignificant / Far behind &nbsp;|&nbsp; 2 = Partially achieved &nbsp;|&nbsp; 3 = On Schedule &nbsp;|&nbsp; 4 = Beyond expectation &nbsp;|&nbsp; 5 = Highly exceeds expectation<br><span style="font-size:11px;opacity:.8">Half-point scores allowed: 1 · 1.5 · 2 · 2.5 · 3 · 3.5 · 4 · 4.5 · 5</span></div>
+              <div class="warning-box" id="wt-notice" style="display:none;">⚠️ <span id="wt-msg"></span></div>
+              <div id="ee-obj-wrap"></div>
+              <div style="display:flex;justify-content:flex-end;align-items:center;gap:10px;margin-top:8px;font-size:13px">
+                <span style="color:var(--gray-text)">Total Weight:</span>
+                <span class="wt-pill" id="wt-total">0%</span>
+              </div>
             </div>
-          </div></div>
+          </div>
+          <div class="sub-bar"><button class="btn btn-ghost" onclick="goTab('ee',0)">← Back</button><button class="btn btn-primary" onclick="goTab('ee',2)">Next: Competencies →</button></div>
         </div>
 
-        <div class="card" style="padding:24px;">
-          <div class="form-section-title">⚡ S3 — Productivity &amp; Efficiency</div>
-          <div class="form-row"><div class="form-group full">
-            <label>Self-Assessment</label>
-            <textarea id="s3-text" placeholder="Describe how you manage your workload and meet deadlines..."></textarea>
-          </div></div>
-          <div class="form-row"><div class="form-group">
-            <label>Self Rating</label>
-            <div class="rating-wrap">
-              <select class="score-sel" id="score-s3" onchange="setRating('s3',parseFloat(this.value)||0)">
-                <option value="">— Select —</option>
-                <option value="1">1.0 — Poor</option>
-                <option value="1.5">1.5 — Below Average</option>
-                <option value="2">2.0 — Below Average</option>
-                <option value="2.5">2.5 — Approaching</option>
-                <option value="3">3.0 — Satisfactory</option>
-                <option value="3.5">3.5 — Above Average</option>
-                <option value="4">4.0 — Good</option>
-                <option value="4.5">4.5 — Very Good</option>
-                <option value="5">5.0 — Excellent</option>
-              </select>
-              <span class="rating-label" id="rating-label-s3">Not rated</span>
+        <!-- S3: RATING OF COMPETENCIES -->
+        <div class="sp" id="ee-p2">
+          <div class="card" style="padding:0;">
+            <div class="card-header"><span class="card-title">3 — Rating of Competencies</span><span style="font-size:12px;color:var(--gray-text)">8 competencies (3 result-oriented + 4 behaviour + 1 job skills) · Self Score</span></div>
+            <div style="padding:20px;">
+              <div class="info-box"><strong>Score guide:</strong> 1 = Unacceptable/Below Expectation &nbsp;|&nbsp; 2 = Average/Meet Most &nbsp;|&nbsp; 3 = Good/Meet Expectations &nbsp;|&nbsp; 4 = Excellent/Above &nbsp;|&nbsp; 5 = Outstanding/Beyond Expectations</div>
+              <table class="ctbl">
+                <thead><tr>
+                  <th style="width:32%">Competency</th>
+                  <th style="width:28%">Explanation <span style="text-transform:none;letter-spacing:0;font-weight:400">(if applicable)</span></th>
+                  <th>Self Score</th>
+                </tr></thead>
+                <tbody id="ee-comp-body"></tbody>
+              </table>
             </div>
-          </div></div>
-        </div>
-
-        <div class="card" style="padding:24px;">
-          <div class="form-section-title">🤝 S4 — Communication &amp; Teamwork</div>
-          <div class="form-row"><div class="form-group full">
-            <label>Self-Assessment</label>
-            <textarea id="s4-text" placeholder="Describe your collaboration and communication with colleagues and clients..."></textarea>
-          </div></div>
-          <div class="form-row"><div class="form-group">
-            <label>Self Rating</label>
-            <div class="rating-wrap">
-              <select class="score-sel" id="score-s4" onchange="setRating('s4',parseFloat(this.value)||0)">
-                <option value="">— Select —</option>
-                <option value="1">1.0 — Poor</option>
-                <option value="1.5">1.5 — Below Average</option>
-                <option value="2">2.0 — Below Average</option>
-                <option value="2.5">2.5 — Approaching</option>
-                <option value="3">3.0 — Satisfactory</option>
-                <option value="3.5">3.5 — Above Average</option>
-                <option value="4">4.0 — Good</option>
-                <option value="4.5">4.5 — Very Good</option>
-                <option value="5">5.0 — Excellent</option>
-              </select>
-              <span class="rating-label" id="rating-label-s4">Not rated</span>
+          </div>
+          <!-- Management competencies (conditional) -->
+          <div class="card" id="mgmt-comp-card" style="padding:0;">
+            <div class="card-header">
+              <span style="background:var(--orange);color:#fff;padding:2px 9px;border-radius:20px;font-size:12px;font-weight:700;">M</span>
+              &nbsp;<span class="card-title">Management Competencies</span>
+              <span style="font-size:12px;color:var(--gray-text);flex:1;margin-left:8px;">Required for supervisors and above only</span>
+              <label style="display:flex;align-items:center;gap:7px;cursor:pointer;font-size:12px;font-weight:500;color:var(--gray-text);">
+                <input type="checkbox" id="is-mgr-cb" onchange="toggleMgmt()" style="width:15px;height:15px;accent-color:var(--blue)"> I am a supervisor / manager
+              </label>
             </div>
-          </div></div>
-        </div>
-
-        <div class="card" style="padding:24px;">
-          <div class="form-section-title">💡 S5 — Initiative &amp; Problem Solving</div>
-          <div class="form-row"><div class="form-group full">
-            <label>Self-Assessment</label>
-            <textarea id="s5-text" placeholder="Describe initiatives you have taken and how you resolve challenges..."></textarea>
-          </div></div>
-          <div class="form-row"><div class="form-group">
-            <label>Self Rating</label>
-            <div class="rating-wrap">
-              <select class="score-sel" id="score-s5" onchange="setRating('s5',parseFloat(this.value)||0)">
-                <option value="">— Select —</option>
-                <option value="1">1.0 — Poor</option>
-                <option value="1.5">1.5 — Below Average</option>
-                <option value="2">2.0 — Below Average</option>
-                <option value="2.5">2.5 — Approaching</option>
-                <option value="3">3.0 — Satisfactory</option>
-                <option value="3.5">3.5 — Above Average</option>
-                <option value="4">4.0 — Good</option>
-                <option value="4.5">4.5 — Very Good</option>
-                <option value="5">5.0 — Excellent</option>
-              </select>
-              <span class="rating-label" id="rating-label-s5">Not rated</span>
+            <div style="padding:20px;display:none;" id="mgmt-body">
+              <div class="warning-box">⚠️ Management competency scores are included in the overall rating when ticked.</div>
+              <table class="ctbl">
+                <thead><tr>
+                  <th style="width:32%">Management Competency</th>
+                  <th style="width:28%">Explanation <span style="text-transform:none;letter-spacing:0;font-weight:400">(if applicable)</span></th>
+                  <th>Self Score</th>
+                </tr></thead>
+                <tbody id="ee-mgmt-body"></tbody>
+              </table>
             </div>
-          </div></div>
+          </div>
+          <div class="sub-bar"><button class="btn btn-ghost" onclick="goTab('ee',1)">← Back</button><button class="btn btn-primary" onclick="goTab('ee',3)">Next: Dev Actions →</button></div>
         </div>
 
-        <div class="card" style="padding:24px;">
-          <div class="form-section-title">🏆 S6 — Key Achievements This Year</div>
-          <div class="form-row"><div class="form-group full">
-            <label>Describe your key achievements (free text)</label>
-            <textarea id="s6-text" style="min-height:120px;" placeholder="List your major accomplishments, projects delivered, and contributions this year..."></textarea>
-          </div></div>
+        <!-- S4: PLANNED DEVELOPMENT ACTIONS -->
+        <div class="sp" id="ee-p3">
+          <div class="card" style="padding:0;">
+            <div class="card-header"><span class="card-title">4 — Planned Development Actions</span><span style="font-size:12px;color:var(--gray-text)">Actions with fixed date and responsible party</span></div>
+            <div style="padding:20px;">
+              <table class="devtbl" id="dev-table">
+                <thead><tr><th style="width:55%">Actions (professional, behaviour, leadership, others)</th><th style="width:20%">Fixed Date</th><th style="width:20%">Responsible</th><th style="width:5%"></th></tr></thead>
+                <tbody id="dev-tbody"></tbody>
+              </table>
+              <button class="btn btn-ghost btn-sm" onclick="addDevRow()" style="margin-top:10px">+ Add Action</button>
+              <hr style="margin:16px 0;border:none;border-top:1px solid var(--gray-border);">
+              <div><label>Remarks</label><textarea id="dev_remarks" rows="3" placeholder="Any additional remarks on development actions…"></textarea></div>
+            </div>
+          </div>
+          <div class="sub-bar"><button class="btn btn-ghost" onclick="goTab('ee',2)">← Back</button><button class="btn btn-primary" onclick="goTab('ee',4)">Next: Next Year Objectives →</button></div>
         </div>
 
-        <div class="card" style="padding:24px;">
-          <div class="form-section-title">🌱 S7 — Development Goals &amp; Areas for Improvement</div>
-          <div class="form-row"><div class="form-group full">
-            <label>Your development plan for the coming year (free text)</label>
-            <textarea id="s7-text" style="min-height:120px;" placeholder="What skills do you want to develop? What areas would you like to improve?..."></textarea>
-          </div></div>
+        <!-- S5: OBJECTIVES SETTING FOR THE NEW YEAR -->
+        <div class="sp" id="ee-p4">
+          <div class="card" style="padding:0;">
+            <div class="card-header"><span class="card-title">5 — Objectives Setting for the New Year</span><span style="font-size:12px;color:var(--gray-text)">Set agreed objectives and weights for the upcoming appraisal cycle</span></div>
+            <div style="padding:20px;">
+              <table class="devtbl" id="ny-table">
+                <thead><tr><th style="width:75%">Descriptions of the Objectives</th><th style="width:20%">Weight (%)</th><th style="width:5%"></th></tr></thead>
+                <tbody id="ny-tbody"></tbody>
+              </table>
+              <button class="btn btn-ghost btn-sm" onclick="addNYRow()" style="margin-top:10px">+ Add Objective</button>
+            </div>
+          </div>
+          <div class="sub-bar"><button class="btn btn-ghost" onclick="goTab('ee',3)">← Back</button><button class="btn btn-primary" onclick="goTab('ee',5)">Next: Employee Satisfaction →</button></div>
         </div>
 
-        <div style="display:flex;gap:12px;margin-bottom:32px;flex-wrap:wrap;">
-          <button class="btn btn-ghost" onclick="saveForm()">💾 Save Draft</button>
-          <button class="btn btn-primary" id="emp-submit-btn" onclick="submitForm()">🚀 Submit PA</button>
+        <!-- S6: EMPLOYEE SATISFACTION -->
+        <div class="sp" id="ee-p5">
+          <div class="card" style="padding:0;">
+            <div class="card-header"><span class="card-title">6 — Employee Satisfaction</span><span style="font-size:12px;color:var(--gray-text)">Prepared by the employee · discussed at appraisal outcome</span></div>
+            <div style="padding:20px;">
+              <div class="success-box">✅ These declarations <strong>DO NOT HAVE ANY IMPACT</strong> on the performance appraisal.</div>
+              <div style="margin-bottom:16px;">
+                <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--blue);margin-bottom:8px;">Satisfaction in the current activities / Overall Job Satisfaction</div>
+                <div class="smiley-row">
+                  <button class="smb" id="sm-happy" onclick="setSmiley('happy')" title="Satisfied">😊</button>
+                  <button class="smb" id="sm-neutral" onclick="setSmiley('neutral')" title="Neutral">😐</button>
+                  <button class="smb" id="sm-sad" onclick="setSmiley('sad')" title="Unsatisfied">😞</button>
+                </div>
+                <div style="font-size:11px;color:var(--gray-text);margin-top:6px;" id="smiley-lbl">Select your overall job satisfaction level</div>
+              </div>
+              <div style="margin-bottom:12px;"><label>Remarks — On the job training / on the working conditions</label><textarea id="sat_training" rows="3" placeholder="Your thoughts on training opportunities and working conditions…"></textarea></div>
+              <div><label>On the teamwork with colleagues / subordinates and other areas</label><textarea id="sat_teamwork" rows="3" placeholder="Your thoughts on teamwork, collaboration, and working relationships…"></textarea></div>
+            </div>
+          </div>
+          <div class="sub-bar"><button class="btn btn-ghost" onclick="goTab('ee',4)">← Back</button><button class="btn btn-primary" onclick="goTab('ee',6)">Next: Expectations →</button></div>
+        </div>
+
+        <!-- S7: EMPLOYEE EXPECTATIONS -->
+        <div class="sp" id="ee-p6">
+          <div class="card" style="padding:0;">
+            <div class="card-header"><span class="card-title">7 — Employee Expectations</span><span style="font-size:12px;color:var(--gray-text)">Opportunity to express future expectations — discussed with supervisor noncommittally</span></div>
+            <div style="padding:20px;">
+              <div style="margin-bottom:12px;"><label>Employee Expectations</label><textarea id="ee_expectations" rows="4" placeholder="Opportunity for you to express your future expectations and discuss them with your supervisor noncommittally…"></textarea></div>
+              <div><label>Comment of the Supervisor</label><textarea id="sup_expectations_comment" rows="3" readonly placeholder="To be completed by supervisor during appraisal discussion…"></textarea></div>
+            </div>
+          </div>
+          <div class="sub-bar"><button class="btn btn-ghost" onclick="goTab('ee',5)">← Back</button><button class="btn btn-primary" onclick="goTab('ee',7)">Next: Additional Remarks →</button></div>
+        </div>
+
+        <!-- S8: ADDITIONAL REMARKS -->
+        <div class="sp" id="ee-p7">
+          <div class="card" style="padding:0;">
+            <div class="card-header"><span class="card-title">8 — Additional Remarks</span></div>
+            <div style="padding:20px;">
+              <div style="margin-bottom:12px;"><label>Additional Remarks from Employee</label><textarea id="ee_add_remarks" rows="4" placeholder="Any additional remarks you wish to add…"></textarea></div>
+              <div><label>Additional Remarks from Supervisor</label><textarea id="sup_add_remarks" rows="4" readonly placeholder="To be completed by supervisor…"></textarea></div>
+            </div>
+          </div>
+          <div class="sub-bar"><button class="btn btn-ghost" onclick="goTab('ee',6)">← Back</button><button class="btn btn-primary" onclick="goTab('ee',8)">Next: Outcome &amp; Submit →</button></div>
+        </div>
+
+        <!-- S9 + S10: APPRAISAL OUTCOME & DECLARATION -->
+        <div class="sp" id="ee-p8">
+          <div class="card" style="padding:0;">
+            <div class="card-header"><span class="card-title">9 — Appraisal Outcome</span><span style="font-size:12px;color:var(--gray-text)">Auto-calculated from scores · finalised after manager review</span></div>
+            <div>
+              <div class="outcome-row"><span class="outcome-lbl">Overall Rating of objectives and achievements</span><span class="outcome-val na" id="oc-obj">Pending manager review</span></div>
+              <div class="outcome-row"><span class="outcome-lbl">Overall Rating of skill analysis</span><span class="outcome-val na" id="oc-skill">Pending manager review</span></div>
+              <div class="outcome-row" style="background:var(--gray-bg);"><span class="outcome-lbl" style="font-weight:600">Final overall / result rating</span><span class="outcome-val na" id="oc-final">Pending manager review</span></div>
+              <div style="padding:12px 16px;font-size:12px;color:var(--gray-text)">1 = Unacceptable/Below Expectation (1–1.9) &nbsp;·&nbsp; 2 = Average/Meet Most (2–2.9) &nbsp;·&nbsp; 3 = Good/Meet Expectations (3–3.9) &nbsp;·&nbsp; 4 = Excellent/Above (4–4.5) &nbsp;·&nbsp; 5 = Outstanding/Beyond (4.6–5)</div>
+            </div>
+          </div>
+          <div class="card" style="padding:0;">
+            <div class="card-header"><span class="card-title">10 — Agreement and Approval</span></div>
+            <div style="padding:20px;">
+              <p style="font-size:12.5px;color:var(--gray-text);line-height:1.8;margin-bottom:4px;">The employee confirms with his/her signature that a discussion about the performance appraisal (results and behaviour) and the development actions has taken place and that at the beginning of the period of the appraisal the objective have been agreed respectively.</p>
+              <div class="sign-row">
+                <div class="sign-box"><div class="sign-name" id="ee-sign-name">—</div><div class="sign-role">Agreed By · Employee</div><div class="sign-date" id="ee-sign-date">Pending submission</div></div>
+                <div class="sign-box"><div class="sign-name" id="ee-mgr-sign-name">—</div><div class="sign-role">Approved By · Immediate Manager</div><div class="sign-date">Pending manager review</div></div>
+                <div class="sign-box"><div class="sign-name">—</div><div class="sign-role">Approved By · Department Head</div><div class="sign-date">Pending</div></div>
+              </div>
+            </div>
+          </div>
+          <div class="sub-bar">
+            <button class="btn btn-ghost" onclick="goTab('ee',7)">← Back</button>
+            <div style="display:flex;gap:10px;">
+              <button class="btn btn-ghost" onclick="saveForm()">💾 Save Draft</button>
+              <button class="btn btn-primary" id="emp-submit-btn" onclick="submitForm()">🚀 Submit PA →</button>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -677,173 +806,136 @@
       <div id="mgrReview" style="display:none;">
         <span class="back-link" onclick="mgrNav('mgrTeam')">← Back to Team</span>
         <div id="mgr-emp-profile-card"></div>
-        <div class="info-box" id="mgr-review-info">📋 Review the employee's self-assessment below and provide your manager rating and comments for each section.</div>
         <div id="mgr-approved-notice" style="display:none;"><div class="success-box">✅ This PA has been <strong>Approved</strong>. No further action required.</div></div>
         <div id="mgr-returned-notice" style="display:none;"><div class="warning-box">⚠️ This PA was <strong>Returned</strong> to the employee for revision.</div></div>
+        <div class="info-box" id="mgr-review-info">📋 Review the employee's self-assessment and enter Manager Score + Agreed Score for each section.</div>
 
-        <div class="card" style="padding:24px;">
-          <div class="form-section-title">📘 S1 — Job Knowledge &amp; Technical Skills</div>
-          <div class="form-row"><div class="form-group full"><label>Employee's Self-Assessment</label><textarea readonly id="mgr-s1-text"></textarea></div></div>
-          <div class="form-row">
-            <div class="form-group"><label>Employee Self-Rating</label><div id="mgr-s1-self-rating" style="font-size:20px;color:#f5a623;"></div></div>
-            <div class="form-group"><label>Manager Rating</label>
-              <div class="rating-wrap"><select class="score-sel" id="mgr-score-s1" onchange="setMgrRating('s1',parseFloat(this.value)||0)">
-                <option value="">— Select —</option>
-                <option value="1">1.0 — Poor</option>
-                <option value="1.5">1.5 — Below Average</option>
-                <option value="2">2.0 — Below Average</option>
-                <option value="2.5">2.5 — Approaching</option>
-                <option value="3">3.0 — Satisfactory</option>
-                <option value="3.5">3.5 — Above Average</option>
-                <option value="4">4.0 — Good</option>
-                <option value="4.5">4.5 — Very Good</option>
-                <option value="5">5.0 — Excellent</option>
-              </select><span class="rating-label" id="mgr-rating-label-s1">Not rated</span></div>
+        <!-- LIVE SCORE PANEL -->
+        <div class="score-panel">
+          <div class="sp-main"><div class="sp-big" id="mgr-big">—</div><div class="sp-lbl">Overall Score</div></div>
+          <div class="sp-right">
+            <div class="sp-rating" id="mgr-rating">Enter all scores to calculate</div>
+            <div class="sp-band" id="mgr-band">—</div>
+            <div class="sp-grid">
+              <div class="sp-cell"><div class="scl">Obj Avg (wtd)</div><div class="scv" id="sp-oa">—</div></div>
+              <div class="sp-cell"><div class="scl">Comp Avg</div><div class="scv" id="sp-ca">—</div></div>
+              <div class="sp-cell"><div class="scl">Filled</div><div class="scv" id="sp-filled">0/13</div></div>
             </div>
           </div>
-          <div class="form-row"><div class="form-group full"><label>Manager Comments</label><textarea id="mgr-s1-comment" placeholder="Add your comments for this section..."></textarea></div></div>
         </div>
 
-        <div class="card" style="padding:24px;">
-          <div class="form-section-title">🎯 S2 — Work Quality &amp; Accuracy</div>
-          <div class="form-row"><div class="form-group full"><label>Employee's Self-Assessment</label><textarea readonly id="mgr-s2-text"></textarea></div></div>
-          <div class="form-row">
-            <div class="form-group"><label>Employee Self-Rating</label><div id="mgr-s2-self-rating" style="font-size:20px;color:#f5a623;"></div></div>
-            <div class="form-group"><label>Manager Rating</label>
-              <div class="rating-wrap"><select class="score-sel" id="mgr-score-s2" onchange="setMgrRating('s2',parseFloat(this.value)||0)">
-                <option value="">— Select —</option>
-                <option value="1">1.0 — Poor</option>
-                <option value="1.5">1.5 — Below Average</option>
-                <option value="2">2.0 — Below Average</option>
-                <option value="2.5">2.5 — Approaching</option>
-                <option value="3">3.0 — Satisfactory</option>
-                <option value="3.5">3.5 — Above Average</option>
-                <option value="4">4.0 — Good</option>
-                <option value="4.5">4.5 — Very Good</option>
-                <option value="5">5.0 — Excellent</option>
-              </select><span class="rating-label" id="mgr-rating-label-s2">Not rated</span></div>
+        <!-- WIZARD TABS -->
+        <div class="wtabs" id="mgr-tabs">
+          <div class="wtab active" onclick="goTab('mgr',0)">S2 Objectives</div>
+          <div class="wtab" onclick="goTab('mgr',1)">S3 Competencies</div>
+          <div class="wtab" onclick="goTab('mgr',2)">S7 Expectations</div>
+          <div class="wtab" onclick="goTab('mgr',3)">S8 Remarks</div>
+          <div class="wtab" onclick="goTab('mgr',4)">S9–10 Outcome</div>
+        </div>
+
+        <!-- MGR S2: OBJECTIVES -->
+        <div class="sp active" id="mgr-p0">
+          <div class="card" style="padding:0;">
+            <div class="card-header"><span class="card-title">2 — Objectives: Manager &amp; Agreed Scores</span><span style="font-size:12px;color:var(--gray-text)">Self scores shown read-only · enter Manager Score and Agreed Score</span></div>
+            <div style="padding:20px;">
+              <div class="info-box">Score guide: 1 = Insignificant &nbsp;|&nbsp; 2 = Partially achieved &nbsp;|&nbsp; 3 = On Schedule &nbsp;|&nbsp; 4 = Beyond expectation &nbsp;|&nbsp; 5 = Highly exceeds</div>
+              <div id="mgr-obj-wrap"></div>
             </div>
           </div>
-          <div class="form-row"><div class="form-group full"><label>Manager Comments</label><textarea id="mgr-s2-comment" placeholder="Add your comments for this section..."></textarea></div></div>
+          <div class="sub-bar"><div></div><button class="btn btn-primary" onclick="goTab('mgr',1)">Next: Competencies →</button></div>
         </div>
 
-        <div class="card" style="padding:24px;">
-          <div class="form-section-title">⚡ S3 — Productivity &amp; Efficiency</div>
-          <div class="form-row"><div class="form-group full"><label>Employee's Self-Assessment</label><textarea readonly id="mgr-s3-text"></textarea></div></div>
-          <div class="form-row">
-            <div class="form-group"><label>Employee Self-Rating</label><div id="mgr-s3-self-rating" style="font-size:20px;color:#f5a623;"></div></div>
-            <div class="form-group"><label>Manager Rating</label>
-              <div class="rating-wrap"><select class="score-sel" id="mgr-score-s3" onchange="setMgrRating('s3',parseFloat(this.value)||0)">
-                <option value="">— Select —</option>
-                <option value="1">1.0 — Poor</option>
-                <option value="1.5">1.5 — Below Average</option>
-                <option value="2">2.0 — Below Average</option>
-                <option value="2.5">2.5 — Approaching</option>
-                <option value="3">3.0 — Satisfactory</option>
-                <option value="3.5">3.5 — Above Average</option>
-                <option value="4">4.0 — Good</option>
-                <option value="4.5">4.5 — Very Good</option>
-                <option value="5">5.0 — Excellent</option>
-              </select><span class="rating-label" id="mgr-rating-label-s3">Not rated</span></div>
+        <!-- MGR S3: COMPETENCIES -->
+        <div class="sp" id="mgr-p1">
+          <div class="card" style="padding:0;">
+            <div class="card-header"><span class="card-title">3 — Competencies: Manager &amp; Agreed Scores</span><span style="font-size:12px;color:var(--gray-text)">Self scores read-only · enter Manager Score, Agreed Score, and Explanation</span></div>
+            <div style="padding:20px;">
+              <div class="info-box">Score guide: 1 = Unacceptable &nbsp;|&nbsp; 2 = Average/Meet Most &nbsp;|&nbsp; 3 = Good/Meet &nbsp;|&nbsp; 4 = Excellent/Above &nbsp;|&nbsp; 5 = Outstanding/Beyond</div>
+              <table class="ctbl">
+                <thead><tr>
+                  <th style="width:28%">Competency</th>
+                  <th style="width:22%">Explanation <span style="text-transform:none;letter-spacing:0;font-weight:400">(if applicable)</span></th>
+                  <th>Self</th>
+                  <th>Mgr Score</th>
+                  <th>Agreed Score</th>
+                </tr></thead>
+                <tbody id="mgr-comp-body"></tbody>
+              </table>
             </div>
           </div>
-          <div class="form-row"><div class="form-group full"><label>Manager Comments</label><textarea id="mgr-s3-comment" placeholder="Add your comments for this section..."></textarea></div></div>
+          <div class="sub-bar"><button class="btn btn-ghost" onclick="goTab('mgr',0)">← Back</button><button class="btn btn-primary" onclick="goTab('mgr',2)">Next: Expectations →</button></div>
         </div>
 
-        <div class="card" style="padding:24px;">
-          <div class="form-section-title">🤝 S4 — Communication &amp; Teamwork</div>
-          <div class="form-row"><div class="form-group full"><label>Employee's Self-Assessment</label><textarea readonly id="mgr-s4-text"></textarea></div></div>
-          <div class="form-row">
-            <div class="form-group"><label>Employee Self-Rating</label><div id="mgr-s4-self-rating" style="font-size:20px;color:#f5a623;"></div></div>
-            <div class="form-group"><label>Manager Rating</label>
-              <div class="rating-wrap"><select class="score-sel" id="mgr-score-s4" onchange="setMgrRating('s4',parseFloat(this.value)||0)">
-                <option value="">— Select —</option>
-                <option value="1">1.0 — Poor</option>
-                <option value="1.5">1.5 — Below Average</option>
-                <option value="2">2.0 — Below Average</option>
-                <option value="2.5">2.5 — Approaching</option>
-                <option value="3">3.0 — Satisfactory</option>
-                <option value="3.5">3.5 — Above Average</option>
-                <option value="4">4.0 — Good</option>
-                <option value="4.5">4.5 — Very Good</option>
-                <option value="5">5.0 — Excellent</option>
-              </select><span class="rating-label" id="mgr-rating-label-s4">Not rated</span></div>
+        <!-- MGR S7: EXPECTATIONS -->
+        <div class="sp" id="mgr-p2">
+          <div class="card" style="padding:0;">
+            <div class="card-header"><span class="card-title">7 — Employee Expectations</span></div>
+            <div style="padding:20px;">
+              <div style="margin-bottom:12px;"><label>Employee Expectations</label><textarea readonly id="mgr-ee-expectations" rows="4" placeholder="(Not filled by employee)"></textarea></div>
+              <div><label>Comment of the Supervisor <span style="color:var(--red);">*</span></label><textarea id="mgr_sup_expectations" rows="3" placeholder="Your comments on the employee's expectations…"></textarea></div>
             </div>
           </div>
-          <div class="form-row"><div class="form-group full"><label>Manager Comments</label><textarea id="mgr-s4-comment" placeholder="Add your comments for this section..."></textarea></div></div>
+          <div class="sub-bar"><button class="btn btn-ghost" onclick="goTab('mgr',1)">← Back</button><button class="btn btn-primary" onclick="goTab('mgr',3)">Next: Remarks →</button></div>
         </div>
 
-        <div class="card" style="padding:24px;">
-          <div class="form-section-title">💡 S5 — Initiative &amp; Problem Solving</div>
-          <div class="form-row"><div class="form-group full"><label>Employee's Self-Assessment</label><textarea readonly id="mgr-s5-text"></textarea></div></div>
-          <div class="form-row">
-            <div class="form-group"><label>Employee Self-Rating</label><div id="mgr-s5-self-rating" style="font-size:20px;color:#f5a623;"></div></div>
-            <div class="form-group"><label>Manager Rating</label>
-              <div class="rating-wrap"><select class="score-sel" id="mgr-score-s5" onchange="setMgrRating('s5',parseFloat(this.value)||0)">
-                <option value="">— Select —</option>
-                <option value="1">1.0 — Poor</option>
-                <option value="1.5">1.5 — Below Average</option>
-                <option value="2">2.0 — Below Average</option>
-                <option value="2.5">2.5 — Approaching</option>
-                <option value="3">3.0 — Satisfactory</option>
-                <option value="3.5">3.5 — Above Average</option>
-                <option value="4">4.0 — Good</option>
-                <option value="4.5">4.5 — Very Good</option>
-                <option value="5">5.0 — Excellent</option>
-              </select><span class="rating-label" id="mgr-rating-label-s5">Not rated</span></div>
+        <!-- MGR S8: REMARKS -->
+        <div class="sp" id="mgr-p3">
+          <div class="card" style="padding:0;">
+            <div class="card-header"><span class="card-title">8 — Additional Remarks</span></div>
+            <div style="padding:20px;">
+              <div style="margin-bottom:12px;"><label>Additional Remarks from Employee</label><textarea readonly id="mgr-ee-remarks" rows="3" placeholder="(Not filled by employee)"></textarea></div>
+              <div><label>Additional Remarks from Supervisor <span style="color:var(--red);">*</span></label><textarea id="mgr_sup_remarks" rows="4" placeholder="Your overall additional remarks…"></textarea></div>
             </div>
           </div>
-          <div class="form-row"><div class="form-group full"><label>Manager Comments</label><textarea id="mgr-s5-comment" placeholder="Add your comments for this section..."></textarea></div></div>
+          <div class="sub-bar"><button class="btn btn-ghost" onclick="goTab('mgr',2)">← Back</button><button class="btn btn-primary" onclick="goTab('mgr',4)">Next: Outcome →</button></div>
         </div>
 
-        <div class="card" style="padding:24px;">
-          <div class="form-section-title">🏆 S6 — Key Achievements</div>
-          <div class="form-row"><div class="form-group full"><label>Employee's Response</label><textarea readonly id="mgr-s6-text" style="min-height:100px;"></textarea></div></div>
-          <div class="form-row"><div class="form-group full"><label>Manager Comments</label><textarea id="mgr-s6-comment" placeholder="Add your comments..."></textarea></div></div>
-        </div>
-
-        <div class="card" style="padding:24px;">
-          <div class="form-section-title">🌱 S7 — Development Goals</div>
-          <div class="form-row"><div class="form-group full"><label>Employee's Response</label><textarea readonly id="mgr-s7-text" style="min-height:100px;"></textarea></div></div>
-          <div class="form-row"><div class="form-group full"><label>Manager Comments</label><textarea id="mgr-s7-comment" placeholder="Add your comments and recommended development priorities..."></textarea></div></div>
-        </div>
-
-        <div class="card" style="padding:24px;">
-          <div class="form-section-title">📊 Overall Manager Assessment</div>
-          <div class="form-row">
-            <div class="form-group"><label>Overall Manager Rating</label>
-              <div class="rating-wrap"><select class="score-sel" id="mgr-score-overall" onchange="setMgrRating('overall',parseFloat(this.value)||0)">
-                <option value="">— Select —</option>
-                <option value="1">1.0 — Poor</option>
-                <option value="1.5">1.5 — Below Average</option>
-                <option value="2">2.0 — Below Average</option>
-                <option value="2.5">2.5 — Approaching</option>
-                <option value="3">3.0 — Satisfactory</option>
-                <option value="3.5">3.5 — Above Average</option>
-                <option value="4">4.0 — Good</option>
-                <option value="4.5">4.5 — Very Good</option>
-                <option value="5">5.0 — Excellent</option>
-              </select><span class="rating-label" id="mgr-rating-label-overall">Not rated</span></div>
-            </div>
-            <div class="form-group"><label>Recommended Action</label>
-              <select id="mgr-recommendation">
-                <option value="">— Select —</option>
-                <option value="Confirm">Confirm Performance</option>
-                <option value="PIP">Performance Improvement Plan</option>
-                <option value="Promote">Recommend for Promotion</option>
-                <option value="Commend">Letter of Commendation</option>
-              </select>
+        <!-- MGR S9+10 -->
+        <div class="sp" id="mgr-p4">
+          <div class="card" style="padding:0;">
+            <div class="card-header"><span class="card-title">9 — Appraisal Outcome</span><span style="font-size:12px;color:var(--gray-text)">Calculated from agreed scores (falls back to manager scores if agreed is blank)</span></div>
+            <div>
+              <div class="outcome-row"><span class="outcome-lbl">Overall Rating of objectives and achievements</span><span class="outcome-val" id="mgr-oc-obj">—</span></div>
+              <div class="outcome-row"><span class="outcome-lbl">Overall Rating of skill analysis</span><span class="outcome-val" id="mgr-oc-skill">—</span></div>
+              <div class="outcome-row" style="background:var(--gray-bg);"><span class="outcome-lbl" style="font-weight:600">Final overall / result rating</span><span class="outcome-val" id="mgr-oc-final">—</span></div>
+              <div style="padding:12px 16px;font-size:12px;color:var(--gray-text)">1 = Unacceptable/Below (1–1.9) &nbsp;·&nbsp; 2 = Average/Meet Most (2–2.9) &nbsp;·&nbsp; 3 = Good/Meet (3–3.9) &nbsp;·&nbsp; 4 = Excellent/Above (4–4.5) &nbsp;·&nbsp; 5 = Outstanding/Beyond (4.6–5)</div>
             </div>
           </div>
-          <div class="form-row"><div class="form-group full"><label>Overall Comments to Employee</label>
-            <textarea id="mgr-overall-comment" style="min-height:100px;" placeholder="Provide overall feedback to the employee..."></textarea>
-          </div></div>
-        </div>
-
-        <div id="mgr-action-btns" style="display:flex;gap:12px;margin-bottom:32px;flex-wrap:wrap;">
-          <button class="btn btn-success" onclick="approvePA()">✅ Approve PA</button>
-          <button class="btn btn-danger" onclick="returnPA()">↩️ Return to Employee</button>
-          <button class="btn btn-ghost" onclick="mgrNav('mgrTeam')">Cancel</button>
+          <div class="card" style="padding:0;">
+            <div class="card-header"><span class="card-title">Recommendation</span></div>
+            <div style="padding:20px;">
+              <div class="form-row">
+                <div class="form-group"><label>Recommended Action</label>
+                  <select id="mgr-recommendation">
+                    <option value="">— Select —</option>
+                    <option value="Confirm">Confirm Performance</option>
+                    <option value="PIP">Performance Improvement Plan</option>
+                    <option value="Promote">Recommend for Promotion</option>
+                    <option value="Commend">Letter of Commendation</option>
+                  </select>
+                </div>
+              </div>
+              <div><label>Overall Comments to Employee</label><textarea id="mgr-overall-comment" style="min-height:80px;" placeholder="Provide overall feedback to the employee…"></textarea></div>
+            </div>
+          </div>
+          <div class="card" style="padding:0;">
+            <div class="card-header"><span class="card-title">10 — Agreement and Approval</span></div>
+            <div style="padding:20px;">
+              <p style="font-size:12.5px;color:var(--gray-text);line-height:1.8;margin-bottom:12px;">The employee confirms with his/her signature that a discussion about the performance appraisal (results and behaviour) and the development actions has taken place.</p>
+              <div class="sign-row">
+                <div class="sign-box"><div class="sign-name" id="mgr-ee-sign-name">—</div><div class="sign-role">Agreed By · Employee</div><div class="sign-date" id="mgr-ee-sign-date">Pending</div></div>
+                <div class="sign-box"><div class="sign-name" id="mgr-sign-name">—</div><div class="sign-role">Approved By · Immediate Manager</div><div class="sign-date" id="mgr-sign-date">Pending submission</div></div>
+                <div class="sign-box"><div class="sign-name">—</div><div class="sign-role">Approved By · Department Head</div><div class="sign-date">Pending</div></div>
+              </div>
+            </div>
+          </div>
+          <div class="sub-bar">
+            <button class="btn btn-ghost" onclick="goTab('mgr',3)">← Back</button>
+            <div id="mgr-action-btns" style="display:flex;gap:12px;flex-wrap:wrap;">
+              <button class="btn btn-success" onclick="approvePA()">✅ Approve PA</button>
+              <button class="btn btn-danger" onclick="returnPA()">↩️ Return to Employee</button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -1059,7 +1151,33 @@ const SUPABASE_URL  = 'https://rfayekgpmrrzmyxtchzr.supabase.co';
 const SUPABASE_ANON = 'sb_publishable_j3Q6d10J3LbIeT45dAmFHQ_e1rjEZ7g';
 const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
 
-const SCORE_LBL = {1:'Poor',1.5:'Below Average',2:'Below Average',2.5:'Approaching',3:'Satisfactory',3.5:'Above Average',4:'Good',4.5:'Very Good',5:'Excellent'};
+const OBJ_LBL = {1:'Insignificant Achievement',1.5:'Between 1–2',2:'Partially Achieved',2.5:'Between 2–3',3:'Objective Achieved / On Schedule',3.5:'Between 3–4',4:'Beyond Expectation',4.5:'Between 4–5',5:'Highly Exceeds Expectation'};
+const COMP_LBL = {1:'Unacceptable/Below Expectation',1.5:'Between 1–2',2:'Average/Meet Most Expectation',2.5:'Between 2–3',3:'Good/Meet Expectations',3.5:'Between 3–4',4:'Excellent/Above Expectations',4.5:'Between 4–5',5:'Outstanding/Beyond Expectations'};
+const OUT_LBL = {1:'Unacceptable/Below Expectation',2:'Average/Meet Most Expectation',3:'Good/Meet Expectations',4:'Excellent/Above Expectations',5:'Outstanding/Beyond Expectations'};
+const HALFPOINTS = [1,1.5,2,2.5,3,3.5,4,4.5,5];
+const OBJS = [
+  {id:1,agree:'',review:'',w:20,self:null},
+  {id:2,agree:'',review:'',w:20,self:null},
+  {id:3,agree:'',review:'',w:20,self:null},
+  {id:4,agree:'',review:'',w:20,self:null},
+  {id:5,agree:'',review:'',w:20,self:null},
+];
+const COMPS = [
+  {grp:'Resulted Oriented Competence',id:'c1',n:'Productivity',d:'Quantity & quality of work completed within expected timeframe. Meets required volume of work.'},
+  {grp:'',id:'c2',n:'Quality',d:'Accuracy, Neatness and thoroughness in accomplishing a task.'},
+  {grp:'',id:'c3',n:'Accountability',d:'Is punctual and can be relied upon to meet commitments. Takes responsibility for outcomes.'},
+  {grp:'Behavior Competencies',id:'c4',n:'Flexibility',d:'Understands & Adjust to changes in work environment or responsibilities.'},
+  {grp:'',id:'c5',n:'Teamwork',d:'Interacts effectively with team members to achieve common goals.'},
+  {grp:'',id:'c6',n:'Discipline',d:'Stick to the rules, the agreements and the timeframe.'},
+  {grp:'',id:'c7',n:'Initiatives',d:'Assumes greater responsibility. Identifies and recommends solutions or improvements.'},
+  {grp:'Specific Job Match Competencies',id:'c8',n:'Job Skills',d:'Meets the required job skills or even exceeds.'},
+];
+const MGMT = [
+  {id:'m1',n:'Creation of High Performance Culture',d:'Builds an organisational culture that drives high performance and employee engagement.'},
+  {id:'m2',n:'Entrepreneurial Drive',d:'Strives to build better, more innovative business practices and results.'},
+  {id:'m3',n:'People Development',d:'Meets own development goal. Recognises and develops employees potential and performance.'},
+];
+const SC = {};
 
 const state = {
   currentUser: null, currentRole: null, currentEmp: null, activeCycle: null,
@@ -1087,6 +1205,272 @@ function getBadge(s) {
 function fmtDate(iso) {
   if(!iso) return '—';
   return new Date(iso).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
+}
+
+// ══════════════════════════════════════════════════
+//  FORM BUILDER HELPERS (mirrors WS7_PA_Form_v4)
+// ══════════════════════════════════════════════════
+
+function outcomeLabel(s) {
+  if (!s) return '—';
+  if (s < 2) return OUT_LBL[1];
+  if (s < 3) return OUT_LBL[2];
+  if (s < 4) return OUT_LBL[3];
+  if (s <= 4.5) return OUT_LBL[4];
+  return OUT_LBL[5];
+}
+
+function scClass(v) {
+  if (!v) return '';
+  if (v <= 1.5) return 's1';
+  if (v <= 2.5) return 's2';
+  if (v <= 3.5) return 's3';
+  if (v <= 4.5) return 's4';
+  return 's5';
+}
+
+function scoreDD(fid, val, ro, lblType) {
+  const lbl = lblType === 'obj' ? OBJ_LBL : (lblType === 'comp' ? COMP_LBL : OBJ_LBL);
+  const cls = scClass(val);
+  if (ro) {
+    const txt = val ? (val + ' — ' + (lbl[val]||'')) : '—';
+    return `<span class="ps ${cls}">${txt}</span>`;
+  }
+  let opts = '<option value="">— Select —</option>';
+  HALFPOINTS.forEach(v => {
+    const sel = (v === val) ? ' selected' : '';
+    opts += `<option value="${v}"${sel}>${v} — ${lbl[v]||''}</option>`;
+  });
+  return `<select id="${fid}" class="score-sel ${cls}" onchange="onDD('${fid}',this)">${opts}</select>`;
+}
+
+function onDD(fid, sel) {
+  const v = parseFloat(sel.value) || 0;
+  SC[fid] = v;
+  sel.className = 'score-sel ' + (v ? scClass(v) : '');
+  calcMgrLive();
+  updateWeightTotal();
+}
+
+function buildObjSection(wrapId, isEE) {
+  const wrap = document.getElementById(wrapId);
+  if (!wrap) return;
+  let html = '';
+  OBJS.forEach(o => {
+    const agree = isEE ? `<input id="obj${o.id}_agree" placeholder="Describe the objective…" value="${o.agree||''}">` : `<input readonly value="${o.agree||'(not set)'}">`;
+    const review = isEE ? `<input id="obj${o.id}_review" placeholder="Final review / outcome…" value="${o.review||''}">` : `<input readonly value="${o.review||'(not set)'}">`;
+    const wInput = isEE ? `<input id="obj${o.id}_w" type="number" min="0" max="100" value="${o.w||20}" style="width:70px;" onchange="updateWeightTotal()">%` : `<span class="wt-pill">${o.w||20}%</span>`;
+    const selfDD = scoreDD('obj'+o.id+'_self', o.self||null, !isEE, 'obj');
+    const mgrDD  = isEE ? scoreDD('obj'+o.id+'_mgr', null, true, 'obj') : scoreDD('obj'+o.id+'_mgr', SC['obj'+o.id+'_mgr']||null, false, 'obj');
+    const agrDD  = isEE ? scoreDD('obj'+o.id+'_agr', null, true, 'obj') : scoreDD('obj'+o.id+'_agr', SC['obj'+o.id+'_agr']||null, false, 'obj');
+    html += `<div class="obj-block">
+      <div class="obj-num">Objective ${o.id} <span class="wt-pill">${o.w||20}%</span></div>
+      <div class="obj-body">
+        <div class="obj-row-label">Agreement on Objective Setting</div>
+        <div class="obj-desc-row" style="display:flex;gap:8px;align-items:center;">${agree} ${wInput}</div>
+        <div class="obj-row-label final">Final Review</div>
+        <div class="obj-desc-row">${review}</div>
+        <div class="obj-score-row">
+          <div class="score-cell"><label>Self Score</label>${selfDD}</div>
+          <div class="score-cell"><label>Manager Score</label>${mgrDD}</div>
+          <div class="score-cell"><label>Agreed Score</label>${agrDD}</div>
+        </div>
+      </div>
+    </div>`;
+  });
+  wrap.innerHTML = html;
+}
+
+function buildCompSection(bodyId, mgmtId, isEE) {
+  const body = document.getElementById(bodyId);
+  if (!body) return;
+  let html = '';
+  let lastGrp = '';
+  COMPS.forEach(c => {
+    if (c.grp && c.grp !== lastGrp) {
+      html += `<tr><td colspan="5" style="background:#f0f4ff;font-weight:600;font-size:12px;padding:6px 10px;color:var(--blue);">${c.grp}</td></tr>`;
+      lastGrp = c.grp;
+    }
+    const expl = isEE ? `<textarea id="${c.id}_expl" rows="2" placeholder="Explanation (if applicable)…"></textarea>` : `<input readonly value="">`;
+    const selfDD = scoreDD(c.id+'_self', null, !isEE, 'comp');
+    const mgrDD  = scoreDD(c.id+'_mgr', null, true, 'comp');
+    const agrDD  = scoreDD(c.id+'_agr', null, true, 'comp');
+    html += `<tr>
+      <td><strong>${c.n}</strong><div style="font-size:11px;color:var(--gray-text);margin-top:2px;">${c.d}</div></td>
+      <td>${expl}</td>
+      <td>${selfDD}</td>
+      <td>${mgrDD}</td>
+      <td>${agrDD}</td>
+    </tr>`;
+  });
+  body.innerHTML = html;
+  if (mgmtId) buildMgmtSection(mgmtId, isEE);
+}
+
+function buildMgmtSection(mgmtId, isEE) {
+  const body = document.getElementById(mgmtId);
+  if (!body) return;
+  let html = '';
+  MGMT.forEach(c => {
+    const expl = isEE ? `<textarea id="${c.id}_expl" rows="2" placeholder="Explanation (if applicable)…"></textarea>` : `<input readonly value="">`;
+    const selfDD = scoreDD(c.id+'_self', null, !isEE, 'comp');
+    const mgrDD  = scoreDD(c.id+'_mgr', null, true, 'comp');
+    const agrDD  = scoreDD(c.id+'_agr', null, true, 'comp');
+    html += `<tr>
+      <td><strong>${c.n}</strong><div style="font-size:11px;color:var(--gray-text);margin-top:2px;">${c.d}</div></td>
+      <td>${expl}</td>
+      <td>${selfDD}</td>
+      <td>${mgrDD}</td>
+      <td>${agrDD}</td>
+    </tr>`;
+  });
+  body.innerHTML = html;
+}
+
+function buildCompSectionMgr(bodyId) {
+  const body = document.getElementById(bodyId);
+  if (!body) return;
+  let html = '';
+  let lastGrp = '';
+  COMPS.forEach(c => {
+    if (c.grp && c.grp !== lastGrp) {
+      html += `<tr><td colspan="5" style="background:#f0f4ff;font-weight:600;font-size:12px;padding:6px 10px;color:var(--blue);">${c.grp}</td></tr>`;
+      lastGrp = c.grp;
+    }
+    const selfVal = SC[c.id+'_self'] || null;
+    const selfPill = selfVal ? `<span class="ps ${scClass(selfVal)}">${selfVal}</span>` : '<span class="ps">—</span>';
+    const expl = `<textarea id="mgr_${c.id}_expl" rows="2" placeholder="Explanation (if applicable)…"></textarea>`;
+    const mgrDD = scoreDD('mgr_'+c.id+'_mgr', SC['mgr_'+c.id+'_mgr']||null, false, 'comp');
+    const agrDD = scoreDD('mgr_'+c.id+'_agr', SC['mgr_'+c.id+'_agr']||null, false, 'comp');
+    html += `<tr>
+      <td><strong>${c.n}</strong><div style="font-size:11px;color:var(--gray-text);margin-top:2px;">${c.d}</div></td>
+      <td>${expl}</td>
+      <td>${selfPill}</td>
+      <td>${mgrDD}</td>
+      <td>${agrDD}</td>
+    </tr>`;
+  });
+  body.innerHTML = html;
+}
+
+function addDevRow(act, dt, resp) {
+  const tb = document.getElementById('dev-tbody');
+  if (!tb) return;
+  const tr = document.createElement('tr');
+  tr.innerHTML = `<td><input placeholder="Development action…" value="${act||''}"></td><td><input type="date" value="${dt||''}"></td><td><input placeholder="Responsible…" value="${resp||''}"></td><td><button class="btn btn-ghost" style="padding:3px 8px;" onclick="this.closest('tr').remove()">✕</button></td>`;
+  tb.appendChild(tr);
+}
+
+function buildDevRows(actions) {
+  const tb = document.getElementById('dev-tbody');
+  if (!tb) return;
+  tb.innerHTML = '';
+  if (actions && actions.length) { actions.forEach(a => addDevRow(a.action, a.date, a.responsible)); }
+  else { addDevRow('','',''); }
+}
+
+function addNYRow(desc, w) {
+  const tb = document.getElementById('ny-tbody');
+  if (!tb) return;
+  const tr = document.createElement('tr');
+  tr.innerHTML = `<td><input placeholder="New year objective…" value="${desc||''}"></td><td><input type="number" min="0" max="100" placeholder="Weight %" value="${w||''}"></td><td><button class="btn btn-ghost" style="padding:3px 8px;" onclick="this.closest('tr').remove()">✕</button></td>`;
+  tb.appendChild(tr);
+}
+
+function buildNYRows(items) {
+  const tb = document.getElementById('ny-tbody');
+  if (!tb) return;
+  tb.innerHTML = '';
+  if (items && items.length) { items.forEach(r => addNYRow(r.desc, r.weight)); }
+  else { addNYRow('',''); }
+}
+
+function updateWeightTotal() {
+  let total = 0;
+  OBJS.forEach(o => {
+    const el = document.getElementById('obj'+o.id+'_w');
+    if (el) total += parseFloat(el.value)||0;
+  });
+  const el = document.getElementById('wt-total');
+  if (el) el.textContent = total + '%';
+  const notice = document.getElementById('wt-notice');
+  if (notice) notice.style.display = (total !== 100) ? '' : 'none';
+}
+
+function setSmiley(v) {
+  ['sm-happy','sm-neutral','sm-sad'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.classList.toggle('active', el.id === 'sm-'+v);
+  });
+  const lbl = document.getElementById('smiley-lbl');
+  if (lbl) lbl.textContent = v === 'happy' ? 'Satisfied' : (v === 'neutral' ? 'Neutral' : 'Not Satisfied');
+  if (window._formState) window._formState.smiley = v;
+}
+
+function toggleMgmt() {
+  const cb = document.getElementById('is-mgr-cb');
+  const card = document.getElementById('mgmt-comp-card');
+  if (card) card.style.display = (cb && cb.checked) ? '' : 'none';
+}
+
+function calcMgrLive() {
+  // Objectives weighted avg (use agreed if set, else mgr)
+  let wSum = 0, wsSum = 0, objCount = 0;
+  OBJS.forEach(o => {
+    const agr = SC['mgr_obj'+o.id+'_agr'] || SC['obj'+o.id+'_agr'];
+    const mgr = SC['mgr_obj'+o.id+'_mgr'] || SC['obj'+o.id+'_mgr'];
+    const score = agr || mgr;
+    const wEl = document.getElementById('obj'+o.id+'_w');
+    const w = parseFloat((wEl && wEl.value) || o.w || 20);
+    if (score) { wsSum += score * w; wSum += w; objCount++; }
+  });
+  const objAvg = wSum > 0 ? (wsSum / wSum) : null;
+
+  // Competency avg (agreed → mgr fallback)
+  let cSum = 0, cCount = 0;
+  COMPS.forEach(c => {
+    const agr = SC['mgr_'+c.id+'_agr'] || SC[c.id+'_agr'];
+    const mgr = SC['mgr_'+c.id+'_mgr'] || SC[c.id+'_mgr'];
+    const score = agr || mgr;
+    if (score) { cSum += score; cCount++; }
+  });
+  const compAvg = cCount > 0 ? (cSum / cCount) : null;
+  const final   = (objAvg && compAvg) ? ((objAvg + compAvg) / 2) : null;
+
+  // Update live panel
+  const fmt = v => v ? v.toFixed(2) : '—';
+  const oaEl = document.getElementById('sp-oa'); if (oaEl) oaEl.textContent = fmt(objAvg);
+  const caEl = document.getElementById('sp-ca'); if (caEl) caEl.textContent = fmt(compAvg);
+  const bigEl = document.getElementById('mgr-big'); if (bigEl) bigEl.textContent = final ? final.toFixed(2) : '—';
+  const ratingEl = document.getElementById('mgr-rating'); if (ratingEl) ratingEl.textContent = final ? outcomeLabel(final) : 'Enter all scores to calculate';
+  const bandEl = document.getElementById('mgr-band'); if (bandEl) bandEl.textContent = final ? final.toFixed(2) : '—';
+  const filledEl = document.getElementById('sp-filled'); if (filledEl) filledEl.textContent = objCount+'/'+OBJS.length+' obj, '+cCount+'/'+COMPS.length+' comp';
+
+  // Outcome section
+  const ocObjEl = document.getElementById('mgr-oc-obj'); if (ocObjEl) ocObjEl.textContent = objAvg ? (objAvg.toFixed(2)+' — '+outcomeLabel(objAvg)) : '—';
+  const ocSkillEl = document.getElementById('mgr-oc-skill'); if (ocSkillEl) ocSkillEl.textContent = compAvg ? (compAvg.toFixed(2)+' — '+outcomeLabel(compAvg)) : '—';
+  const ocFinalEl = document.getElementById('mgr-oc-final'); if (ocFinalEl) ocFinalEl.textContent = final ? (final.toFixed(2)+' — '+outcomeLabel(final)) : '—';
+  // Also mirror to ee outcome if visible
+  const eeObjEl = document.getElementById('oc-obj'); if (eeObjEl && objAvg) eeObjEl.textContent = objAvg.toFixed(2)+' — '+outcomeLabel(objAvg);
+  const eeSkillEl = document.getElementById('oc-skill'); if (eeSkillEl && compAvg) eeSkillEl.textContent = compAvg.toFixed(2)+' — '+outcomeLabel(compAvg);
+  const eeFinalEl = document.getElementById('oc-final'); if (eeFinalEl && final) eeFinalEl.textContent = final.toFixed(2)+' — '+outcomeLabel(final);
+}
+
+const TAB_COUNTS = {ee:9, mgr:5};
+
+function goTab(prefix, i) {
+  const total = TAB_COUNTS[prefix] || 9;
+  // update tab bar
+  const tabsEl = document.getElementById(prefix+'-tabs');
+  if (tabsEl) {
+    Array.from(tabsEl.children).forEach((t,idx) => t.classList.toggle('active', idx===i));
+  }
+  // show/hide panels
+  for (let n=0; n<total; n++) {
+    const p = document.getElementById(prefix+'-p'+n);
+    if (p) p.classList.toggle('active', n===i);
+  }
+  window.scrollTo({top:0,behavior:'smooth'});
 }
 
 // ── AUTH ──
@@ -1197,17 +1581,68 @@ async function loadEmployeeData(){
   state.mySubmission=sub; clearLoading(); loadEmployeeForm();
 }
 function loadEmployeeForm(){
-  const sub=state.mySubmission,user=state.currentUser; if(!sub) return;
+  const sub=state.mySubmission,user=state.currentUser; if(!sub||!user) return;
   const firstName=user.full_name.split(' ')[0];
   const titleEl=document.getElementById('emp-dash-title'); if(titleEl) titleEl.textContent=firstName+"'s Dashboard";
   const sd=sub.section_data||{};
-  ['s1','s2','s3','s4','s5','s6','s7'].forEach(s=>{const el=document.getElementById(s+'-text');if(el)el.value=sd[s]||'';});
-  const selfR=sd.selfRatings||{};
-  ['s1','s2','s3','s4','s5'].forEach(s=>{
-    const val=selfR[s]||0; state.ratings[s]=val;
-    const sel=document.getElementById('score-'+s); if(sel) sel.value=val||'';
-    const lbl=document.getElementById('rating-label-'+s); if(lbl) lbl.textContent=val>0?val+' / 5 — '+SCORE_LBL[val]:'Not rated';
+
+  // S1 — Personal Data (read-only)
+  const setV=(id,v)=>{const el=document.getElementById(id);if(el)el.value=v||'';};
+  setV('p1-eno',  user.employee_code);
+  setV('p1-name', user.full_name);
+  setV('p1-dept', user.department);
+  setV('p1-pos',  user.position);
+  setV('p1-mgr',  user.manager_code);
+  setV('p1-cycle',state.activeCycle?state.activeCycle.name:'');
+
+  // S2 — build objectives; overlay saved self scores
+  const savedObjs = sd.objectives || [];
+  savedObjs.forEach((o,i)=>{
+    if(OBJS[i]){OBJS[i].agree=o.agree||'';OBJS[i].review=o.review||'';OBJS[i].w=o.weight||20;OBJS[i].self=o.self_score||null;}
   });
+  buildObjSection('ee-obj-wrap', true);
+  // Restore SC dict with saved self scores
+  savedObjs.forEach((o,i)=>{if(o.self_score)SC['obj'+(i+1)+'_self']=o.self_score;});
+  updateWeightTotal();
+
+  // S3 — build competencies; overlay saved self scores
+  buildCompSection('ee-comp-body','ee-mgmt-body',true);
+  const cSelf=sd.comp_self||{};
+  const cExpl=sd.comp_expl||{};
+  Object.keys(cSelf).forEach(id=>{
+    SC[id+'_self']=cSelf[id];
+    const sel=document.getElementById(id+'_self'); if(sel){sel.value=cSelf[id];sel.className='score-sel '+scClass(cSelf[id]);}
+    const expl=document.getElementById(id+'_expl'); if(expl) expl.value=cExpl[id]||'';
+  });
+
+  // S4 — dev actions
+  buildDevRows(sd.dev_actions||[]);
+  const devR=document.getElementById('dev_remarks'); if(devR) devR.value=sd.dev_remarks||'';
+
+  // S5 — new year objectives
+  buildNYRows(sd.ny_objectives||[]);
+
+  // S6 — satisfaction
+  if(sd.smiley) setSmiley(sd.smiley);
+  setV('sat_training', sd.sat_training);
+  setV('sat_teamwork', sd.sat_teamwork);
+
+  // S7 — expectations
+  setV('ee_expectations', sd.ee_expectations);
+  // S7 sup comment is readonly (filled by manager), but populate if stored
+  setV('sup_expectations_comment', sd.sup_expectations_comment||'');
+
+  // S8 — remarks
+  setV('ee_add_remarks', sd.ee_add_remarks);
+  setV('sup_add_remarks', sd.sup_add_remarks||'');
+
+  // S9 outcome (read-only, calculated)
+  calcMgrLive();
+
+  // S10 sign
+  const eeSN=document.getElementById('ee-sign-name'); if(eeSN) eeSN.textContent=user.full_name;
+  const eeSDate=document.getElementById('ee-sign-date'); if(eeSDate) eeSDate.textContent=sub.submitted_at?fmtDate(sub.submitted_at):'Pending submission';
+
   const status=sub.status||'Draft';
   const ss=document.getElementById('emp-status-stat'); if(ss) ss.textContent=status;
   const submitted=document.getElementById('emp-submitted-notice'); if(submitted) submitted.style.display=['Submitted','Under Review','Approved'].includes(status)?'':'none';
@@ -1215,23 +1650,71 @@ function loadEmployeeForm(){
   const btn=document.getElementById('emp-submit-btn'); if(btn) btn.textContent=['Submitted','Under Review','Approved'].includes(status)?'🔄 Resubmit PA':'🚀 Submit PA';
   updateTimeline(); updateFormProgress();
 }
-function setRating(section,val){
-  state.ratings[section]=val;
-  const sel=document.getElementById('score-'+section); if(sel) sel.value=val||'';
-  const lbl=document.getElementById('rating-label-'+section); if(lbl) lbl.textContent=val>0?val+' / 5 — '+SCORE_LBL[val]:'Not rated';
-  updateFormProgress();
-}
+
 function updateFormProgress(){
-  const filled=['s1','s2','s3','s4','s5'].filter(s=>state.ratings[s]>0).length;
-  const texts=['s1','s2','s3','s4','s5','s6','s7'].filter(s=>{const el=document.getElementById(s+'-text');return el&&el.value.trim().length>0;}).length;
-  const pct=Math.min(100,Math.round(((filled*2+texts)/17)*100));
-  document.getElementById('form-progress-bar').style.width=pct+'%';
-  document.getElementById('form-progress-pct').textContent=pct+'%';
-  document.getElementById('emp-completion').textContent=pct+'%';
+  // Count filled objective self scores + competency self scores
+  const objFilled=OBJS.filter(o=>SC['obj'+o.id+'_self']>0).length;
+  const compFilled=COMPS.filter(c=>SC[c.id+'_self']>0).length;
+  const pct=Math.min(100,Math.round(((objFilled+compFilled)/(OBJS.length+COMPS.length))*100));
+  const pb=document.getElementById('form-progress-bar'); if(pb) pb.style.width=pct+'%';
+  const pp=document.getElementById('form-progress-pct'); if(pp) pp.textContent=pct+'%';
+  const ec=document.getElementById('emp-completion'); if(ec) ec.textContent=pct+'%';
 }
+
 function collectFormData(){
-  const data={selfRatings:Object.assign({},state.ratings)};
-  ['s1','s2','s3','s4','s5','s6','s7'].forEach(s=>{const el=document.getElementById(s+'-text');data[s]=el?el.value:'';});
+  const data={};
+
+  // S2 objectives
+  data.objectives=OBJS.map(o=>{
+    const agEl=document.getElementById('obj'+o.id+'_agree');
+    const rvEl=document.getElementById('obj'+o.id+'_review');
+    const wEl =document.getElementById('obj'+o.id+'_w');
+    return {
+      id:o.id,
+      agree:agEl?agEl.value:'',
+      review:rvEl?rvEl.value:'',
+      weight:wEl?parseFloat(wEl.value)||20:20,
+      self_score:SC['obj'+o.id+'_self']||null,
+    };
+  });
+
+  // S3 competencies
+  data.comp_self={};data.comp_expl={};
+  [...COMPS,...MGMT].forEach(c=>{
+    const selfSel=document.getElementById(c.id+'_self'); if(selfSel&&selfSel.value) data.comp_self[c.id]=parseFloat(selfSel.value);
+    const explEl=document.getElementById(c.id+'_expl'); if(explEl) data.comp_expl[c.id]=explEl.value;
+  });
+
+  // S4 dev actions
+  const devRows=[];
+  const devTb=document.getElementById('dev-tbody');
+  if(devTb) Array.from(devTb.rows).forEach(tr=>{
+    const cols=tr.querySelectorAll('input');
+    devRows.push({action:cols[0]?.value||'',date:cols[1]?.value||'',responsible:cols[2]?.value||''});
+  });
+  data.dev_actions=devRows;
+  const devR=document.getElementById('dev_remarks'); data.dev_remarks=devR?devR.value:'';
+
+  // S5 new year objectives
+  const nyRows=[];
+  const nyTb=document.getElementById('ny-tbody');
+  if(nyTb) Array.from(nyTb.rows).forEach(tr=>{
+    const cols=tr.querySelectorAll('input');
+    nyRows.push({desc:cols[0]?.value||'',weight:cols[1]?.value||''});
+  });
+  data.ny_objectives=nyRows;
+
+  // S6 satisfaction
+  const activeSmiley=document.querySelector('.smiley-btn.active');
+  data.smiley=activeSmiley?activeSmiley.id.replace('sm-',''):'';
+  const satT=document.getElementById('sat_training'); data.sat_training=satT?satT.value:'';
+  const satW=document.getElementById('sat_teamwork'); data.sat_teamwork=satW?satW.value:'';
+
+  // S7 expectations
+  const eeEx=document.getElementById('ee_expectations'); data.ee_expectations=eeEx?eeEx.value:'';
+  // S8 remarks
+  const eeRmk=document.getElementById('ee_add_remarks'); data.ee_add_remarks=eeRmk?eeRmk.value:'';
+
   return data;
 }
 async function saveForm(){
@@ -1294,41 +1777,92 @@ function renderMgrTeam(){
 }
 async function openMgrReview(empCode){
   const item=state.teamData.find(i=>i.profile.employee_code===empCode); if(!item) return;
-  state.currentEmp=item; state.mgrRatings={s1:0,s2:0,s3:0,s4:0,s5:0,overall:0};
-  const p=item.profile,sub=item.submission,sd=sub?(sub.section_data||{}):{},selfR=sd.selfRatings||{};
+  state.currentEmp=item;
+  // Clear SC of any previous mgr scores
+  Object.keys(SC).filter(k=>k.startsWith('mgr_')).forEach(k=>delete SC[k]);
+
+  const p=item.profile,sub=item.submission,sd=sub?(sub.section_data||{}):{};
+  const msc=sub?(sub.manager_section_comments||{}):{};
+
   const av=p.full_name.split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase();
-  document.getElementById('mgr-emp-profile-card').innerHTML=`<div class="emp-profile-card"><div class="emp-avatar">${av}</div><div><div class="emp-name">${p.full_name}</div><div class="emp-meta">${p.department||'—'} · Code: ${p.manager_code||'—'}</div><div class="emp-meta">${p.email||''}</div></div><div class="emp-status-wrap"><span class="badge ${getBadge(item.status)}">${item.status}</span><div style="font-size:12px;color:var(--gray-text);margin-top:6px;">Submitted: ${sub?fmtDate(sub.submitted_at):'—'}</div></div></div>`;
-  ['s1','s2','s3','s4','s5','s6','s7'].forEach(s=>{const el=document.getElementById('mgr-'+s+'-text');if(el)el.value=sd[s]||'(Not filled by employee)';});
-  ['s1','s2','s3','s4','s5'].forEach(s=>{const r=selfR[s]||0;const el=document.getElementById('mgr-'+s+'-self-rating');if(el)el.textContent=r>0?r+' / 5 — '+(SCORE_LBL[r]||''):'—';});
-  const msr=sub?(sub.manager_section_ratings||{}):{},msc=sub?(sub.manager_section_comments||{}):{};
-  ['s1','s2','s3','s4','s5'].forEach(s=>{
-    if(msr[s]){state.mgrRatings[s]=msr[s];setMgrRating(s,msr[s]);}
-    else{const sel=document.getElementById('mgr-score-'+s);if(sel)sel.value='';const lbl=document.getElementById('mgr-rating-label-'+s);if(lbl)lbl.textContent='Not rated';}
+  document.getElementById('mgr-emp-profile-card').innerHTML=`<div class="emp-profile-card"><div class="emp-avatar">${av}</div><div><div class="emp-name">${p.full_name}</div><div class="emp-meta">${p.department||'—'} · ${p.position||''}</div><div class="emp-meta">${p.email||''}</div></div><div class="emp-status-wrap"><span class="badge ${getBadge(item.status)}">${item.status}</span><div style="font-size:12px;color:var(--gray-text);margin-top:6px;">Submitted: ${sub?fmtDate(sub.submitted_at):'—'}</div></div></div>`;
+
+  // Overlay employee self scores into SC for display
+  const savedObjs=sd.objectives||[];
+  savedObjs.forEach(o=>{if(o.self_score)SC['obj'+o.id+'_self']=o.self_score;});
+  const cSelf=sd.comp_self||{};
+  Object.keys(cSelf).forEach(id=>{SC[id+'_self']=cSelf[id];});
+
+  // S2 — build mgr objective section (manager + agreed dropdowns live, self read-only pill)
+  buildObjSection('mgr-obj-wrap', false);
+  // Restore saved mgr/agreed scores into SC and re-render dropdowns
+  const objScores=msc.obj_scores||{};
+  Object.keys(objScores).forEach(fid=>{
+    SC[fid]=objScores[fid];
+    const sel=document.getElementById(fid); if(sel){sel.value=objScores[fid];sel.className='score-sel '+scClass(objScores[fid]);}
   });
-  ['s1','s2','s3','s4','s5','s6','s7'].forEach(s=>{const el=document.getElementById('mgr-'+s+'-comment');if(el)el.value=msc[s]||'';});
-  if(sub&&sub.manager_overall_rating){state.mgrRatings.overall=sub.manager_overall_rating;setMgrRating('overall',sub.manager_overall_rating);}
-  else{const sel=document.getElementById('mgr-score-overall');if(sel)sel.value='';}
-  const rec=document.getElementById('mgr-recommendation');if(rec)rec.value=(sub&&sub.manager_recommendation)||'';
-  const oc=document.getElementById('mgr-overall-comment');if(oc)oc.value=(sub&&sub.manager_overall_comment)||'';
+
+  // S3 — build mgr competency section
+  buildCompSectionMgr('mgr-comp-body');
+  const compScores=msc.comp_scores||{};
+  Object.keys(compScores).forEach(fid=>{
+    SC[fid]=compScores[fid];
+    const sel=document.getElementById(fid); if(sel){sel.value=compScores[fid];sel.className='score-sel '+scClass(compScores[fid]);}
+  });
+  const compExpl=msc.comp_expl||{};
+  Object.keys(compExpl).forEach(id=>{const el=document.getElementById('mgr_'+id+'_expl');if(el)el.value=compExpl[id];});
+
+  // S7 expectations
+  const eeEx=document.getElementById('mgr-ee-expectations'); if(eeEx) eeEx.value=sd.ee_expectations||'(Not filled by employee)';
+  const supEx=document.getElementById('mgr_sup_expectations'); if(supEx) supEx.value=msc.s7_comment||'';
+
+  // S8 remarks
+  const eeRmk=document.getElementById('mgr-ee-remarks'); if(eeRmk) eeRmk.value=sd.ee_add_remarks||'(Not filled by employee)';
+  const supRmk=document.getElementById('mgr_sup_remarks'); if(supRmk) supRmk.value=msc.s8_remarks||'';
+
+  // Recommendation + overall comment
+  const rec=document.getElementById('mgr-recommendation'); if(rec) rec.value=(sub&&sub.manager_recommendation)||'';
+  const oc=document.getElementById('mgr-overall-comment'); if(oc) oc.value=(sub&&sub.manager_overall_comment)||'';
+
+  // Sign row
+  const eeSN=document.getElementById('mgr-ee-sign-name'); if(eeSN) eeSN.textContent=p.full_name;
+  const eeSDate=document.getElementById('mgr-ee-sign-date'); if(eeSDate) eeSDate.textContent=sub&&sub.submitted_at?fmtDate(sub.submitted_at):'Pending';
+  const mgrSN=document.getElementById('mgr-sign-name'); if(mgrSN) mgrSN.textContent=state.currentUser.full_name;
+
+  // Status-based visibility
   const status=item.status;
   document.getElementById('mgr-action-btns').style.display=(status==='Approved'||status==='Draft'||status==='Not Started')?'none':'flex';
   document.getElementById('mgr-approved-notice').style.display=status==='Approved'?'':'none';
   document.getElementById('mgr-returned-notice').style.display=status==='Returned'?'':'none';
   document.getElementById('mgr-review-info').style.display=(status==='Submitted'||status==='Under Review')?'':'none';
+
   if(status==='Submitted'&&sub){await db.from('pa_submissions').update({status:'Under Review'}).eq('id',sub.id);item.status='Under Review';if(item.submission)item.submission.status='Under Review';renderMgrTeam();}
+
+  calcMgrLive();
+  goTab('mgr',0);
   mgrNav('mgrReview');
 }
-function setMgrRating(section,val){
-  state.mgrRatings[section]=val;
-  const sel=document.getElementById('mgr-score-'+section); if(sel) sel.value=val||'';
-  const lbl=document.getElementById('mgr-rating-label-'+section); if(lbl) lbl.textContent=val>0?val+' / 5 — '+SCORE_LBL[val]:'Not rated';
-}
+
 function collectMgrReview(){
-  const sc={},sr=Object.assign({},state.mgrRatings);
-  ['s1','s2','s3','s4','s5','s6','s7'].forEach(s=>{const el=document.getElementById('mgr-'+s+'-comment');sc[s]=el?el.value:'';});
-  return{manager_section_comments:sc,manager_section_ratings:sr,manager_overall_rating:state.mgrRatings.overall||null,
+  // Collect obj scores from SC
+  const objScores={};
+  OBJS.forEach(o=>{
+    ['mgr','agr'].forEach(t=>{const key='obj'+o.id+'_'+t;if(SC[key])objScores[key]=SC[key];});
+  });
+  // Collect comp scores from SC
+  const compScores={};const compExpl={};
+  [...COMPS,...MGMT].forEach(c=>{
+    ['mgr','agr'].forEach(t=>{const key='mgr_'+c.id+'_'+t;if(SC[key])compScores[key]=SC[key];});
+    const exEl=document.getElementById('mgr_'+c.id+'_expl'); if(exEl&&exEl.value) compExpl[c.id]=exEl.value;
+  });
+  const s7Ex=document.getElementById('mgr_sup_expectations'); const s8Rmk=document.getElementById('mgr_sup_remarks');
+  return {
+    manager_section_comments:{obj_scores:objScores,comp_scores:compScores,comp_expl:compExpl,s7_comment:s7Ex?s7Ex.value:'',s8_remarks:s8Rmk?s8Rmk.value:''},
+    manager_section_ratings:{},// kept for schema compat
+    manager_overall_rating:state.currentEmp?.submission?.manager_overall_rating||null,
     manager_recommendation:document.getElementById('mgr-recommendation')?.value||null,
-    manager_overall_comment:document.getElementById('mgr-overall-comment')?.value||''};
+    manager_overall_comment:document.getElementById('mgr-overall-comment')?.value||'',
+  };
 }
 function approvePA(){showModal('modal-approve');}
 function returnPA(){showModal('modal-return');}
