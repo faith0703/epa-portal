@@ -981,7 +981,7 @@
 
 const SUPABASE_URL  = 'https://rfayekgpmrrzmyxtchzr.supabase.co';
 const SUPABASE_ANON = 'sb_publishable_j3Q6d10J3LbIeT45dAmFHQ_e1rjEZ7g';
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
 
 const ratingLabels = ['','Poor','Below Average','Satisfactory','Good','Excellent'];
 
@@ -1021,7 +1021,7 @@ async function doLogin() {
   errEl.style.display='none';
   if(!email||!password){showLoginErr('Please enter your email and password.');return;}
   setLoading('Signing in…');
-  const {data,error} = await supabase.auth.signInWithPassword({email,password});
+  const {data,error} = await db.auth.signInWithPassword({email,password});
   if(error){clearLoading();showLoginErr(error.message);return;}
   await loadUserProfile(data.user.id,data.user.email);
   clearLoading();
@@ -1031,7 +1031,7 @@ function showLoginErr(msg){const el=document.getElementById('login-error');el.te
 
 async function doLogout(){
   setLoading('Signing out…');
-  await supabase.auth.signOut();
+  await db.auth.signOut();
   clearLoading();
   Object.assign(state,{currentUser:null,currentRole:null,activeCycle:null,mySubmission:null,teamData:[],allData:[]});
   ['topbar-user-name'].forEach(id=>document.getElementById(id).textContent='');
@@ -1040,10 +1040,10 @@ async function doLogout(){
 }
 
 async function loadUserProfile(userId,email){
-  const {data:profile,error} = await supabase.from('profiles').select('*').eq('id',userId).single();
-  if(error||!profile){await supabase.auth.signOut();showLoginErr('Profile not found. Contact HR.');return;}
+  const {data:profile,error} = await db.from('profiles').select('*').eq('id',userId).single();
+  if(error||!profile){await db.auth.signOut();showLoginErr('Profile not found. Contact HR.');return;}
   state.currentUser = {...profile,email};
-  const {data:cycle} = await supabase.from('cycles').select('*').eq('is_active',true).maybeSingle();
+  const {data:cycle} = await db.from('cycles').select('*').eq('is_active',true).maybeSingle();
   state.activeCycle = cycle||null;
   const badge = document.getElementById('login-cycle-badge');
   if(badge) badge.textContent = cycle ? cycle.name : 'No active cycle';
@@ -1109,9 +1109,9 @@ async function loadEmployeeData(){
   if(!state.activeCycle){toast('No active PA cycle. Contact HR.');return;}
   setLoading('Loading your PA…');
   const empCode=state.currentUser.employee_code, cycleId=state.activeCycle.id;
-  let {data:sub}=await supabase.from('pa_submissions').select('*').eq('employee_code',empCode).eq('cycle_id',cycleId).maybeSingle();
+  let {data:sub}=await db.from('pa_submissions').select('*').eq('employee_code',empCode).eq('cycle_id',cycleId).maybeSingle();
   if(!sub){
-    const {data:newSub,error}=await supabase.from('pa_submissions').insert({
+    const {data:newSub,error}=await db.from('pa_submissions').insert({
       employee_code:empCode,cycle_id:cycleId,cycle_name:state.activeCycle.name,
       manager_code:state.currentUser.manager_code||null,status:'Draft',section_data:{}
     }).select().single();
@@ -1161,7 +1161,7 @@ function collectFormData(){
 async function saveForm(){
   if(!state.mySubmission) return;
   setLoading('Saving draft…');
-  const {error}=await supabase.from('pa_submissions').update({section_data:collectFormData()}).eq('id',state.mySubmission.id);
+  const {error}=await db.from('pa_submissions').update({section_data:collectFormData()}).eq('id',state.mySubmission.id);
   clearLoading();
   if(error){toast('Save failed: '+error.message);return;}
   state.mySubmission.section_data=collectFormData();
@@ -1171,7 +1171,7 @@ function submitForm(){showModal('modal-submit');}
 async function confirmSubmit(){
   closeModal('modal-submit'); if(!state.mySubmission) return;
   const formData=collectFormData(); setLoading('Submitting PA…');
-  const {data:updated,error}=await supabase.from('pa_submissions').update({section_data:formData,status:'Submitted',submitted_at:new Date().toISOString()}).eq('id',state.mySubmission.id).select().single();
+  const {data:updated,error}=await db.from('pa_submissions').update({section_data:formData,status:'Submitted',submitted_at:new Date().toISOString()}).eq('id',state.mySubmission.id).select().single();
   clearLoading(); if(error){toast('Submit failed: '+error.message);return;}
   state.mySubmission=updated; loadEmployeeForm(); empNav('empDashboard');
   toast('PA submitted! Your manager has been notified.');
@@ -1192,10 +1192,10 @@ async function loadManagerData(){
   if(!state.activeCycle){toast('No active PA cycle.');return;}
   setLoading('Loading team data…');
   const myCode=state.currentUser.employee_code,cycleId=state.activeCycle.id;
-  const {data:reportProfiles}=await supabase.from('profiles').select('*').eq('manager_code',myCode).eq('is_active',true);
+  const {data:reportProfiles}=await db.from('profiles').select('*').eq('manager_code',myCode).eq('is_active',true);
   const empCodes=(reportProfiles||[]).map(p=>p.employee_code);
   let submissions=[];
-  if(empCodes.length>0){const {data:subs}=await supabase.from('pa_submissions').select('*').in('employee_code',empCodes).eq('cycle_id',cycleId);submissions=subs||[];}
+  if(empCodes.length>0){const {data:subs}=await db.from('pa_submissions').select('*').in('employee_code',empCodes).eq('cycle_id',cycleId);submissions=subs||[];}
   state.teamData=(reportProfiles||[]).map(p=>({profile:p,submission:submissions.find(s=>s.employee_code===p.employee_code)||null,status:submissions.find(s=>s.employee_code===p.employee_code)?.status||'Not Started'}));
   clearLoading(); renderMgrTeam();
 }
@@ -1239,7 +1239,7 @@ async function openMgrReview(empCode){
   document.getElementById('mgr-approved-notice').style.display=status==='Approved'?'':'none';
   document.getElementById('mgr-returned-notice').style.display=status==='Returned'?'':'none';
   document.getElementById('mgr-review-info').style.display=(status==='Submitted'||status==='Under Review')?'':'none';
-  if(status==='Submitted'&&sub){await supabase.from('pa_submissions').update({status:'Under Review'}).eq('id',sub.id);item.status='Under Review';if(item.submission)item.submission.status='Under Review';renderMgrTeam();}
+  if(status==='Submitted'&&sub){await db.from('pa_submissions').update({status:'Under Review'}).eq('id',sub.id);item.status='Under Review';if(item.submission)item.submission.status='Under Review';renderMgrTeam();}
   mgrNav('mgrReview');
 }
 function setMgrRating(section,val){
@@ -1259,14 +1259,14 @@ function returnPA(){showModal('modal-return');}
 async function confirmApprove(){
   closeModal('modal-approve');const item=state.currentEmp;if(!item||!item.submission)return;
   setLoading('Approving PA…');
-  const {error}=await supabase.from('pa_submissions').update({status:'Approved',reviewed_at:new Date().toISOString(),...collectMgrReview()}).eq('id',item.submission.id);
+  const {error}=await db.from('pa_submissions').update({status:'Approved',reviewed_at:new Date().toISOString(),...collectMgrReview()}).eq('id',item.submission.id);
   clearLoading();if(error){toast('Error: '+error.message);return;}
   item.status='Approved';item.submission.status='Approved';renderMgrTeam();mgrNav('mgrTeam');toast('PA Approved!');
 }
 async function confirmReturn(){
   closeModal('modal-return');const item=state.currentEmp;if(!item||!item.submission)return;
   setLoading('Returning PA…');
-  const {error}=await supabase.from('pa_submissions').update({status:'Returned',reviewed_at:new Date().toISOString(),...collectMgrReview()}).eq('id',item.submission.id);
+  const {error}=await db.from('pa_submissions').update({status:'Returned',reviewed_at:new Date().toISOString(),...collectMgrReview()}).eq('id',item.submission.id);
   clearLoading();if(error){toast('Error: '+error.message);return;}
   item.status='Returned';item.submission.status='Returned';renderMgrTeam();mgrNav('mgrTeam');toast('PA returned to employee for revision.');
 }
@@ -1275,8 +1275,8 @@ async function confirmReturn(){
 async function loadHRData(){
   if(!state.activeCycle){const s=document.getElementById('hr-dash-sub');if(s)s.textContent='No active PA cycle — go to PA Cycles to create one.';return;}
   setLoading('Loading HR data…');
-  const {data:allP}=await supabase.from('profiles').select('*').eq('is_active',true);
-  const {data:allS}=await supabase.from('pa_submissions').select('*').eq('cycle_id',state.activeCycle.id);
+  const {data:allP}=await db.from('profiles').select('*').eq('is_active',true);
+  const {data:allS}=await db.from('pa_submissions').select('*').eq('cycle_id',state.activeCycle.id);
   state.allProfiles=allP||[];
   state.allData=(allP||[]).map(p=>({profile:p,submission:(allS||[]).find(s=>s.employee_code===p.employee_code)||null,status:(allS||[]).find(s=>s.employee_code===p.employee_code)?.status||'Not Started'}));
   const sub=document.getElementById('hr-dash-sub');if(sub)sub.textContent='PA Tracker — '+state.activeCycle.name;
@@ -1357,7 +1357,7 @@ function exportCSV(){
 // ── HR USER MANAGEMENT ──
 async function loadAllProfiles(){
   setLoading('Loading users…');
-  const {data}=await supabase.from('profiles').select('*').order('full_name');
+  const {data}=await db.from('profiles').select('*').order('full_name');
   state.allProfiles=data||[];clearLoading();renderProfilesTable();
 }
 function renderProfilesTable(){
@@ -1393,27 +1393,27 @@ async function saveUser(){
   if(!editId&&password.length<6){errEl.textContent='Password must be at least 6 characters.';errEl.style.display='';return;}
   setLoading(editId?'Saving changes…':'Creating user…');
   if(editId){
-    const {error}=await supabase.from('profiles').update({employee_code:code,full_name:name,email,role,manager_code:manager,department:dept,position}).eq('id',editId);
+    const {error}=await db.from('profiles').update({employee_code:code,full_name:name,email,role,manager_code:manager,department:dept,position}).eq('id',editId);
     clearLoading();if(error){errEl.textContent=error.message;errEl.style.display='';return;}
   }else{
     const tempClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON,{auth:{storageKey:'epa-temp-signup',persistSession:false}});
     const {data:authData,error:authErr}=await tempClient.auth.signUp({email,password});
     if(authErr||!authData.user){clearLoading();errEl.textContent=authErr?authErr.message:'Auth creation failed.';errEl.style.display='';return;}
-    const {error:profErr}=await supabase.from('profiles').insert({id:authData.user.id,employee_code:code,full_name:name,email,role,manager_code:manager,department:dept,position});
+    const {error:profErr}=await db.from('profiles').insert({id:authData.user.id,employee_code:code,full_name:name,email,role,manager_code:manager,department:dept,position});
     clearLoading();if(profErr){errEl.textContent=profErr.message;errEl.style.display='';return;}
   }
   closeModal('modal-user');toast(editId?'User updated.':'Employee created — they can now sign in.');loadAllProfiles();
 }
 async function toggleUserActive(profileId,active){
   setLoading(active?'Reactivating…':'Deactivating…');
-  await supabase.from('profiles').update({is_active:active}).eq('id',profileId);
+  await db.from('profiles').update({is_active:active}).eq('id',profileId);
   clearLoading();toast(active?'User reactivated.':'User deactivated.');loadAllProfiles();
 }
 
 // ── HR CYCLE MANAGEMENT ──
 async function loadCycles(){
   setLoading('Loading cycles…');
-  const {data}=await supabase.from('cycles').select('*').order('start_date',{ascending:false});
+  const {data}=await db.from('cycles').select('*').order('start_date',{ascending:false});
   state.allCycles=data||[];clearLoading();renderCyclesTable();
 }
 function renderCyclesTable(){
@@ -1430,18 +1430,18 @@ async function saveCycle(){
   if(!name||!start||!end){errEl.textContent='All fields are required.';errEl.style.display='';return;}
   if(start>=end){errEl.textContent='End date must be after start date.';errEl.style.display='';return;}
   setLoading('Creating cycle…');
-  if(active)await supabase.from('cycles').update({is_active:false}).neq('id','00000000-0000-0000-0000-000000000000');
-  const {error}=await supabase.from('cycles').insert({name,start_date:start,end_date:end,is_active:active});
+  if(active)await db.from('cycles').update({is_active:false}).neq('id','00000000-0000-0000-0000-000000000000');
+  const {error}=await db.from('cycles').insert({name,start_date:start,end_date:end,is_active:active});
   clearLoading();if(error){errEl.textContent=error.message;errEl.style.display='';return;}
   closeModal('modal-cycle');toast('Cycle created.');
-  if(active){const {data:cycle}=await supabase.from('cycles').select('*').eq('is_active',true).single();state.activeCycle=cycle;}
+  if(active){const {data:cycle}=await db.from('cycles').select('*').eq('is_active',true).single();state.activeCycle=cycle;}
   loadCycles();
 }
 async function setActiveCycle(cycleId){
   setLoading('Updating active cycle…');
-  await supabase.from('cycles').update({is_active:false}).neq('id','00000000-0000-0000-0000-000000000000');
-  await supabase.from('cycles').update({is_active:true}).eq('id',cycleId);
-  const {data:cycle}=await supabase.from('cycles').select('*').eq('id',cycleId).single();
+  await db.from('cycles').update({is_active:false}).neq('id','00000000-0000-0000-0000-000000000000');
+  await db.from('cycles').update({is_active:true}).eq('id',cycleId);
+  const {data:cycle}=await db.from('cycles').select('*').eq('id',cycleId).single();
   state.activeCycle=cycle;clearLoading();toast('Active cycle updated to: '+cycle.name);loadCycles();
 }
 
@@ -1449,10 +1449,10 @@ async function setActiveCycle(cycleId){
 document.addEventListener('DOMContentLoaded',async()=>{
   ['login-email','login-password'].forEach(id=>{const el=document.getElementById(id);if(el)el.addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});});
   setLoading('Loading…');
-  const {data:{session}}=await supabase.auth.getSession();
+  const {data:{session}}=await db.auth.getSession();
   if(session){await loadUserProfile(session.user.id,session.user.email);clearLoading();if(state.currentUser)applyLogin();else{clearLoading();showScreen('scrLogin');}}
   else{
-    const {data:cycle}=await supabase.from('cycles').select('name').eq('is_active',true).maybeSingle();
+    const {data:cycle}=await db.from('cycles').select('name').eq('is_active',true).maybeSingle();
     clearLoading();
     const badge=document.getElementById('login-cycle-badge');if(badge)badge.textContent=cycle?cycle.name:'Contact HR for access';
     showScreen('scrLogin');
