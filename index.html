@@ -314,6 +314,9 @@
   .badge-inactive { background:#fef0e0;color:#c05c00;border:1px solid #f9c985; }
   .btn-danger-sm  { background:#d32f2f;color:#fff;border:none;padding:4px 10px;border-radius:4px;font-size:11px;cursor:pointer; }
   .btn-danger-sm:hover { background:#b71c1c; }
+  /* ── BULK UPLOAD ── */
+  .bulk-row-ok{background:#f0fff8;} .bulk-row-err{background:#fff0f0;}
+  .bulk-status-ok{color:var(--accent-dark);font-size:11px;font-weight:600;} .bulk-status-err{color:var(--red);font-size:11px;font-weight:600;}
 
   /* ── WIZARD TABS (v4 port) ── */
   .wtabs{display:flex;background:#fff;border:1px solid var(--gray-border);border-radius:var(--radius);overflow:hidden;margin-bottom:20px;box-shadow:var(--shadow);}
@@ -443,24 +446,8 @@
 <div id="scrRolePicker" class="screen">
   <div class="picker-title" id="picker-welcome">Welcome! 👋</div>
   <div class="picker-sub">Select how you'd like to proceed today.</div>
-  <div class="role-card-wrap">
-    <div class="role-card" onclick="selectRole('employee')">
-      <div class="role-icon">👤</div>
-      <div class="role-title">Employee</div>
-      <div class="role-desc">View &amp; submit your Performance Appraisal</div>
-    </div>
-    <div class="role-card" onclick="selectRole('manager')">
-      <div class="role-icon">👥</div>
-      <div class="role-title">Manager</div>
-      <div class="role-desc">Review your team's PA submissions</div>
-    </div>
-    <div class="role-card" onclick="selectRole('hr')">
-      <div class="role-icon">🛡️</div>
-      <div class="role-title">HR Admin</div>
-      <div class="role-desc">Oversee all PA records &amp; approvals</div>
-    </div>
-  </div>
-  <div class="picker-demo-note">🧪 Demo mode — all roles accessible for testing</div>
+  <div class="role-card-wrap" id="role-card-wrap"></div>
+  <div class="picker-demo-note" id="picker-demo-note"></div>
 </div>
 
 
@@ -761,11 +748,7 @@
         <div class="card">
           <table>
             <thead><tr><th>Cycle</th><th>Submitted</th><th>Manager</th><th>Status</th><th>Final Rating</th></tr></thead>
-            <tbody>
-              <tr><td>2025</td><td>15 Apr 2025</td><td>Sarah Tan</td><td><span class="badge badge-approved">Approved</span></td><td>4.0</td></tr>
-              <tr><td>2024</td><td>20 Apr 2024</td><td>Sarah Tan</td><td><span class="badge badge-approved">Approved</span></td><td>3.8</td></tr>
-              <tr><td>2023</td><td>18 Apr 2023</td><td>David Lim</td><td><span class="badge badge-approved">Approved</span></td><td>3.5</td></tr>
-            </tbody>
+            <tbody id="history-tbody"><tr><td colspan="5" style="text-align:center;padding:24px;color:var(--gray-text);">Loading history…</td></tr></tbody>
           </table>
         </div>
       </div>
@@ -981,6 +964,11 @@
           <table><thead><tr><th>Employee</th><th>Manager</th><th>Dept</th><th>Status</th><th>Last Updated</th></tr></thead>
           <tbody id="hr-recent-table"></tbody></table>
         </div>
+        <div class="card" id="hr-my-pa-card" style="padding:24px;margin-top:4px;">
+          <div class="card-title" style="margin-bottom:10px;">👤 My Performance Appraisal</div>
+          <p style="font-size:13px;color:var(--gray-text);margin-bottom:14px;">You also have an employee role. Access your own PA form here.</p>
+          <button class="btn btn-primary" onclick="selectRole('employee')">📝 Open My PA Form →</button>
+        </div>
       </div>
 
       <div id="hrAll" style="display:none;">
@@ -1059,8 +1047,9 @@
 
       <div id="hrUsers" style="display:none;">
         <div class="page-header"><h1>User Management</h1><p>Add, edit, or deactivate employee accounts</p></div>
-        <div style="margin-bottom:20px;">
+        <div style="margin-bottom:20px;display:flex;gap:10px;flex-wrap:wrap;">
           <button class="btn btn-primary" onclick="openAddUser()">+ Add Employee</button>
+          <button class="btn btn-outline" onclick="openBulkUpload()">📤 Bulk Upload</button>
         </div>
         <div class="card">
           <table><thead><tr><th>Code</th><th>Name</th><th>Role</th><th>Department</th><th>Manager</th><th>Status</th><th>Action</th></tr></thead>
@@ -1155,6 +1144,43 @@
     <div id="modal-cycle-error" style="display:none;background:#fff0f0;border:1px solid #f5c6cb;border-radius:6px;padding:8px 12px;font-size:12px;color:#c0392b;margin-bottom:12px;"></div>
     <div class="modal-actions"><button class="btn btn-ghost" onclick="closeModal('modal-cycle')">Cancel</button><button class="btn btn-primary" onclick="saveCycle()">Create Cycle</button></div>
   </div></div>
+
+<div class="modal-overlay" id="modal-bulk-upload">
+  <div class="modal" style="max-width:700px;width:95%;text-align:left;">
+    <div class="modal-title" style="text-align:center;margin-bottom:4px;">📤 Bulk Upload Employees</div>
+    <p style="font-size:12px;color:var(--gray-text);text-align:center;margin-bottom:14px;">Upload multiple employees at once. Each row creates an auth account and a profile.</p>
+    <div style="display:flex;gap:10px;align-items:center;margin-bottom:12px;flex-wrap:wrap;">
+      <button class="btn btn-outline btn-sm" onclick="downloadCSVTemplate()">⬇️ Download CSV Template</button>
+      <span style="font-size:11px;color:var(--gray-text);">Columns: employee_code · full_name · email · temp_password · role · department · position · manager_code</span>
+    </div>
+    <div style="margin-bottom:12px;">
+      <label style="font-size:11px;font-weight:700;color:#6b7a8d;text-transform:uppercase;display:block;margin-bottom:6px;">Select CSV File</label>
+      <input type="file" id="bulk-csv-input" accept=".csv" onchange="parseBulkCSV(this)" style="font-size:13px;width:100%;">
+    </div>
+    <div id="bulk-preview-wrap" style="display:none;">
+      <div style="font-size:12px;font-weight:600;margin-bottom:6px;color:var(--text);" id="bulk-preview-count"></div>
+      <div style="max-height:220px;overflow-y:auto;border:1px solid var(--gray-border);border-radius:6px;">
+        <table style="width:100%;border-collapse:collapse;font-size:12px;">
+          <thead><tr style="background:var(--gray-bg);">
+            <th style="padding:5px 8px;text-align:left;font-size:11px;position:sticky;top:0;background:var(--gray-bg);">Code</th>
+            <th style="padding:5px 8px;text-align:left;font-size:11px;position:sticky;top:0;background:var(--gray-bg);">Name</th>
+            <th style="padding:5px 8px;text-align:left;font-size:11px;position:sticky;top:0;background:var(--gray-bg);">Email</th>
+            <th style="padding:5px 8px;text-align:left;font-size:11px;position:sticky;top:0;background:var(--gray-bg);">Role</th>
+            <th style="padding:5px 8px;text-align:left;font-size:11px;position:sticky;top:0;background:var(--gray-bg);">Dept</th>
+            <th style="padding:5px 8px;text-align:left;font-size:11px;position:sticky;top:0;background:var(--gray-bg);">Mgr</th>
+            <th style="padding:5px 8px;text-align:left;font-size:11px;position:sticky;top:0;background:var(--gray-bg);">Status</th>
+          </tr></thead>
+          <tbody id="bulk-preview-body"></tbody>
+        </table>
+      </div>
+    </div>
+    <div id="bulk-error" style="display:none;background:#fff0f0;border:1px solid #f5c6cb;border-radius:6px;padding:8px 12px;font-size:12px;color:#c0392b;margin-top:10px;"></div>
+    <div style="display:flex;gap:10px;justify-content:center;margin-top:16px;flex-wrap:wrap;">
+      <button class="btn btn-ghost" onclick="closeBulkUpload()">Cancel</button>
+      <button class="btn btn-primary" id="bulk-upload-btn" style="display:none;" onclick="uploadAllEmployees()">⬆️ Upload All</button>
+    </div>
+  </div>
+</div>
 
 <div id="toast"></div>
 
@@ -1543,17 +1569,38 @@ function applyLogin(){
   const user=state.currentUser; if(!user) return;
   document.getElementById('topbar-user-name').textContent=user.full_name;
   document.getElementById('topbar-role-label').style.display='';
-  document.getElementById('btn-switch-role').style.display='';
   document.getElementById('btn-logout').style.display='';
   const firstName=user.full_name.split(' ')[0];
   const pw=document.getElementById('picker-welcome'); if(pw) pw.textContent='Welcome, '+firstName+' 👋';
-  if(user.role==='employee') selectRole('employee');
-  else if(user.role==='manager') selectRole('manager');
-  else showScreen('scrRolePicker');
+  const roles=getUserRoles();
+  // Only show Switch Role if the user has more than one role
+  document.getElementById('btn-switch-role').style.display=roles.length>1?'':'none';
+  if(roles.length===1){selectRole(roles[0]);}
+  else{buildRolePicker();showScreen('scrRolePicker');}
 }
-function goRolePicker(){document.getElementById('topbar-role-label').textContent='—';showScreen('scrRolePicker');}
+// Returns array of roles this user may access, based on roles[] array or primary role
+function getUserRoles(){
+  const u=state.currentUser; if(!u) return [];
+  if(u.roles&&u.roles.length>0) return u.roles;
+  if(u.role==='hr') return ['employee','manager','hr'];
+  if(u.role==='manager') return ['employee','manager'];
+  return ['employee'];
+}
+// Populates role-card-wrap with only the cards the current user has access to
+function buildRolePicker(){
+  const roles=getUserRoles();
+  const CFG={
+    employee:{icon:'👤',title:'Employee',desc:'View & submit your Performance Appraisal'},
+    manager: {icon:'👥',title:'Manager', desc:"Review your team's PA submissions"},
+    hr:      {icon:'🛡️',title:'HR Admin',desc:'Oversee all PA records & approvals'},
+  };
+  const html=roles.map(r=>{const c=CFG[r];return`<div class="role-card" onclick="selectRole('${r}')"><div class="role-icon">${c.icon}</div><div class="role-title">${c.title}</div><div class="role-desc">${c.desc}</div></div>`;}).join('');
+  const wrap=document.getElementById('role-card-wrap'); if(wrap) wrap.innerHTML=html;
+  const note=document.getElementById('picker-demo-note'); if(note) note.textContent='';
+}
+function goRolePicker(){document.getElementById('topbar-role-label').textContent='—';buildRolePicker();showScreen('scrRolePicker');}
 function selectRole(role){
-  if(state.currentUser.role!=='hr'&&role!==state.currentUser.role){toast('Access denied.');return;}
+  if(!getUserRoles().includes(role)){toast('Access denied.');return;}
   state.currentRole=role;
   const labels={employee:'Employee',manager:'Manager',hr:'HR Admin'};
   document.getElementById('topbar-role-label').textContent=labels[role];
@@ -1568,6 +1615,7 @@ function empNav(section){
   const idx={empDashboard:0,empForm:1,empHistory:2};
   document.querySelectorAll('#scrEmployeeHome .sidebar-item')[idx[section]].classList.add('active');
   updateTimeline(); if(section==='empForm') updateFormProgress();
+  if(section==='empHistory') loadPAHistory();
 }
 function mgrNav(section){
   ['mgrDashboard','mgrTeam','mgrReview'].forEach(s=>document.getElementById(s).style.display='none');
@@ -1602,7 +1650,7 @@ async function loadEmployeeData(){
     if(error){clearLoading();toast('Error: '+error.message);return;}
     sub=newSub;
   }
-  state.mySubmission=sub; clearLoading(); loadEmployeeForm();
+  state.mySubmission=sub; clearLoading(); loadEmployeeForm(); loadPAHistory();
 }
 function loadEmployeeForm(){
   const sub=state.mySubmission,user=state.currentUser; if(!sub||!user) return;
@@ -1768,6 +1816,32 @@ function updateTimeline(){
     else if(i===idx){dot.className='tl-dot active-step';dot.textContent=i+2;}
     else{dot.className='tl-dot pending-step';dot.textContent=i+2;}});
   lines.forEach((id,i)=>{const el=document.getElementById(id);if(el)el.className='tl-line'+(i<idx?' done':'');});
+}
+
+async function loadPAHistory(){
+  const tbl=document.getElementById('history-tbody'); if(!tbl) return;
+  const empCode=state.currentUser?.employee_code; if(!empCode) return;
+  tbl.innerHTML='<tr><td colspan="5" style="text-align:center;padding:16px;color:var(--gray-text);">Loading…</td></tr>';
+  const {data:subs,error}=await db.from('pa_submissions')
+    .select('*, cycles(name)')
+    .eq('employee_code',empCode)
+    .in('status',['Submitted','Under Review','Approved','Returned'])
+    .order('submitted_at',{ascending:false});
+  if(error){tbl.innerHTML='<tr><td colspan="5" style="text-align:center;padding:16px;color:var(--red);">Error loading history.</td></tr>';return;}
+  if(!subs||subs.length===0){tbl.innerHTML='<tr><td colspan="5" style="text-align:center;padding:24px;color:var(--gray-text);">No previous PA cycles found.</td></tr>';return;}
+  tbl.innerHTML=subs.map(s=>{
+    const cycleName=s.cycles?.name||s.cycle_name||'—';
+    const mgrProfile=state.allProfiles.find(p=>p.employee_code===s.manager_code);
+    const mgrName=mgrProfile?mgrProfile.full_name:(s.manager_code||'—');
+    const finalScore=s.manager_section_comments?.final_score??s.manager_overall_rating??null;
+    return`<tr>
+      <td>${cycleName}</td>
+      <td>${fmtDate(s.submitted_at)}</td>
+      <td>${mgrName}</td>
+      <td><span class="badge ${getBadge(s.status)}">${s.status}</span></td>
+      <td>${finalScore!==null?Number(finalScore).toFixed(1):'—'}</td>
+    </tr>`;
+  }).join('');
 }
 
 // ── MANAGER ──
@@ -2087,6 +2161,87 @@ async function toggleUserActive(profileId,active){
   setLoading(active?'Reactivating…':'Deactivating…');
   await db.from('profiles').update({is_active:active}).eq('id',profileId);
   clearLoading();toast(active?'User reactivated.':'User deactivated.');loadAllProfiles();
+}
+
+// ── BULK UPLOAD ──
+let bulkRows=[];
+function openBulkUpload(){
+  bulkRows=[];
+  const input=document.getElementById('bulk-csv-input');if(input)input.value='';
+  const pw=document.getElementById('bulk-preview-wrap');if(pw)pw.style.display='none';
+  const err=document.getElementById('bulk-error');if(err)err.style.display='none';
+  const btn=document.getElementById('bulk-upload-btn');if(btn)btn.style.display='none';
+  showModal('modal-bulk-upload');
+}
+function closeBulkUpload(){closeModal('modal-bulk-upload');}
+function downloadCSVTemplate(){
+  const csv='employee_code,full_name,email,temp_password,role,department,position,manager_code\nEMP001,Ahmad Faizal,ahmad.faizal@company.com,TempPass123,employee,Payroll,Payroll Executive,MGR001';
+  const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);
+  a.download='epa_bulk_upload_template.csv';a.click();toast('Template downloaded.');
+}
+function parseBulkCSV(input){
+  const errEl=document.getElementById('bulk-error');errEl.style.display='none';
+  const file=input.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=function(e){
+    const lines=e.target.result.split('\n').map(l=>l.trim()).filter(l=>l);
+    if(lines.length<2){errEl.textContent='CSV must have a header row and at least one data row.';errEl.style.display='';return;}
+    const headers=lines[0].split(',').map(h=>h.trim().toLowerCase().replace(/"/g,''));
+    const required=['employee_code','full_name','email','temp_password'];
+    const missing=required.filter(r=>!headers.includes(r));
+    if(missing.length){errEl.textContent='Missing required columns: '+missing.join(', ');errEl.style.display='';return;}
+    bulkRows=[];
+    for(let i=1;i<lines.length;i++){
+      const vals=lines[i].split(',').map(v=>v.trim().replace(/^"|"$/g,''));
+      const row={};headers.forEach((h,idx)=>{row[h]=vals[idx]||'';});
+      bulkRows.push({employee_code:(row.employee_code||'').toUpperCase(),full_name:row.full_name||'',email:(row.email||'').toLowerCase(),temp_password:row.temp_password||'',role:row.role||'employee',department:row.department||null,position:row.position||null,manager_code:(row.manager_code||'').toUpperCase()||null});
+    }
+    const tbody=document.getElementById('bulk-preview-body');
+    tbody.innerHTML=bulkRows.map((r,i)=>`<tr id="bulk-row-${i}">
+      <td style="padding:5px 8px;">${r.employee_code}</td>
+      <td style="padding:5px 8px;">${r.full_name}</td>
+      <td style="padding:5px 8px;">${r.email}</td>
+      <td style="padding:5px 8px;">${r.role}</td>
+      <td style="padding:5px 8px;">${r.department||'—'}</td>
+      <td style="padding:5px 8px;">${r.manager_code||'—'}</td>
+      <td style="padding:5px 8px;" id="bulk-status-${i}"><span style="color:var(--gray-text);font-size:11px;">Pending</span></td>
+    </tr>`).join('');
+    document.getElementById('bulk-preview-count').textContent=bulkRows.length+' row(s) ready to upload';
+    document.getElementById('bulk-preview-wrap').style.display='';
+    document.getElementById('bulk-upload-btn').style.display='';
+  };
+  reader.readAsText(file);
+}
+async function uploadAllEmployees(){
+  if(!bulkRows.length)return;
+  const btn=document.getElementById('bulk-upload-btn');btn.disabled=true;btn.textContent='Uploading…';
+  let ok=0,fail=0;
+  for(let i=0;i<bulkRows.length;i++){
+    const r=bulkRows[i];
+    const statusEl=document.getElementById('bulk-status-'+i);
+    const rowEl=document.getElementById('bulk-row-'+i);
+    if(statusEl)statusEl.innerHTML='<span style="color:var(--gray-text);font-size:11px;">⏳ Working…</span>';
+    try{
+      const tempClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON,{auth:{storageKey:'epa-bulk-'+i,persistSession:false}});
+      const {data:authData,error:authErr}=await tempClient.auth.signUp({email:r.email,password:r.temp_password});
+      if(authErr)throw new Error(authErr.message);
+      const uid=authData.user?.id;
+      if(!uid)throw new Error('Auth created but no user ID returned.');
+      const {error:profErr}=await db.from('profiles').upsert({id:uid,employee_code:r.employee_code,full_name:r.full_name,email:r.email,role:r.role,department:r.department||null,position:r.position||null,manager_code:r.manager_code||null,is_active:true},{onConflict:'employee_code'});
+      if(profErr)throw new Error(profErr.message);
+      if(statusEl)statusEl.innerHTML='<span class="bulk-status-ok">✅ Created</span>';
+      if(rowEl)rowEl.classList.add('bulk-row-ok');
+      ok++;
+    }catch(ex){
+      const msg=String(ex.message||ex).substring(0,50);
+      if(statusEl)statusEl.innerHTML=`<span class="bulk-status-err" title="${ex.message}">❌ ${msg}</span>`;
+      if(rowEl)rowEl.classList.add('bulk-row-err');
+      fail++;
+    }
+  }
+  btn.disabled=false;btn.textContent='⬆️ Upload All';
+  toast(ok+' uploaded'+(fail?' · '+fail+' failed':'')+'.');
+  if(ok>0)loadAllProfiles();
 }
 
 // ── HR CYCLE MANAGEMENT ──
