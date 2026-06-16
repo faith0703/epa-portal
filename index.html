@@ -3,7 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ePA Portal — Performance Appraisal</title>
+<title>ePA Portal v2 — Performance Appraisal</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
   :root {
     --blue: #0055A5;
@@ -303,79 +304,58 @@
     .role-card-wrap { flex-direction: column; align-items: center; }
     .login-demo-grid { grid-template-columns: repeat(2, 1fr); }
   }
+
+  /* ── LOADING OVERLAY ── */
+  #loading-overlay { position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:9999;align-items:center;justify-content:center;flex-direction:column;gap:16px; }
+  #loading-overlay.show { display:flex !important; }
+  @keyframes spin { to { transform:rotate(360deg); } }
+
+  /* ── HR badge colours ── */
+  .badge-active   { background:#e8f8f0;color:#1a7f4b;border:1px solid #a8dfc3; }
+  .badge-inactive { background:#fef0e0;color:#c05c00;border:1px solid #f9c985; }
+  .btn-danger-sm  { background:#d32f2f;color:#fff;border:none;padding:4px 10px;border-radius:4px;font-size:11px;cursor:pointer; }
+  .btn-danger-sm:hover { background:#b71c1c; }
 </style>
 </head>
 <body>
 
-<!-- TOPBAR -->
+<div id="loading-overlay">
+  <div style="width:44px;height:44px;border:4px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin .8s linear infinite;"></div>
+  <div id="loading-msg" style="color:#fff;font-size:14px;font-weight:600;"></div>
+</div>
+
 <div class="topbar">
-  <div class="topbar-logo">i<span>-</span>Admin &nbsp;<span style="font-weight:300;opacity:.6;font-size:14px">| ePA Portal</span></div>
+  <div class="topbar-logo">i-<span>Admin</span> &nbsp;|&nbsp; ePA Portal</div>
   <div class="topbar-right">
     <span class="topbar-user" id="topbar-user-name"></span>
-    <span class="topbar-role-badge" id="topbar-role-label" style="display:none">—</span>
-    <button class="btn-switch" id="btn-switch-role" onclick="goRolePicker()" style="display:none">Switch Role</button>
-    <button class="btn-switch btn-logout" id="btn-logout" onclick="doLogout()" style="display:none">Log Out</button>
+    <span class="topbar-role-badge" id="topbar-role-label" style="display:none;"></span>
+    <button class="btn-switch" id="btn-switch-role" style="display:none;" onclick="goRolePicker()">Switch Role</button>
+    <button class="btn-switch btn-logout" id="btn-logout" style="display:none;" onclick="doLogout()">Sign Out</button>
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════════════════ LOGIN -->
 <div id="scrLogin" class="screen">
   <div class="login-card">
     <div class="login-logo">
       <span class="login-logo-icon">📋</span>
       <div class="login-logo-title">ePA Portal</div>
       <div class="login-logo-sub">Electronic Performance Appraisal System</div>
-      <span class="login-cycle-badge">Cycle 2026</span>
+      <span class="login-cycle-badge" id="login-cycle-badge">Loading…</span>
+    </div>
+    <div id="login-error" style="display:none;background:#fff0f0;border:1.5px solid #f5c6cb;border-radius:6px;padding:10px 14px;font-size:13px;color:#c0392b;margin-bottom:14px;"></div>
+    <div class="login-field">
+      <label>Email Address</label>
+      <input type="email" id="login-email" placeholder="your.name@company.com" autocomplete="email" spellcheck="false">
     </div>
     <div class="login-field">
-      <label>Employee ID / Access Code</label>
-      <input type="text" id="login-code" placeholder="e.g. EMP001, MGR001, ADMIN" autocomplete="off" spellcheck="false">
+      <label>Password</label>
+      <input type="password" id="login-password" placeholder="Enter your password" autocomplete="current-password">
     </div>
-    <div class="login-field">
-      <label>Your Name <span style="font-weight:400;text-transform:none;letter-spacing:0">(optional — leave blank to use registered name)</span></label>
-      <input type="text" id="login-name" placeholder="Your full name">
-    </div>
-    <button class="login-btn" onclick="doLogin()">Sign In →</button>
-    <div class="login-demo">
-      <div class="login-demo-title">Demo Credentials — click to autofill</div>
-      <div class="login-demo-grid">
-        <div class="login-demo-item" onclick="autofillLogin('EMP001')">
-          <span class="demo-code">EMP001</span>
-          <span class="demo-role">Employee</span>
-          <span class="demo-name">Ahmad Faizal</span>
-        </div>
-        <div class="login-demo-item" onclick="autofillLogin('EMP002')">
-          <span class="demo-code">EMP002</span>
-          <span class="demo-role">Employee</span>
-          <span class="demo-name">Priya Ramasamy</span>
-        </div>
-        <div class="login-demo-item" onclick="autofillLogin('EMP003')">
-          <span class="demo-code">EMP003</span>
-          <span class="demo-role">Employee</span>
-          <span class="demo-name">Jason Lee</span>
-        </div>
-        <div class="login-demo-item" onclick="autofillLogin('EMP004')">
-          <span class="demo-code">EMP004</span>
-          <span class="demo-role">Employee</span>
-          <span class="demo-name">Nurul Ain</span>
-        </div>
-        <div class="login-demo-item" onclick="autofillLogin('MGR001')">
-          <span class="demo-code">MGR001</span>
-          <span class="demo-role">Manager</span>
-          <span class="demo-name">Weng Choon</span>
-        </div>
-        <div class="login-demo-item" onclick="autofillLogin('ADMIN')">
-          <span class="demo-code">ADMIN</span>
-          <span class="demo-role">HR Admin</span>
-          <span class="demo-name">HR Team</span>
-        </div>
-      </div>
-    </div>
-    <div class="login-note">💾 Your progress is saved automatically in this browser</div>
+    <button class="login-btn" id="login-btn" onclick="doLogin()">Sign In →</button>
+    <div class="login-note" style="margin-top:16px;">🔐 Contact your HR Administrator for login credentials</div>
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════════════════ ROLE PICKER -->
 <div id="scrRolePicker" class="screen">
   <div class="picker-title" id="picker-welcome">Welcome! 👋</div>
   <div class="picker-sub">Select how you'd like to proceed today.</div>
@@ -398,6 +378,7 @@
   </div>
   <div class="picker-demo-note">🧪 Demo mode — all roles accessible for testing</div>
 </div>
+
 
 <!-- ═══════════════════════════════════════════════════════ EMPLOYEE HOME -->
 <div id="scrEmployeeHome" class="screen">
@@ -625,6 +606,7 @@
   </div>
 </div>
 
+
 <!-- ═══════════════════════════════════════════════════════ MANAGER HOME -->
 <div id="scrManagerHome" class="screen">
   <div class="main-layout">
@@ -792,6 +774,7 @@
   </div>
 </div>
 
+
 <!-- ═══════════════════════════════════════════════════════ HR HOME -->
 <div id="scrHRHome" class="screen">
   <div class="main-layout">
@@ -800,22 +783,25 @@
       <div class="sidebar-item active" onclick="hrNav('hrDashboard')"><span class="si-icon">🏠</span> Dashboard</div>
       <div class="sidebar-item" onclick="hrNav('hrAll')"><span class="si-icon">📋</span> All Submissions</div>
       <div class="sidebar-item" onclick="hrNav('hrReports')"><span class="si-icon">📊</span> Reports</div>
+      <div class="sidebar-item" onclick="hrNav('hrUsers')"><span class="si-icon">👤</span> User Management</div>
+      <div class="sidebar-item" onclick="hrNav('hrCycles')"><span class="si-icon">🔄</span> PA Cycles</div>
     </div>
     <div class="content">
+
       <div id="hrDashboard">
-        <div class="page-header"><h1>HR Admin Dashboard</h1><p>PA Tracker — Cycle 2026 Overview</p></div>
+        <div class="page-header"><h1>HR Admin Dashboard</h1><p id="hr-dash-sub">PA Tracker — Overview</p></div>
         <div class="stats-row">
-          <div class="stat-card"><div class="stat-num" id="hr-total">8</div><div class="stat-label">Total Employees</div></div>
-          <div class="stat-card green"><div class="stat-num" id="hr-approved">0</div><div class="stat-label">Approved</div></div>
-          <div class="stat-card orange"><div class="stat-num" id="hr-review">0</div><div class="stat-label">Under Review</div></div>
-          <div class="stat-card"><div class="stat-num" id="hr-submitted">0</div><div class="stat-label">Submitted</div></div>
-          <div class="stat-card red"><div class="stat-num" id="hr-draft">0</div><div class="stat-label">Draft / Not Started</div></div>
+          <div class="stat-card"><div class="stat-num" id="hr-total">—</div><div class="stat-label">Total Employees</div></div>
+          <div class="stat-card green"><div class="stat-num" id="hr-approved">—</div><div class="stat-label">Approved</div></div>
+          <div class="stat-card orange"><div class="stat-num" id="hr-review">—</div><div class="stat-label">Under Review</div></div>
+          <div class="stat-card"><div class="stat-num" id="hr-submitted">—</div><div class="stat-label">Submitted</div></div>
+          <div class="stat-card red"><div class="stat-num" id="hr-draft">—</div><div class="stat-label">Draft / Not Started</div></div>
         </div>
         <div class="card" style="padding:24px;margin-bottom:24px;">
           <div class="card-title" style="margin-bottom:16px;">📈 Overall Cycle Completion</div>
           <div class="progress-bar-wrap">
             <div class="progress-bar-bg"><div class="progress-bar-fill" id="hr-completion-bar" style="width:0%"></div></div>
-            <div class="progress-label"><span id="hr-completion-text">Loading...</span><span id="hr-completion-pct">0%</span></div>
+            <div class="progress-label"><span id="hr-completion-text">Loading…</span><span id="hr-completion-pct">0%</span></div>
           </div>
         </div>
         <div class="card">
@@ -831,21 +817,14 @@
           <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center;">
             <div><label style="font-size:11px;">Filter by Status</label>
               <select id="hr-filter-status" onchange="applyHRFilter()" style="width:160px;margin-top:4px;">
-                <option value="">All Status</option>
-                <option value="Draft">Draft</option>
-                <option value="Submitted">Submitted</option>
-                <option value="Under Review">Under Review</option>
-                <option value="Approved">Approved</option>
-                <option value="Returned">Returned</option>
+                <option value="">All Status</option><option value="Draft">Draft</option>
+                <option value="Submitted">Submitted</option><option value="Under Review">Under Review</option>
+                <option value="Approved">Approved</option><option value="Returned">Returned</option>
               </select>
             </div>
             <div><label style="font-size:11px;">Filter by Department</label>
               <select id="hr-filter-dept" onchange="applyHRFilter()" style="width:160px;margin-top:4px;">
                 <option value="">All Departments</option>
-                <option value="HR Operations">HR Operations</option>
-                <option value="Payroll">Payroll</option>
-                <option value="Technology">Technology</option>
-                <option value="Finance">Finance</option>
               </select>
             </div>
             <div style="margin-left:auto;margin-top:18px;">
@@ -884,664 +863,602 @@
       </div>
 
       <div id="hrReports" style="display:none;">
-        <div class="page-header"><h1>Reports</h1><p>PA Cycle 2026 — Summary Analytics</p></div>
+        <div class="page-header"><h1>Reports</h1><p id="rpt-cycle-sub">PA Cycle — Summary Analytics</p></div>
         <div class="stats-row">
           <div class="stat-card"><div class="stat-num" id="rpt-avg-self">—</div><div class="stat-label">Avg Self-Rating</div></div>
-          <div class="stat-card green"><div class="stat-num">3.7</div><div class="stat-label">Avg Manager Rating</div></div>
+          <div class="stat-card green"><div class="stat-num" id="rpt-avg-mgr">—</div><div class="stat-label">Avg Manager Rating</div></div>
           <div class="stat-card orange"><div class="stat-num" id="rpt-days">—</div><div class="stat-label">Days to Deadline</div></div>
         </div>
         <div class="card" style="padding:24px;">
           <div class="card-title" style="margin-bottom:16px;">📊 Status by Department</div>
-          <table>
-            <thead><tr><th>Department</th><th>Total</th><th>Submitted+</th><th>Approved</th><th>Completion</th></tr></thead>
-            <tbody id="rpt-dept-table"></tbody>
-          </table>
+          <table><thead><tr><th>Department</th><th>Total</th><th>Submitted+</th><th>Approved</th><th>Completion</th></tr></thead>
+          <tbody id="rpt-dept-table"></tbody></table>
         </div>
       </div>
+
+      <div id="hrUsers" style="display:none;">
+        <div class="page-header"><h1>User Management</h1><p>Add, edit, or deactivate employee accounts</p></div>
+        <div style="margin-bottom:20px;">
+          <button class="btn btn-primary" onclick="openAddUser()">+ Add Employee</button>
+        </div>
+        <div class="card">
+          <table><thead><tr><th>Code</th><th>Name</th><th>Role</th><th>Department</th><th>Manager</th><th>Status</th><th>Action</th></tr></thead>
+          <tbody id="users-table"></tbody></table>
+        </div>
+        <div class="info-box" style="margin-top:16px;">💡 Click <strong>Add Employee</strong> to create a login account and profile in one step. Share the email + temporary password with the employee.</div>
+      </div>
+
+      <div id="hrCycles" style="display:none;">
+        <div class="page-header"><h1>PA Cycles</h1><p>Manage appraisal cycles — only one can be active at a time</p></div>
+        <div style="margin-bottom:20px;">
+          <button class="btn btn-primary" onclick="openAddCycle()">+ New Cycle</button>
+        </div>
+        <div class="card">
+          <table><thead><tr><th>Cycle Name</th><th>Start Date</th><th>End Date</th><th>Status</th><th>Action</th></tr></thead>
+          <tbody id="cycles-table"></tbody></table>
+        </div>
+      </div>
+
     </div>
   </div>
 </div>
 
-<!-- MODALS -->
 <div class="modal-overlay" id="modal-submit">
-  <div class="modal">
-    <div class="modal-icon">🚀</div>
-    <div class="modal-title">Submit Your PA?</div>
+  <div class="modal"><div class="modal-icon">🚀</div><div class="modal-title">Submit Your PA?</div>
     <div class="modal-msg">Once submitted, your manager will be notified to begin their review. You can still update and resubmit before they start.</div>
-    <div class="modal-actions">
-      <button class="btn btn-ghost" onclick="closeModal('modal-submit')">Cancel</button>
-      <button class="btn btn-primary" onclick="confirmSubmit()">Yes, Submit</button>
-    </div>
-  </div>
-</div>
+    <div class="modal-actions"><button class="btn btn-ghost" onclick="closeModal('modal-submit')">Cancel</button><button class="btn btn-primary" onclick="confirmSubmit()">Yes, Submit</button></div>
+  </div></div>
 
 <div class="modal-overlay" id="modal-approve">
-  <div class="modal">
-    <div class="modal-icon">✅</div>
-    <div class="modal-title">Approve this PA?</div>
+  <div class="modal"><div class="modal-icon">✅</div><div class="modal-title">Approve this PA?</div>
     <div class="modal-msg">The employee will be notified that their PA has been approved. This action will be recorded.</div>
-    <div class="modal-actions">
-      <button class="btn btn-ghost" onclick="closeModal('modal-approve')">Cancel</button>
-      <button class="btn btn-success" onclick="confirmApprove()">Yes, Approve</button>
-    </div>
-  </div>
-</div>
+    <div class="modal-actions"><button class="btn btn-ghost" onclick="closeModal('modal-approve')">Cancel</button><button class="btn btn-success" onclick="confirmApprove()">Yes, Approve</button></div>
+  </div></div>
 
 <div class="modal-overlay" id="modal-return">
-  <div class="modal">
-    <div class="modal-icon">↩️</div>
-    <div class="modal-title">Return PA to Employee?</div>
-    <div class="modal-msg">The employee will be notified to revise and resubmit their PA. Please ensure you have added comments explaining what needs to be updated.</div>
-    <div class="modal-actions">
-      <button class="btn btn-ghost" onclick="closeModal('modal-return')">Cancel</button>
-      <button class="btn btn-danger" onclick="confirmReturn()">Yes, Return</button>
-    </div>
-  </div>
-</div>
+  <div class="modal"><div class="modal-icon">↩️</div><div class="modal-title">Return PA to Employee?</div>
+    <div class="modal-msg">The employee will be notified to revise and resubmit. Please ensure you have added comments explaining what needs updating.</div>
+    <div class="modal-actions"><button class="btn btn-ghost" onclick="closeModal('modal-return')">Cancel</button><button class="btn btn-danger" onclick="confirmReturn()">Yes, Return</button></div>
+  </div></div>
 
 <div class="modal-overlay" id="modal-saved">
-  <div class="modal">
-    <div class="modal-icon">💾</div>
-    <div class="modal-title">Draft Saved!</div>
-    <div class="modal-msg">Your progress has been saved to this browser. You can continue editing at any time before the deadline.</div>
+  <div class="modal"><div class="modal-icon">💾</div><div class="modal-title">Draft Saved!</div>
+    <div class="modal-msg">Your progress has been saved to the server. You can continue editing at any time before the deadline.</div>
     <div class="modal-actions"><button class="btn btn-primary" onclick="closeModal('modal-saved')">OK</button></div>
-  </div>
-</div>
+  </div></div>
+
+<div class="modal-overlay" id="modal-user">
+  <div class="modal" style="max-width:520px;width:95%;">
+    <div class="modal-title" id="modal-user-title">Add Employee</div>
+    <input type="hidden" id="user-edit-id">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0;text-align:left;">
+      <div><label style="font-size:11px;font-weight:700;color:#6b7a8d;text-transform:uppercase;display:block;margin-bottom:4px;">Employee Code *</label>
+        <input type="text" id="u-code" placeholder="EMP001" style="width:100%;padding:9px 12px;border:1.5px solid #d1d9e0;border-radius:6px;font-size:13px;"></div>
+      <div><label style="font-size:11px;font-weight:700;color:#6b7a8d;text-transform:uppercase;display:block;margin-bottom:4px;">Full Name *</label>
+        <input type="text" id="u-name" placeholder="Ahmad Faizal bin Aziz" style="width:100%;padding:9px 12px;border:1.5px solid #d1d9e0;border-radius:6px;font-size:13px;"></div>
+      <div><label style="font-size:11px;font-weight:700;color:#6b7a8d;text-transform:uppercase;display:block;margin-bottom:4px;">Email *</label>
+        <input type="email" id="u-email" placeholder="employee@company.com" style="width:100%;padding:9px 12px;border:1.5px solid #d1d9e0;border-radius:6px;font-size:13px;"></div>
+      <div id="u-password-wrap"><label style="font-size:11px;font-weight:700;color:#6b7a8d;text-transform:uppercase;display:block;margin-bottom:4px;">Temp Password *</label>
+        <input type="text" id="u-password" placeholder="Min 6 chars" style="width:100%;padding:9px 12px;border:1.5px solid #d1d9e0;border-radius:6px;font-size:13px;"></div>
+      <div><label style="font-size:11px;font-weight:700;color:#6b7a8d;text-transform:uppercase;display:block;margin-bottom:4px;">Role *</label>
+        <select id="u-role" style="width:100%;padding:9px 12px;border:1.5px solid #d1d9e0;border-radius:6px;font-size:13px;">
+          <option value="employee">Employee</option><option value="manager">Manager</option><option value="hr">HR Admin</option>
+        </select></div>
+      <div><label style="font-size:11px;font-weight:700;color:#6b7a8d;text-transform:uppercase;display:block;margin-bottom:4px;">Manager Code</label>
+        <input type="text" id="u-manager" placeholder="MGR001" style="width:100%;padding:9px 12px;border:1.5px solid #d1d9e0;border-radius:6px;font-size:13px;"></div>
+      <div><label style="font-size:11px;font-weight:700;color:#6b7a8d;text-transform:uppercase;display:block;margin-bottom:4px;">Department</label>
+        <input type="text" id="u-dept" placeholder="Payroll" style="width:100%;padding:9px 12px;border:1.5px solid #d1d9e0;border-radius:6px;font-size:13px;"></div>
+      <div><label style="font-size:11px;font-weight:700;color:#6b7a8d;text-transform:uppercase;display:block;margin-bottom:4px;">Position</label>
+        <input type="text" id="u-position" placeholder="Payroll Executive" style="width:100%;padding:9px 12px;border:1.5px solid #d1d9e0;border-radius:6px;font-size:13px;"></div>
+    </div>
+    <div id="modal-user-error" style="display:none;background:#fff0f0;border:1px solid #f5c6cb;border-radius:6px;padding:8px 12px;font-size:12px;color:#c0392b;margin-bottom:12px;"></div>
+    <div class="modal-actions"><button class="btn btn-ghost" onclick="closeModal('modal-user')">Cancel</button><button class="btn btn-primary" onclick="saveUser()">Save</button></div>
+  </div></div>
+
+<div class="modal-overlay" id="modal-cycle">
+  <div class="modal" style="max-width:440px;width:95%;">
+    <div class="modal-title">New PA Cycle</div>
+    <div style="display:grid;gap:12px;margin:16px 0;text-align:left;">
+      <div><label style="font-size:11px;font-weight:700;color:#6b7a8d;text-transform:uppercase;display:block;margin-bottom:4px;">Cycle Name *</label>
+        <input type="text" id="c-name" placeholder="FY2027 (Apr 2027 – Mar 2028)" style="width:100%;padding:9px 12px;border:1.5px solid #d1d9e0;border-radius:6px;font-size:13px;"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div><label style="font-size:11px;font-weight:700;color:#6b7a8d;text-transform:uppercase;display:block;margin-bottom:4px;">Start Date *</label>
+          <input type="date" id="c-start" style="width:100%;padding:9px 12px;border:1.5px solid #d1d9e0;border-radius:6px;font-size:13px;"></div>
+        <div><label style="font-size:11px;font-weight:700;color:#6b7a8d;text-transform:uppercase;display:block;margin-bottom:4px;">End Date *</label>
+          <input type="date" id="c-end" style="width:100%;padding:9px 12px;border:1.5px solid #d1d9e0;border-radius:6px;font-size:13px;"></div>
+      </div>
+      <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer;">
+        <input type="checkbox" id="c-active"> Set as active cycle immediately
+      </label>
+    </div>
+    <div id="modal-cycle-error" style="display:none;background:#fff0f0;border:1px solid #f5c6cb;border-radius:6px;padding:8px 12px;font-size:12px;color:#c0392b;margin-bottom:12px;"></div>
+    <div class="modal-actions"><button class="btn btn-ghost" onclick="closeModal('modal-cycle')">Cancel</button><button class="btn btn-primary" onclick="saveCycle()">Create Cycle</button></div>
+  </div></div>
 
 <div id="toast"></div>
 
 <script>
-// ══════════════════════════════════════════════
-// LOCALSTORAGE LAYER
-// (swap lsGet/lsSet for API calls to go multi-user)
-// ══════════════════════════════════════════════
-function lsGet(k) { try { return JSON.parse(localStorage.getItem('epa_' + k)); } catch(e) { return null; } }
-function lsSet(k, v) { try { localStorage.setItem('epa_' + k, JSON.stringify(v)); } catch(e) {} }
 
-// ══════════════════════════════════════════════
-// DEMO USERS
-// ══════════════════════════════════════════════
-const DEMO_USERS = [
-  { code:'EMP001', name:'Ahmad Faizal bin Aziz',  role:'employee', empId:1 },
-  { code:'EMP002', name:'Priya a/p Ramasamy',      role:'employee', empId:2 },
-  { code:'EMP003', name:'Jason Lee Kah Meng',       role:'employee', empId:3 },
-  { code:'EMP004', name:'Nurul Ain binti Harun',    role:'employee', empId:4 },
-  { code:'EMP005', name:'Weng Choon Wong',          role:'employee', empId:5 },
-  { code:'MGR001', name:'Weng Choon Wong',          role:'manager',  empId:5 },
-  { code:'ADMIN',  name:'HR Administrator',         role:'hr',       empId:null },
-];
-
-// ══════════════════════════════════════════════
-// STATE
-// ══════════════════════════════════════════════
-const state = {
-  currentUser: null,
-  currentRole: null,
-  currentEmp: null,
-  empFormStatus: 'Draft',
-  ratings: { s1:0, s2:0, s3:0, s4:0, s5:0 },
-  mgrRatings: { s1:0, s2:0, s3:0, s4:0, s5:0, overall:0 },
-};
-
-// ══════════════════════════════════════════════
-// EMPLOYEE DATA
-// ══════════════════════════════════════════════
-const employees = [
-  { id:1, name:'Ahmad Faizal bin Aziz',   email:'ahmad.faizal@i-admin.com',  dept:'Payroll',      manager:'Weng Choon Wong', avatar:'AF', status:'Draft',        submitted:'—',          s1:'',s2:'',s3:'',s4:'',s5:'',s6:'',s7:'', selfRatings:{s1:0,s2:0,s3:0,s4:0,s5:0} },
-  { id:2, name:'Priya a/p Ramasamy',      email:'priya.ramasamy@i-admin.com', dept:'Payroll',      manager:'Weng Choon Wong', avatar:'PR', status:'Submitted',    submitted:'22 May 2026', s1:'I have 3 years experience in Malaysian payroll. I process EPF, SOCSO and PCB submissions monthly for 8 clients with zero late filings.',s2:'My error rate is below 1% for the past year. I double-check all calculations before payroll is released.',s3:'I manage my 8 clients efficiently and always meet deadlines. Occasionally need support during peak months.',s4:'I communicate proactively with clients and escalate issues early. Good team player.',s5:'I identified a duplicate payment risk in one client\'s data and raised it before payroll was run.',s6:'Successfully transitioned 2 new clients onto ePayslip platform within SLA.',s7:'I want to improve my Excel skills and learn Power Automate for payroll automation.', selfRatings:{s1:4,s2:4,s3:3,s4:4,s5:4} },
-  { id:3, name:'Jason Lee Kah Meng',      email:'jason.lee@i-admin.com',      dept:'Technology',   manager:'Weng Choon Wong', avatar:'JL', status:'Approved',     submitted:'10 May 2026', s1:'Strong technical background in SharePoint and Power Platform. Supported multiple automation projects.',s2:'Delivered all projects on time with minimal rework. Code review pass rate >90%.',s3:'Handle 3–4 concurrent projects. Consistently meet sprint commitments.',s4:'Work closely with HR and Finance teams. Good at translating business requirements to technical specs.',s5:'Proposed and implemented automated testing for Power Automate flows reducing QA time by 40%.',s6:'Delivered WS3 HTML payroll calculator and WS7 Power Apps PA Tracker ahead of schedule.',s7:'Plan to pursue PL-400 Power Platform Developer certification in Q3 2026.', selfRatings:{s1:5,s2:4,s3:4,s4:4,s5:5} },
-  { id:4, name:'Nurul Ain binti Harun',   email:'nurul.ain@i-admin.com',      dept:'HR Operations',manager:'Weng Choon Wong', avatar:'NA', status:'Under Review', submitted:'18 May 2026', s1:'Specialised in HR operations including onboarding, offboarding and statutory compliance for Malaysia.',s2:'All HR letters and documents issued on time. No compliance lapses in 2026.',s3:'Efficient in handling multiple employee queries daily. Response time under 24 hours.',s4:'Bridge between HR and operations team. Run monthly HR briefings for new staff.',s5:'Developed an onboarding tracker that reduced new joiner errors by 50%.',s6:'Completed HRDF PSMB registration for 3 entities. Led internship programme with 4 interns.',s7:'Want to deepen knowledge in employment law and explore HRIS implementation.', selfRatings:{s1:4,s2:5,s3:4,s4:5,s5:4} },
-];
-
-const allEmployees = [
-  ...employees,
-  { id:5, name:'Weng Choon Wong',     email:'wengchoon.wong@i-admin.com', dept:'HR Operations', manager:'Sarah Tan',       avatar:'WC', status:'Submitted',  submitted:'23 May 2026', s1:'',s2:'',s3:'',s4:'',s5:'',s6:'',s7:'', selfRatings:{s1:4,s2:5,s3:3,s4:4,s5:0} },
-  { id:6, name:'Sarah Tan Wei Ling',  email:'sarah.tan@i-admin.com',      dept:'Finance',       manager:'James Ong',       avatar:'ST', status:'Draft',       submitted:'—',           s1:'',s2:'',s3:'',s4:'',s5:'',s6:'',s7:'', selfRatings:{s1:0,s2:0,s3:0,s4:0,s5:0} },
-  { id:7, name:'Raj Kumar s/o Pillai',email:'raj.kumar@i-admin.com',      dept:'Payroll',       manager:'Weng Choon Wong', avatar:'RK', status:'Under Review',submitted:'20 May 2026', s1:'',s2:'',s3:'',s4:'',s5:'',s6:'',s7:'', selfRatings:{s1:3,s2:4,s3:3,s4:3,s5:3} },
-  { id:8, name:'Melissa Chong Hui Min',email:'melissa.chong@i-admin.com', dept:'Technology',    manager:'Weng Choon Wong', avatar:'MC', status:'Approved',    submitted:'12 May 2026', s1:'',s2:'',s3:'',s4:'',s5:'',s6:'',s7:'', selfRatings:{s1:4,s2:4,s3:5,s4:4,s5:4} },
-];
+const SUPABASE_URL  = 'https://rfayekgpmrrzmyxtchzr.supabase.co';
+const SUPABASE_ANON = 'sb_publishable_j3Q6d10J3LbIeT45dAmFHQ_e1rjEZ7g';
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
 
 const ratingLabels = ['','Poor','Below Average','Satisfactory','Good','Excellent'];
 
-// ══════════════════════════════════════════════
-// INIT DATA — restore localStorage overrides
-// ══════════════════════════════════════════════
-function initData() {
-  const savedStatuses = lsGet('statuses') || {};
-  const savedForms    = lsGet('forms')    || {};
-  allEmployees.forEach(emp => {
-    if (savedStatuses[emp.id]) {
-      emp.status    = savedStatuses[emp.id].status;
-      emp.submitted = savedStatuses[emp.id].submitted || emp.submitted;
-    }
-    if (savedForms[emp.id]) {
-      const f = savedForms[emp.id];
-      ['s1','s2','s3','s4','s5','s6','s7'].forEach(s => { if (f[s] !== undefined) emp[s] = f[s]; });
-      if (f.selfRatings) emp.selfRatings = Object.assign({}, emp.selfRatings, f.selfRatings);
-    }
-  });
+const state = {
+  currentUser: null, currentRole: null, currentEmp: null, activeCycle: null,
+  mySubmission: null, teamData: [], allData: [], allProfiles: [], allCycles: [],
+  ratings:    { s1:0, s2:0, s3:0, s4:0, s5:0 },
+  mgrRatings: { s1:0, s2:0, s3:0, s4:0, s5:0, overall:0 },
+};
+
+// ── UTILITIES ──
+function setLoading(msg) {
+  document.getElementById('loading-msg').textContent = msg||'';
+  document.getElementById('loading-overlay').classList.add('show');
+}
+function clearLoading() { document.getElementById('loading-overlay').classList.remove('show'); }
+function toast(msg) {
+  const t = document.getElementById('toast'); t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3000);
+}
+function showModal(id)  { document.getElementById(id).classList.add('show'); }
+function closeModal(id) { document.getElementById(id).classList.remove('show'); }
+function getBadge(s) {
+  return {Draft:'badge-draft',Submitted:'badge-submitted','Under Review':'badge-review',
+          Approved:'badge-approved',Returned:'badge-returned'}[s]||'badge-draft';
+}
+function fmtDate(iso) {
+  if(!iso) return '—';
+  return new Date(iso).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
 }
 
-// ══════════════════════════════════════════════
-// LOGIN / LOGOUT
-// ══════════════════════════════════════════════
-function autofillLogin(code) {
-  document.getElementById('login-code').value = code;
-  document.getElementById('login-code').focus();
-}
-
-function doLogin() {
-  const code = (document.getElementById('login-code').value || '').trim().toUpperCase();
-  const nameOverride = (document.getElementById('login-name').value || '').trim();
-  if (!code) { alert('Please enter your Employee ID or access code.'); return; }
-  const user = DEMO_USERS.find(u => u.code === code);
-  if (!user) { alert('Access code not recognised.\n\nValid codes: EMP001–EMP005, MGR001, ADMIN'); return; }
-  state.currentUser = Object.assign({}, user, { displayName: nameOverride || user.name });
-  lsSet('session', state.currentUser);
+// ── AUTH ──
+async function doLogin() {
+  const email    = (document.getElementById('login-email').value||'').trim();
+  const password = document.getElementById('login-password').value;
+  const errEl    = document.getElementById('login-error');
+  errEl.style.display='none';
+  if(!email||!password){showLoginErr('Please enter your email and password.');return;}
+  setLoading('Signing in…');
+  const {data,error} = await supabase.auth.signInWithPassword({email,password});
+  if(error){clearLoading();showLoginErr(error.message);return;}
+  await loadUserProfile(data.user.id,data.user.email);
+  clearLoading();
   applyLogin();
 }
+function showLoginErr(msg){const el=document.getElementById('login-error');el.textContent=msg;el.style.display='';}
 
-function applyLogin() {
-  const user = state.currentUser;
-  if (!user) return;
-  document.getElementById('topbar-user-name').textContent = user.displayName || user.name;
-  document.getElementById('topbar-role-label').style.display = '';
-  document.getElementById('btn-switch-role').style.display = '';
-  document.getElementById('btn-logout').style.display = '';
-  const firstName = (user.displayName || user.name).split(' ')[0];
-  document.getElementById('picker-welcome').textContent = 'Welcome, ' + firstName + ' 👋';
-  if (user.role === 'employee') { selectRole('employee'); }
-  else if (user.role === 'manager') { selectRole('manager'); }
-  else if (user.role === 'hr') { selectRole('hr'); }
-}
-
-function doLogout() {
-  state.currentUser = null;
-  state.currentRole = null;
-  localStorage.removeItem('epa_session');
-  document.getElementById('topbar-user-name').textContent = '';
-  document.getElementById('topbar-role-label').style.display = 'none';
-  document.getElementById('btn-switch-role').style.display = 'none';
-  document.getElementById('btn-logout').style.display = 'none';
+async function doLogout(){
+  setLoading('Signing out…');
+  await supabase.auth.signOut();
+  clearLoading();
+  Object.assign(state,{currentUser:null,currentRole:null,activeCycle:null,mySubmission:null,teamData:[],allData:[]});
+  ['topbar-user-name'].forEach(id=>document.getElementById(id).textContent='');
+  ['topbar-role-label','btn-switch-role','btn-logout'].forEach(id=>document.getElementById(id).style.display='none');
   showScreen('scrLogin');
-  toast('Logged out. Your data is saved.');
 }
 
-// ══════════════════════════════════════════════
-// NAVIGATION
-// ══════════════════════════════════════════════
-function showScreen(id) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+async function loadUserProfile(userId,email){
+  const {data:profile,error} = await supabase.from('profiles').select('*').eq('id',userId).single();
+  if(error||!profile){await supabase.auth.signOut();showLoginErr('Profile not found. Contact HR.');return;}
+  state.currentUser = {...profile,email};
+  const {data:cycle} = await supabase.from('cycles').select('*').eq('is_active',true).maybeSingle();
+  state.activeCycle = cycle||null;
+  const badge = document.getElementById('login-cycle-badge');
+  if(badge) badge.textContent = cycle ? cycle.name : 'No active cycle';
+}
+
+// ── NAVIGATION ──
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
-  window.scrollTo(0, 0);
+  window.scrollTo(0,0);
 }
-
-function goRolePicker() {
-  document.getElementById('topbar-role-label').textContent = '—';
-  showScreen('scrRolePicker');
+function applyLogin(){
+  const user=state.currentUser; if(!user) return;
+  document.getElementById('topbar-user-name').textContent=user.full_name;
+  document.getElementById('topbar-role-label').style.display='';
+  document.getElementById('btn-switch-role').style.display='';
+  document.getElementById('btn-logout').style.display='';
+  const firstName=user.full_name.split(' ')[0];
+  const pw=document.getElementById('picker-welcome'); if(pw) pw.textContent='Welcome, '+firstName+' 👋';
+  if(user.role==='employee') selectRole('employee');
+  else if(user.role==='manager') selectRole('manager');
+  else showScreen('scrRolePicker');
 }
-
-function selectRole(role) {
-  state.currentRole = role;
-  const labels = { employee:'Employee', manager:'Manager', hr:'HR Admin' };
-  document.getElementById('topbar-role-label').textContent = labels[role];
-  if (role === 'employee') {
-    showScreen('scrEmployeeHome');
-    loadEmployeeForm();
-    empNav('empDashboard');
-  } else if (role === 'manager') {
-    showScreen('scrManagerHome');
-    mgrNav('mgrDashboard');
-    renderMgrTeam();
-  } else if (role === 'hr') {
-    showScreen('scrHRHome');
-    hrNav('hrDashboard');
-    renderHRTables();
-  }
+function goRolePicker(){document.getElementById('topbar-role-label').textContent='—';showScreen('scrRolePicker');}
+function selectRole(role){
+  if(state.currentUser.role!=='hr'&&role!==state.currentUser.role){toast('Access denied.');return;}
+  state.currentRole=role;
+  const labels={employee:'Employee',manager:'Manager',hr:'HR Admin'};
+  document.getElementById('topbar-role-label').textContent=labels[role];
+  if(role==='employee'){showScreen('scrEmployeeHome');loadEmployeeData();empNav('empDashboard');}
+  else if(role==='manager'){showScreen('scrManagerHome');loadManagerData();mgrNav('mgrDashboard');}
+  else{showScreen('scrHRHome');loadHRData();hrNav('hrDashboard');}
 }
-
-function empNav(section) {
-  ['empDashboard','empForm','empHistory'].forEach(s => document.getElementById(s).style.display = 'none');
-  document.getElementById(section).style.display = '';
-  document.querySelectorAll('#scrEmployeeHome .sidebar-item').forEach(el => el.classList.remove('active'));
-  const idx = { empDashboard:0, empForm:1, empHistory:2 };
+function empNav(section){
+  ['empDashboard','empForm','empHistory'].forEach(s=>document.getElementById(s).style.display='none');
+  document.getElementById(section).style.display='';
+  document.querySelectorAll('#scrEmployeeHome .sidebar-item').forEach(el=>el.classList.remove('active'));
+  const idx={empDashboard:0,empForm:1,empHistory:2};
   document.querySelectorAll('#scrEmployeeHome .sidebar-item')[idx[section]].classList.add('active');
-  updateTimeline();
-  if (section === 'empForm') updateFormProgress();
+  updateTimeline(); if(section==='empForm') updateFormProgress();
 }
-
-function mgrNav(section) {
-  ['mgrDashboard','mgrTeam','mgrReview'].forEach(s => document.getElementById(s).style.display = 'none');
-  document.getElementById(section).style.display = '';
-  document.querySelectorAll('#scrManagerHome .sidebar-item').forEach(el => el.classList.remove('active'));
-  if (section !== 'mgrReview') {
-    const idx = { mgrDashboard:0, mgrTeam:1 };
-    document.querySelectorAll('#scrManagerHome .sidebar-item')[idx[section]].classList.add('active');
-  }
+function mgrNav(section){
+  ['mgrDashboard','mgrTeam','mgrReview'].forEach(s=>document.getElementById(s).style.display='none');
+  document.getElementById(section).style.display='';
+  document.querySelectorAll('#scrManagerHome .sidebar-item').forEach(el=>el.classList.remove('active'));
+  if(section!=='mgrReview'){const idx={mgrDashboard:0,mgrTeam:1};document.querySelectorAll('#scrManagerHome .sidebar-item')[idx[section]].classList.add('active');}
   renderMgrTeam();
 }
-
-function hrNav(section) {
-  ['hrDashboard','hrAll','hrDetail','hrReports'].forEach(s => document.getElementById(s).style.display = 'none');
-  document.getElementById(section).style.display = '';
-  document.querySelectorAll('#scrHRHome .sidebar-item').forEach(el => el.classList.remove('active'));
-  const idx = { hrDashboard:0, hrAll:1, hrReports:2 };
-  if (idx[section] !== undefined) document.querySelectorAll('#scrHRHome .sidebar-item')[idx[section]].classList.add('active');
-  if (section === 'hrAll') renderHRAll();
-  if (section === 'hrReports') renderReports();
+function hrNav(section){
+  ['hrDashboard','hrAll','hrDetail','hrReports','hrUsers','hrCycles'].forEach(s=>{const el=document.getElementById(s);if(el)el.style.display='none';});
+  document.getElementById(section).style.display='';
+  document.querySelectorAll('#scrHRHome .sidebar-item').forEach(el=>el.classList.remove('active'));
+  const idx={hrDashboard:0,hrAll:1,hrReports:2,hrUsers:3,hrCycles:4};
+  if(idx[section]!==undefined) document.querySelectorAll('#scrHRHome .sidebar-item')[idx[section]].classList.add('active');
+  if(section==='hrAll') renderHRAll();
+  if(section==='hrReports') renderReports();
+  if(section==='hrUsers') loadAllProfiles();
+  if(section==='hrCycles') loadCycles();
 }
 
-// ══════════════════════════════════════════════
-// EMPLOYEE FORM
-// ══════════════════════════════════════════════
-function loadEmployeeForm() {
-  const user = state.currentUser;
-  if (!user || !user.empId) return;
-  const emp = allEmployees.find(e => e.id === user.empId);
-  if (!emp) return;
-
-  // Update dash title
-  const firstName = (user.displayName || user.name).split(' ')[0];
-  const titleEl = document.getElementById('emp-dash-title');
-  if (titleEl) titleEl.textContent = firstName + "'s Dashboard";
-
-  // Fill form fields (always override HTML defaults)
-  ['s1','s2','s3','s4','s5','s6','s7'].forEach(s => {
-    const el = document.getElementById(s + '-text');
-    if (el) el.value = emp[s] || '';
+// ── EMPLOYEE ──
+async function loadEmployeeData(){
+  if(!state.activeCycle){toast('No active PA cycle. Contact HR.');return;}
+  setLoading('Loading your PA…');
+  const empCode=state.currentUser.employee_code, cycleId=state.activeCycle.id;
+  let {data:sub}=await supabase.from('pa_submissions').select('*').eq('employee_code',empCode).eq('cycle_id',cycleId).maybeSingle();
+  if(!sub){
+    const {data:newSub,error}=await supabase.from('pa_submissions').insert({
+      employee_code:empCode,cycle_id:cycleId,cycle_name:state.activeCycle.name,
+      manager_code:state.currentUser.manager_code||null,status:'Draft',section_data:{}
+    }).select().single();
+    if(error){clearLoading();toast('Error: '+error.message);return;}
+    sub=newSub;
+  }
+  state.mySubmission=sub; clearLoading(); loadEmployeeForm();
+}
+function loadEmployeeForm(){
+  const sub=state.mySubmission,user=state.currentUser; if(!sub) return;
+  const firstName=user.full_name.split(' ')[0];
+  const titleEl=document.getElementById('emp-dash-title'); if(titleEl) titleEl.textContent=firstName+"'s Dashboard";
+  const sd=sub.section_data||{};
+  ['s1','s2','s3','s4','s5','s6','s7'].forEach(s=>{const el=document.getElementById(s+'-text');if(el)el.value=sd[s]||'';});
+  const selfR=sd.selfRatings||{};
+  ['s1','s2','s3','s4','s5'].forEach(s=>{
+    const val=selfR[s]||0; state.ratings[s]=val;
+    const stars=document.getElementById('stars-'+s); if(stars) stars.querySelectorAll('.star').forEach((st,i)=>st.classList.toggle('filled',i<val));
+    const lbl=document.getElementById('rating-label-'+s); if(lbl) lbl.textContent=val>0?val+' / 5 — '+ratingLabels[val]:'Not rated';
   });
-
-  // Reset + apply ratings
-  ['s1','s2','s3','s4','s5'].forEach(s => {
-    const val = emp.selfRatings[s] || 0;
-    state.ratings[s] = val;
-    const stars = document.getElementById('stars-' + s);
-    if (stars) stars.querySelectorAll('.star').forEach((st, i) => st.classList.toggle('filled', i < val));
-    const lbl = document.getElementById('rating-label-' + s);
-    if (lbl) lbl.textContent = val > 0 ? val + ' / 5 — ' + ratingLabels[val] : 'Not rated';
-  });
-
-  state.empFormStatus = emp.status || 'Draft';
-  const statusStat = document.getElementById('emp-status-stat');
-  if (statusStat) statusStat.textContent = state.empFormStatus;
-
-  const submitted = document.getElementById('emp-submitted-notice');
-  const returned  = document.getElementById('emp-returned-notice');
-  const submitBtn = document.getElementById('emp-submit-btn');
-  if (submitted) submitted.style.display = ['Submitted','Under Review','Approved'].includes(emp.status) ? '' : 'none';
-  if (returned)  returned.style.display  = emp.status === 'Returned' ? '' : 'none';
-  if (submitBtn) submitBtn.textContent   = ['Submitted','Under Review','Approved'].includes(emp.status) ? '🔄 Resubmit PA' : '🚀 Submit PA';
-
-  updateTimeline();
+  const status=sub.status||'Draft';
+  const ss=document.getElementById('emp-status-stat'); if(ss) ss.textContent=status;
+  const submitted=document.getElementById('emp-submitted-notice'); if(submitted) submitted.style.display=['Submitted','Under Review','Approved'].includes(status)?'':'none';
+  const returned=document.getElementById('emp-returned-notice'); if(returned) returned.style.display=(status==='Returned')?'':'none';
+  const btn=document.getElementById('emp-submit-btn'); if(btn) btn.textContent=['Submitted','Under Review','Approved'].includes(status)?'🔄 Resubmit PA':'🚀 Submit PA';
+  updateTimeline(); updateFormProgress();
+}
+function setRating(section,val){
+  state.ratings[section]=val;
+  document.getElementById('stars-'+section).querySelectorAll('.star').forEach((s,i)=>s.classList.toggle('filled',i<val));
+  document.getElementById('rating-label-'+section).textContent=val+' / 5 — '+ratingLabels[val];
   updateFormProgress();
 }
-
-function setRating(section, val) {
-  state.ratings[section] = val;
-  document.getElementById('stars-' + section).querySelectorAll('.star').forEach((s, i) => s.classList.toggle('filled', i < val));
-  document.getElementById('rating-label-' + section).textContent = val + ' / 5 — ' + ratingLabels[val];
-  updateFormProgress();
+function updateFormProgress(){
+  const filled=['s1','s2','s3','s4','s5'].filter(s=>state.ratings[s]>0).length;
+  const texts=['s1','s2','s3','s4','s5','s6','s7'].filter(s=>{const el=document.getElementById(s+'-text');return el&&el.value.trim().length>0;}).length;
+  const pct=Math.min(100,Math.round(((filled*2+texts)/17)*100));
+  document.getElementById('form-progress-bar').style.width=pct+'%';
+  document.getElementById('form-progress-pct').textContent=pct+'%';
+  document.getElementById('emp-completion').textContent=pct+'%';
 }
-
-function updateFormProgress() {
-  const filled = ['s1','s2','s3','s4','s5'].filter(s => state.ratings[s] > 0).length;
-  const texts  = ['s1','s2','s3','s4','s5','s6','s7'].filter(s => { const el = document.getElementById(s+'-text'); return el && el.value.trim().length > 0; }).length;
-  const pct = Math.min(100, Math.round(((filled * 2 + texts) / 17) * 100));
-  document.getElementById('form-progress-bar').style.width = pct + '%';
-  document.getElementById('form-progress-pct').textContent = pct + '%';
-  document.getElementById('emp-completion').textContent = pct + '%';
-}
-
-function collectFormData() {
-  const data = { selfRatings: Object.assign({}, state.ratings) };
-  ['s1','s2','s3','s4','s5','s6','s7'].forEach(s => {
-    const el = document.getElementById(s + '-text');
-    data[s] = el ? el.value : '';
-  });
+function collectFormData(){
+  const data={selfRatings:Object.assign({},state.ratings)};
+  ['s1','s2','s3','s4','s5','s6','s7'].forEach(s=>{const el=document.getElementById(s+'-text');data[s]=el?el.value:'';});
   return data;
 }
-
-function saveForm() {
-  const user = state.currentUser;
-  const formData = collectFormData();
-  if (user && user.empId) {
-    const emp = allEmployees.find(e => e.id === user.empId);
-    if (emp) {
-      ['s1','s2','s3','s4','s5','s6','s7'].forEach(s => { emp[s] = formData[s]; });
-      emp.selfRatings = Object.assign({}, formData.selfRatings);
-    }
-    const savedForms = lsGet('forms') || {};
-    savedForms[user.empId] = formData;
-    lsSet('forms', savedForms);
-  }
+async function saveForm(){
+  if(!state.mySubmission) return;
+  setLoading('Saving draft…');
+  const {error}=await supabase.from('pa_submissions').update({section_data:collectFormData()}).eq('id',state.mySubmission.id);
+  clearLoading();
+  if(error){toast('Save failed: '+error.message);return;}
+  state.mySubmission.section_data=collectFormData();
   showModal('modal-saved');
 }
-
-function submitForm() { showModal('modal-submit'); }
-
-function confirmSubmit() {
-  closeModal('modal-submit');
-  const user = state.currentUser;
-  const formData = collectFormData();
-  const now = new Date().toLocaleDateString('en-GB', {day:'numeric', month:'short', year:'numeric'});
-
-  if (user && user.empId) {
-    const emp = allEmployees.find(e => e.id === user.empId);
-    if (emp) {
-      ['s1','s2','s3','s4','s5','s6','s7'].forEach(s => { emp[s] = formData[s]; });
-      emp.selfRatings = Object.assign({}, formData.selfRatings);
-      emp.status    = 'Submitted';
-      emp.submitted = now;
-    }
-    const savedStatuses = lsGet('statuses') || {};
-    const savedForms    = lsGet('forms')    || {};
-    savedStatuses[user.empId] = { status:'Submitted', submitted: now };
-    savedForms[user.empId]    = formData;
-    lsSet('statuses', savedStatuses);
-    lsSet('forms', savedForms);
-  }
-
-  state.empFormStatus = 'Submitted';
-  document.getElementById('emp-submitted-notice').style.display = '';
-  document.getElementById('emp-submit-btn').textContent = '🔄 Resubmit PA';
-  document.getElementById('emp-status-stat').textContent = 'Submitted';
-  updateTimeline();
-  empNav('empDashboard');
+function submitForm(){showModal('modal-submit');}
+async function confirmSubmit(){
+  closeModal('modal-submit'); if(!state.mySubmission) return;
+  const formData=collectFormData(); setLoading('Submitting PA…');
+  const {data:updated,error}=await supabase.from('pa_submissions').update({section_data:formData,status:'Submitted',submitted_at:new Date().toISOString()}).eq('id',state.mySubmission.id).select().single();
+  clearLoading(); if(error){toast('Submit failed: '+error.message);return;}
+  state.mySubmission=updated; loadEmployeeForm(); empNav('empDashboard');
   toast('PA submitted! Your manager has been notified.');
 }
-
-function updateTimeline() {
-  const status = state.empFormStatus;
-  const steps  = ['Submitted','Under Review','Approved'];
-  const dots   = ['tl-submitted','tl-review','tl-approved'];
-  const lines  = ['tl-line-review','tl-line-approved'];
-  const idx    = steps.indexOf(status);
-  dots.forEach((id, i) => {
-    const dot = document.getElementById(id);
-    if (!dot) return;
-    if (i < idx)  { dot.className = 'tl-dot done';         dot.textContent = '✓'; }
-    else if (i === idx) { dot.className = 'tl-dot active-step'; dot.textContent = i+2; }
-    else          { dot.className = 'tl-dot pending-step'; dot.textContent = i+2; }
-  });
-  lines.forEach((id, i) => {
-    const el = document.getElementById(id);
-    if (el) el.className = 'tl-line' + (i < idx ? ' done' : '');
-  });
+function updateTimeline(){
+  const status=state.mySubmission?state.mySubmission.status:'Draft';
+  const steps=['Submitted','Under Review','Approved'],dots=['tl-submitted','tl-review','tl-approved'],lines=['tl-line-review','tl-line-approved'];
+  const idx=steps.indexOf(status);
+  dots.forEach((id,i)=>{const dot=document.getElementById(id);if(!dot)return;
+    if(i<idx){dot.className='tl-dot done';dot.textContent='✓';}
+    else if(i===idx){dot.className='tl-dot active-step';dot.textContent=i+2;}
+    else{dot.className='tl-dot pending-step';dot.textContent=i+2;}});
+  lines.forEach((id,i)=>{const el=document.getElementById(id);if(el)el.className='tl-line'+(i<idx?' done':'');});
 }
 
-// ══════════════════════════════════════════════
-// MANAGER
-// ══════════════════════════════════════════════
-function setMgrRating(section, val) {
-  state.mgrRatings[section] = val;
-  document.getElementById('mgr-stars-' + section).querySelectorAll('.star').forEach((s, i) => s.classList.toggle('filled', i < val));
-  document.getElementById('mgr-rating-label-' + section).textContent = val + ' / 5 — ' + ratingLabels[val];
+// ── MANAGER ──
+async function loadManagerData(){
+  if(!state.activeCycle){toast('No active PA cycle.');return;}
+  setLoading('Loading team data…');
+  const myCode=state.currentUser.employee_code,cycleId=state.activeCycle.id;
+  const {data:reportProfiles}=await supabase.from('profiles').select('*').eq('manager_code',myCode).eq('is_active',true);
+  const empCodes=(reportProfiles||[]).map(p=>p.employee_code);
+  let submissions=[];
+  if(empCodes.length>0){const {data:subs}=await supabase.from('pa_submissions').select('*').in('employee_code',empCodes).eq('cycle_id',cycleId);submissions=subs||[];}
+  state.teamData=(reportProfiles||[]).map(p=>({profile:p,submission:submissions.find(s=>s.employee_code===p.employee_code)||null,status:submissions.find(s=>s.employee_code===p.employee_code)?.status||'Not Started'}));
+  clearLoading(); renderMgrTeam();
 }
-
-function renderMgrTeam() {
-  const bc = (s) => ({Draft:'badge-draft',Submitted:'badge-submitted','Under Review':'badge-review',Approved:'badge-approved',Returned:'badge-returned'}[s]||'badge-draft');
-  const row = (emp) => `
-    <tr class="clickable" onclick="openMgrReview(${emp.id})">
-      <td><strong>${emp.name}</strong><br><span style="font-size:12px;color:var(--gray-text)">${emp.email}</span></td>
-      <td>${emp.dept}</td>
-      <td><span class="badge ${bc(emp.status)}">${emp.status}</span></td>
-      <td>${emp.submitted}</td>
-      <td>${emp.status==='Submitted'||emp.status==='Under Review'
-        ? '<button class="btn btn-primary btn-sm" onclick="event.stopPropagation();openMgrReview('+emp.id+')">Review →</button>'
-        : '<span style="color:var(--gray-text);font-size:12px;">'+(emp.status==='Approved'?'✅ Done':'—')+'</span>'}</td>
-    </tr>`;
-  const html = employees.map(row).join('');
-  ['mgr-team-preview','mgr-team-full'].forEach(id => { const el = document.getElementById(id); if (el) el.innerHTML = html; });
-  document.getElementById('mgr-approved-count').textContent = employees.filter(e=>e.status==='Approved').length;
-  document.getElementById('mgr-pending-count').textContent  = employees.filter(e=>e.status==='Submitted'||e.status==='Under Review').length;
-  document.getElementById('mgr-draft-count').textContent    = employees.filter(e=>e.status==='Draft').length;
-  const pending = employees.filter(e=>e.status==='Submitted'||e.status==='Under Review').length;
-  const infoEl = document.getElementById('mgr-action-info');
-  if (infoEl) infoEl.textContent = pending > 0
-    ? '📌 Action needed: ' + pending + ' team member(s) awaiting your review. Please complete by 15 Jul 2026.'
-    : '✅ All team PA reviews are up to date.';
+function renderMgrTeam(){
+  const row=item=>{
+    const p=item.profile,status=item.status,sub=item.submission,submittedAt=sub?fmtDate(sub.submitted_at):'—';
+    const canReview=status==='Submitted'||status==='Under Review';
+    return `<tr class="clickable" onclick="openMgrReview('${p.employee_code}')">
+      <td><strong>${p.full_name}</strong><br><span style="font-size:12px;color:var(--gray-text)">${p.email||''}</span></td>
+      <td>${p.department||'—'}</td><td><span class="badge ${getBadge(status)}">${status}</span></td><td>${submittedAt}</td>
+      <td>${canReview?'<button class="btn btn-primary btn-sm" onclick="event.stopPropagation();openMgrReview(\''+p.employee_code+'\')">Review →</button>':'<span style="color:var(--gray-text);font-size:12px;">'+(status==='Approved'?'✅ Done':'—')+'</span>'}</td></tr>`;};
+  const html=state.teamData.map(row).join('');
+  ['mgr-team-preview','mgr-team-full'].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML=html||'<tr><td colspan="5" style="text-align:center;padding:24px;color:var(--gray-text);">No direct reports found.</td></tr>';});
+  const el=id=>document.getElementById(id);
+  if(el('mgr-approved-count')) el('mgr-approved-count').textContent=state.teamData.filter(i=>i.status==='Approved').length;
+  if(el('mgr-pending-count'))  el('mgr-pending-count').textContent=state.teamData.filter(i=>i.status==='Submitted'||i.status==='Under Review').length;
+  if(el('mgr-draft-count'))    el('mgr-draft-count').textContent=state.teamData.filter(i=>i.status==='Draft'||i.status==='Not Started').length;
+  const pending=state.teamData.filter(i=>i.status==='Submitted'||i.status==='Under Review').length;
+  const info=el('mgr-action-info'); if(info) info.textContent=pending>0?'📌 Action needed: '+pending+' team member(s) awaiting your review.':'✅ All team PA reviews are up to date.';
 }
-
-function openMgrReview(id) {
-  const emp = employees.find(e => e.id === id);
-  if (!emp) return;
-  state.currentEmp = emp;
-  state.mgrRatings = { s1:0, s2:0, s3:0, s4:0, s5:0, overall:0 };
-
-  document.getElementById('mgr-emp-profile-card').innerHTML = `
-    <div class="emp-profile-card">
-      <div class="emp-avatar">${emp.avatar}</div>
-      <div>
-        <div class="emp-name">${emp.name}</div>
-        <div class="emp-meta">${emp.dept} · Manager: ${emp.manager}</div>
-        <div class="emp-meta">${emp.email}</div>
-      </div>
-      <div class="emp-status-wrap">
-        <span class="badge ${getBadge(emp.status)}">${emp.status}</span>
-        <div style="font-size:12px;color:var(--gray-text);margin-top:6px;">Submitted: ${emp.submitted}</div>
-      </div>
-    </div>`;
-
-  ['s1','s2','s3','s4','s5','s6','s7'].forEach(s => {
-    const el = document.getElementById('mgr-' + s + '-text');
-    if (el) el.value = emp[s] || '(Not filled by employee)';
+async function openMgrReview(empCode){
+  const item=state.teamData.find(i=>i.profile.employee_code===empCode); if(!item) return;
+  state.currentEmp=item; state.mgrRatings={s1:0,s2:0,s3:0,s4:0,s5:0,overall:0};
+  const p=item.profile,sub=item.submission,sd=sub?(sub.section_data||{}):{},selfR=sd.selfRatings||{};
+  const av=p.full_name.split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase();
+  document.getElementById('mgr-emp-profile-card').innerHTML=`<div class="emp-profile-card"><div class="emp-avatar">${av}</div><div><div class="emp-name">${p.full_name}</div><div class="emp-meta">${p.department||'—'} · Code: ${p.manager_code||'—'}</div><div class="emp-meta">${p.email||''}</div></div><div class="emp-status-wrap"><span class="badge ${getBadge(item.status)}">${item.status}</span><div style="font-size:12px;color:var(--gray-text);margin-top:6px;">Submitted: ${sub?fmtDate(sub.submitted_at):'—'}</div></div></div>`;
+  ['s1','s2','s3','s4','s5','s6','s7'].forEach(s=>{const el=document.getElementById('mgr-'+s+'-text');if(el)el.value=sd[s]||'(Not filled by employee)';});
+  ['s1','s2','s3','s4','s5'].forEach(s=>{const r=selfR[s]||0;const el=document.getElementById('mgr-'+s+'-self-rating');if(el)el.textContent=r>0?'★'.repeat(r)+'☆'.repeat(5-r):'—';});
+  const msr=sub?(sub.manager_section_ratings||{}):{},msc=sub?(sub.manager_section_comments||{}):{};
+  ['s1','s2','s3','s4','s5'].forEach(s=>{
+    if(msr[s]){state.mgrRatings[s]=msr[s];setMgrRating(s,msr[s]);}
+    else{const stars=document.getElementById('mgr-stars-'+s);if(stars)stars.querySelectorAll('.star').forEach(st=>st.classList.remove('filled'));const lbl=document.getElementById('mgr-rating-label-'+s);if(lbl)lbl.textContent='Not rated';}
   });
-  ['s1','s2','s3','s4','s5'].forEach(s => {
-    const r = emp.selfRatings[s];
-    const el = document.getElementById('mgr-' + s + '-self-rating');
-    if (el) el.textContent = r > 0 ? '★'.repeat(r) + '☆'.repeat(5-r) : '—';
-  });
-  // Reset mgr stars
-  ['s1','s2','s3','s4','s5','overall'].forEach(s => {
-    const stars = document.getElementById('mgr-stars-' + s);
-    if (stars) stars.querySelectorAll('.star').forEach(st => st.classList.remove('filled'));
-    const lbl = document.getElementById('mgr-rating-label-' + s);
-    if (lbl) lbl.textContent = 'Not rated';
-  });
-  const rec = document.getElementById('mgr-recommendation');
-  if (rec) rec.value = '';
-  const oc = document.getElementById('mgr-overall-comment');
-  if (oc) oc.value = '';
-
-  document.getElementById('mgr-action-btns').style.display    = (emp.status==='Approved'||emp.status==='Draft') ? 'none' : 'flex';
-  document.getElementById('mgr-approved-notice').style.display = emp.status==='Approved' ? '' : 'none';
-  document.getElementById('mgr-returned-notice').style.display = emp.status==='Returned' ? '' : 'none';
-  document.getElementById('mgr-review-info').style.display     = (emp.status==='Submitted'||emp.status==='Under Review') ? '' : 'none';
-
-  if (emp.status === 'Submitted') {
-    emp.status = 'Under Review';
-    const savedStatuses = lsGet('statuses') || {};
-    savedStatuses[emp.id] = { status:'Under Review', submitted: emp.submitted };
-    lsSet('statuses', savedStatuses);
-    renderMgrTeam();
-  }
+  ['s1','s2','s3','s4','s5','s6','s7'].forEach(s=>{const el=document.getElementById('mgr-'+s+'-comment');if(el)el.value=msc[s]||'';});
+  if(sub&&sub.manager_overall_rating){state.mgrRatings.overall=sub.manager_overall_rating;setMgrRating('overall',sub.manager_overall_rating);}
+  else{const stars=document.getElementById('mgr-stars-overall');if(stars)stars.querySelectorAll('.star').forEach(st=>st.classList.remove('filled'));}
+  const rec=document.getElementById('mgr-recommendation');if(rec)rec.value=(sub&&sub.manager_recommendation)||'';
+  const oc=document.getElementById('mgr-overall-comment');if(oc)oc.value=(sub&&sub.manager_overall_comment)||'';
+  const status=item.status;
+  document.getElementById('mgr-action-btns').style.display=(status==='Approved'||status==='Draft'||status==='Not Started')?'none':'flex';
+  document.getElementById('mgr-approved-notice').style.display=status==='Approved'?'':'none';
+  document.getElementById('mgr-returned-notice').style.display=status==='Returned'?'':'none';
+  document.getElementById('mgr-review-info').style.display=(status==='Submitted'||status==='Under Review')?'':'none';
+  if(status==='Submitted'&&sub){await supabase.from('pa_submissions').update({status:'Under Review'}).eq('id',sub.id);item.status='Under Review';if(item.submission)item.submission.status='Under Review';renderMgrTeam();}
   mgrNav('mgrReview');
 }
-
-function approvePA() { showModal('modal-approve'); }
-function returnPA()  { showModal('modal-return');  }
-
-function confirmApprove() {
-  closeModal('modal-approve');
-  if (state.currentEmp) {
-    state.currentEmp.status = 'Approved';
-    const ss = lsGet('statuses') || {};
-    ss[state.currentEmp.id] = { status:'Approved', submitted: state.currentEmp.submitted };
-    lsSet('statuses', ss);
-    renderMgrTeam();
-    renderHRTables();
-  }
-  mgrNav('mgrTeam');
-  toast('PA Approved! Employee has been notified.');
+function setMgrRating(section,val){
+  state.mgrRatings[section]=val;
+  const stars=document.getElementById('mgr-stars-'+section);if(stars)stars.querySelectorAll('.star').forEach((s,i)=>s.classList.toggle('filled',i<val));
+  const lbl=document.getElementById('mgr-rating-label-'+section);if(lbl)lbl.textContent=val+' / 5 — '+ratingLabels[val];
+}
+function collectMgrReview(){
+  const sc={},sr=Object.assign({},state.mgrRatings);
+  ['s1','s2','s3','s4','s5','s6','s7'].forEach(s=>{const el=document.getElementById('mgr-'+s+'-comment');sc[s]=el?el.value:'';});
+  return{manager_section_comments:sc,manager_section_ratings:sr,manager_overall_rating:state.mgrRatings.overall||null,
+    manager_recommendation:document.getElementById('mgr-recommendation')?.value||null,
+    manager_overall_comment:document.getElementById('mgr-overall-comment')?.value||''};
+}
+function approvePA(){showModal('modal-approve');}
+function returnPA(){showModal('modal-return');}
+async function confirmApprove(){
+  closeModal('modal-approve');const item=state.currentEmp;if(!item||!item.submission)return;
+  setLoading('Approving PA…');
+  const {error}=await supabase.from('pa_submissions').update({status:'Approved',reviewed_at:new Date().toISOString(),...collectMgrReview()}).eq('id',item.submission.id);
+  clearLoading();if(error){toast('Error: '+error.message);return;}
+  item.status='Approved';item.submission.status='Approved';renderMgrTeam();mgrNav('mgrTeam');toast('PA Approved!');
+}
+async function confirmReturn(){
+  closeModal('modal-return');const item=state.currentEmp;if(!item||!item.submission)return;
+  setLoading('Returning PA…');
+  const {error}=await supabase.from('pa_submissions').update({status:'Returned',reviewed_at:new Date().toISOString(),...collectMgrReview()}).eq('id',item.submission.id);
+  clearLoading();if(error){toast('Error: '+error.message);return;}
+  item.status='Returned';item.submission.status='Returned';renderMgrTeam();mgrNav('mgrTeam');toast('PA returned to employee for revision.');
 }
 
-function confirmReturn() {
-  closeModal('modal-return');
-  if (state.currentEmp) {
-    state.currentEmp.status = 'Returned';
-    const ss = lsGet('statuses') || {};
-    ss[state.currentEmp.id] = { status:'Returned', submitted: state.currentEmp.submitted };
-    lsSet('statuses', ss);
-    renderMgrTeam();
-    renderHRTables();
-  }
-  mgrNav('mgrTeam');
-  toast('PA returned to employee for revision.');
+// ── HR ADMIN ──
+async function loadHRData(){
+  if(!state.activeCycle){const s=document.getElementById('hr-dash-sub');if(s)s.textContent='No active PA cycle — go to PA Cycles to create one.';return;}
+  setLoading('Loading HR data…');
+  const {data:allP}=await supabase.from('profiles').select('*').eq('is_active',true);
+  const {data:allS}=await supabase.from('pa_submissions').select('*').eq('cycle_id',state.activeCycle.id);
+  state.allProfiles=allP||[];
+  state.allData=(allP||[]).map(p=>({profile:p,submission:(allS||[]).find(s=>s.employee_code===p.employee_code)||null,status:(allS||[]).find(s=>s.employee_code===p.employee_code)?.status||'Not Started'}));
+  const sub=document.getElementById('hr-dash-sub');if(sub)sub.textContent='PA Tracker — '+state.activeCycle.name;
+  const depts=[...new Set(state.allProfiles.map(p=>p.department).filter(Boolean))].sort();
+  const deptSel=document.getElementById('hr-filter-dept');
+  if(deptSel)deptSel.innerHTML='<option value="">All Departments</option>'+depts.map(d=>`<option value="${d}">${d}</option>`).join('');
+  clearLoading();renderHRTables();
 }
-
-// ══════════════════════════════════════════════
-// HR ADMIN
-// ══════════════════════════════════════════════
-function renderHRTables() { renderHRRecent(); renderHRAll(); updateHRStats(); }
-function getBadge(s) { return {Draft:'badge-draft',Submitted:'badge-submitted','Under Review':'badge-review',Approved:'badge-approved',Returned:'badge-returned'}[s]||'badge-draft'; }
-
-function renderHRRecent() {
-  const tbl = document.getElementById('hr-recent-table');
-  if (!tbl) return;
-  tbl.innerHTML = allEmployees.slice(0,5).map(e => `
-    <tr class="clickable" onclick="openHRDetail(${e.id})">
-      <td><strong>${e.name}</strong></td><td>${e.manager}</td><td>${e.dept}</td>
-      <td><span class="badge ${getBadge(e.status)}">${e.status}</span></td><td>${e.submitted}</td>
-    </tr>`).join('');
+function renderHRTables(){renderHRRecent();renderHRAll();updateHRStats();}
+function renderHRRecent(){
+  const tbl=document.getElementById('hr-recent-table');if(!tbl)return;
+  tbl.innerHTML=state.allData.slice(0,5).map(item=>{
+    const p=item.profile,sub=item.submission,mgr=state.allProfiles.find(x=>x.employee_code===p.manager_code);
+    return `<tr class="clickable" onclick="openHRDetail('${p.employee_code}')"><td><strong>${p.full_name}</strong></td><td>${mgr?mgr.full_name:(p.manager_code||'—')}</td><td>${p.department||'—'}</td><td><span class="badge ${getBadge(item.status)}">${item.status}</span></td><td>${sub?fmtDate(sub.updated_at):'—'}</td></tr>`;
+  }).join('')||'<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--gray-text);">No data yet.</td></tr>';
 }
-
-function renderHRAll(filterStatus='', filterDept='') {
-  const tbl = document.getElementById('hr-all-table');
-  if (!tbl) return;
-  let data = allEmployees;
-  if (filterStatus) data = data.filter(e => e.status === filterStatus);
-  if (filterDept)   data = data.filter(e => e.dept   === filterDept);
-  tbl.innerHTML = data.map(e => `
-    <tr class="clickable" onclick="openHRDetail(${e.id})">
-      <td><strong>${e.name}</strong><br><span style="font-size:12px;color:var(--gray-text)">${e.email}</span></td>
-      <td>${e.dept}</td><td>${e.manager}</td>
-      <td><span class="badge ${getBadge(e.status)}">${e.status}</span></td>
-      <td>${e.submitted}</td>
-      <td><button class="btn btn-outline btn-sm" onclick="event.stopPropagation();openHRDetail(${e.id})">View</button></td>
-    </tr>`).join('');
+function renderHRAll(filterStatus='',filterDept=''){
+  const tbl=document.getElementById('hr-all-table');if(!tbl)return;
+  let data=state.allData;
+  if(filterStatus)data=data.filter(i=>i.status===filterStatus);
+  if(filterDept)data=data.filter(i=>i.profile.department===filterDept);
+  tbl.innerHTML=data.map(item=>{
+    const p=item.profile,sub=item.submission,mgr=state.allProfiles.find(x=>x.employee_code===p.manager_code);
+    return `<tr class="clickable" onclick="openHRDetail('${p.employee_code}')"><td><strong>${p.full_name}</strong><br><span style="font-size:12px;color:var(--gray-text)">${p.email||''}</span></td><td>${p.department||'—'}</td><td>${mgr?mgr.full_name:(p.manager_code||'—')}</td><td><span class="badge ${getBadge(item.status)}">${item.status}</span></td><td>${sub?fmtDate(sub.submitted_at):'—'}</td><td><button class="btn btn-outline btn-sm" onclick="event.stopPropagation();openHRDetail('${p.employee_code}')">View</button></td></tr>`;
+  }).join('')||'<tr><td colspan="6" style="text-align:center;padding:20px;color:var(--gray-text);">No records found.</td></tr>';
 }
-
-function applyHRFilter() {
-  renderHRAll(document.getElementById('hr-filter-status').value, document.getElementById('hr-filter-dept').value);
+function applyHRFilter(){renderHRAll(document.getElementById('hr-filter-status').value,document.getElementById('hr-filter-dept').value);}
+function updateHRStats(){
+  const el=id=>document.getElementById(id);
+  const total=state.allData.length,approved=state.allData.filter(i=>i.status==='Approved').length,
+    review=state.allData.filter(i=>i.status==='Under Review').length,submitted=state.allData.filter(i=>i.status==='Submitted').length,
+    draft=state.allData.filter(i=>i.status==='Draft'||i.status==='Not Started').length;
+  if(el('hr-total'))el('hr-total').textContent=total;if(el('hr-approved'))el('hr-approved').textContent=approved;
+  if(el('hr-review'))el('hr-review').textContent=review;if(el('hr-submitted'))el('hr-submitted').textContent=submitted;if(el('hr-draft'))el('hr-draft').textContent=draft;
+  const done=approved+review+submitted,pct=total?Math.round((done/total)*100):0;
+  if(el('hr-completion-bar'))el('hr-completion-bar').style.width=pct+'%';
+  if(el('hr-completion-text'))el('hr-completion-text').textContent=done+' of '+total+' employees in progress or done';
+  if(el('hr-completion-pct'))el('hr-completion-pct').textContent=pct+'%';
 }
-
-function updateHRStats() {
-  const total    = allEmployees.length;
-  const approved = allEmployees.filter(e=>e.status==='Approved').length;
-  const review   = allEmployees.filter(e=>e.status==='Under Review').length;
-  const submitted= allEmployees.filter(e=>e.status==='Submitted').length;
-  const draft    = allEmployees.filter(e=>e.status==='Draft').length;
-  document.getElementById('hr-total').textContent     = total;
-  document.getElementById('hr-approved').textContent  = approved;
-  document.getElementById('hr-review').textContent    = review;
-  document.getElementById('hr-submitted').textContent = submitted;
-  document.getElementById('hr-draft').textContent     = draft;
-  const done = approved + review + submitted;
-  const pct  = Math.round((done / total) * 100);
-  const bar  = document.getElementById('hr-completion-bar');
-  const txt  = document.getElementById('hr-completion-text');
-  const pctEl= document.getElementById('hr-completion-pct');
-  if (bar)   bar.style.width  = pct + '%';
-  if (txt)   txt.textContent  = done + ' of ' + total + ' employees completed or in progress';
-  if (pctEl) pctEl.textContent= pct + '%';
-}
-
-function openHRDetail(id) {
-  const emp = allEmployees.find(e => e.id === id);
-  if (!emp) return;
-  document.getElementById('hr-detail-profile').innerHTML = `
-    <div class="emp-profile-card">
-      <div class="emp-avatar">${emp.avatar}</div>
-      <div>
-        <div class="emp-name">${emp.name}</div>
-        <div class="emp-meta">${emp.dept} · Manager: ${emp.manager}</div>
-        <div class="emp-meta">${emp.email}</div>
-      </div>
-      <div class="emp-status-wrap">
-        <span class="badge ${getBadge(emp.status)}">${emp.status}</span>
-        <div style="font-size:12px;color:var(--gray-text);margin-top:6px;">Submitted: ${emp.submitted}</div>
-      </div>
-    </div>`;
-  document.getElementById('hr-s1-text').value = emp.s1 || '(Not filled)';
-  document.getElementById('hr-s2-text').value = emp.s2 || '(Not filled)';
-  document.getElementById('hr-s6-text').value = emp.s6 || '(Not filled)';
-  document.getElementById('hr-s7-text').value = emp.s7 || '(Not filled)';
-  document.getElementById('hr-s1-rating').textContent = emp.selfRatings.s1>0 ? '★'.repeat(emp.selfRatings.s1)+'☆'.repeat(5-emp.selfRatings.s1) : '—';
-  document.getElementById('hr-s2-rating').textContent = emp.selfRatings.s2>0 ? '★'.repeat(emp.selfRatings.s2)+'☆'.repeat(5-emp.selfRatings.s2) : '—';
+function openHRDetail(empCode){
+  const item=state.allData.find(i=>i.profile.employee_code===empCode);if(!item)return;
+  const p=item.profile,sub=item.submission,sd=sub?(sub.section_data||{}):{},selfR=sd.selfRatings||{};
+  const av=p.full_name.split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase();
+  const mgr=state.allProfiles.find(x=>x.employee_code===p.manager_code);
+  document.getElementById('hr-detail-profile').innerHTML=`<div class="emp-profile-card"><div class="emp-avatar">${av}</div><div><div class="emp-name">${p.full_name}</div><div class="emp-meta">${p.department||'—'} · Manager: ${mgr?mgr.full_name:(p.manager_code||'—')}</div><div class="emp-meta">${p.email||''}</div></div><div class="emp-status-wrap"><span class="badge ${getBadge(item.status)}">${item.status}</span><div style="font-size:12px;color:var(--gray-text);margin-top:6px;">Submitted: ${sub?fmtDate(sub.submitted_at):'—'}</div></div></div>`;
+  document.getElementById('hr-s1-text').value=sd.s1||'(Not filled)';document.getElementById('hr-s2-text').value=sd.s2||'(Not filled)';
+  document.getElementById('hr-s6-text').value=sd.s6||'(Not filled)';document.getElementById('hr-s7-text').value=sd.s7||'(Not filled)';
+  document.getElementById('hr-s1-rating').textContent=selfR.s1>0?'★'.repeat(selfR.s1)+'☆'.repeat(5-selfR.s1):'—';
+  document.getElementById('hr-s2-rating').textContent=selfR.s2>0?'★'.repeat(selfR.s2)+'☆'.repeat(5-selfR.s2):'—';
   hrNav('hrDetail');
 }
-
-function renderReports() {
-  const depts = [...new Set(allEmployees.map(e=>e.dept))];
-  const deadline = new Date('2026-06-30');
-  const today    = new Date();
-  const days     = Math.max(0, Math.ceil((deadline - today) / 86400000));
-  const dEl = document.getElementById('rpt-days');
-  if (dEl) dEl.textContent = days;
-
-  const ratings = allEmployees.flatMap(e => Object.values(e.selfRatings).filter(v=>v>0));
-  const avg = ratings.length ? (ratings.reduce((a,b)=>a+b,0)/ratings.length).toFixed(1) : '—';
-  const aEl = document.getElementById('rpt-avg-self');
-  if (aEl) aEl.textContent = avg;
-
-  const tbl = document.getElementById('rpt-dept-table');
-  if (!tbl) return;
-  tbl.innerHTML = depts.map(dept => {
-    const emps    = allEmployees.filter(e=>e.dept===dept);
-    const total   = emps.length;
-    const subPlus = emps.filter(e=>['Submitted','Under Review','Approved'].includes(e.status)).length;
-    const appd    = emps.filter(e=>e.status==='Approved').length;
-    const pct     = Math.round((subPlus/total)*100);
-    const cls     = pct>=100 ? 'badge-approved' : pct>=50 ? 'badge-submitted' : pct>0 ? 'badge-review' : 'badge-draft';
-    return `<tr><td>${dept}</td><td>${total}</td><td>${subPlus}</td><td>${appd}</td><td><span class="badge ${cls}">${pct}%</span></td></tr>`;
-  }).join('');
+function renderReports(){
+  if(!state.activeCycle)return;
+  const s=document.getElementById('rpt-cycle-sub');if(s)s.textContent=state.activeCycle.name+' — Summary Analytics';
+  const days=Math.max(0,Math.ceil((new Date(state.activeCycle.end_date)-new Date())/86400000));
+  const el=id=>document.getElementById(id);if(el('rpt-days'))el('rpt-days').textContent=days;
+  const allR=state.allData.flatMap(i=>Object.values((i.submission?.section_data?.selfRatings)||{}).filter(v=>v>0));
+  if(el('rpt-avg-self'))el('rpt-avg-self').textContent=allR.length?(allR.reduce((a,b)=>a+b,0)/allR.length).toFixed(1):'—';
+  const mgrR=state.allData.flatMap(i=>Object.values((i.submission?.manager_section_ratings)||{}).filter(v=>v>0));
+  if(el('rpt-avg-mgr'))el('rpt-avg-mgr').textContent=mgrR.length?(mgrR.reduce((a,b)=>a+b,0)/mgrR.length).toFixed(1):'—';
+  const depts=[...new Set(state.allData.map(i=>i.profile.department).filter(Boolean))];
+  const tbl=el('rpt-dept-table');if(!tbl)return;
+  tbl.innerHTML=depts.map(dept=>{
+    const items=state.allData.filter(i=>i.profile.department===dept),total=items.length;
+    const subPlus=items.filter(i=>['Submitted','Under Review','Approved'].includes(i.status)).length;
+    const appd=items.filter(i=>i.status==='Approved').length,pct=total?Math.round((subPlus/total)*100):0;
+    const cls=pct>=100?'badge-approved':pct>=50?'badge-submitted':pct>0?'badge-review':'badge-draft';
+    return`<tr><td>${dept}</td><td>${total}</td><td>${subPlus}</td><td>${appd}</td><td><span class="badge ${cls}">${pct}%</span></td></tr>`;}).join('');
+}
+function exportCSV(){
+  const rows=[['Name','Email','Department','Manager','Status','Submitted']];
+  state.allData.forEach(i=>{const p=i.profile,sub=i.submission;rows.push([p.full_name,p.email||'',p.department||'',p.manager_code||'',i.status,sub?fmtDate(sub.submitted_at):'']);});
+  const csv=rows.map(r=>r.map(v=>'"'+String(v||'').replace(/"/g,'""')+'"').join(',')).join('\n');
+  const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);
+  a.download='PA_Export_'+(state.activeCycle?state.activeCycle.name.replace(/[^a-z0-9]/gi,'_'):'all')+'.csv';a.click();toast('CSV exported!');
 }
 
-function exportCSV() {
-  const rows = [['Name','Email','Department','Manager','Status','Submitted']];
-  allEmployees.forEach(e => rows.push([e.name,e.email,e.dept,e.manager,e.status,e.submitted]));
-  const csv = rows.map(r => r.map(v => '"'+String(v).replace(/"/g,'""')+'"').join(',')).join('\n');
-  const a = document.createElement('a');
-  a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
-  a.download = 'PA_Tracker_2026.csv';
-  a.click();
-  toast('CSV exported successfully!');
+// ── HR USER MANAGEMENT ──
+async function loadAllProfiles(){
+  setLoading('Loading users…');
+  const {data}=await supabase.from('profiles').select('*').order('full_name');
+  state.allProfiles=data||[];clearLoading();renderProfilesTable();
+}
+function renderProfilesTable(){
+  const tbl=document.getElementById('users-table');if(!tbl)return;
+  tbl.innerHTML=state.allProfiles.map(p=>{
+    const mgr=state.allProfiles.find(x=>x.employee_code===p.manager_code);
+    return`<tr><td><strong>${p.employee_code}</strong></td><td>${p.full_name}<br><span style="font-size:11px;color:var(--gray-text)">${p.email||''}</span></td><td><span class="badge ${p.role==='hr'?'badge-approved':p.role==='manager'?'badge-review':'badge-draft'}">${p.role}</span></td><td>${p.department||'—'}</td><td>${mgr?mgr.full_name:(p.manager_code||'—')}</td><td><span class="badge ${p.is_active?'badge-active':'badge-inactive'}">${p.is_active?'Active':'Inactive'}</span></td><td style="white-space:nowrap;"><button class="btn btn-outline btn-sm" onclick="openEditUser('${p.id}')">Edit</button>${p.is_active?'<button class="btn-danger-sm" style="margin-left:6px;" onclick="toggleUserActive(\''+p.id+'\',false)">Deactivate</button>':'<button class="btn btn-outline btn-sm" style="margin-left:6px;" onclick="toggleUserActive(\''+p.id+'\',true)">Reactivate</button>'}</td></tr>`;
+  }).join('')||'<tr><td colspan="7" style="text-align:center;padding:20px;color:var(--gray-text);">No users yet.</td></tr>';
+}
+function openAddUser(){
+  document.getElementById('modal-user-title').textContent='Add Employee';document.getElementById('user-edit-id').value='';
+  document.getElementById('u-password-wrap').style.display='';
+  ['u-code','u-name','u-email','u-password','u-manager','u-dept','u-position'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('u-role').value='employee';document.getElementById('modal-user-error').style.display='none';showModal('modal-user');
+}
+function openEditUser(profileId){
+  const p=state.allProfiles.find(x=>x.id===profileId);if(!p)return;
+  document.getElementById('modal-user-title').textContent='Edit Employee';document.getElementById('user-edit-id').value=p.id;
+  document.getElementById('u-password-wrap').style.display='none';
+  document.getElementById('u-code').value=p.employee_code||'';document.getElementById('u-name').value=p.full_name||'';
+  document.getElementById('u-email').value=p.email||'';document.getElementById('u-role').value=p.role||'employee';
+  document.getElementById('u-manager').value=p.manager_code||'';document.getElementById('u-dept').value=p.department||'';
+  document.getElementById('u-position').value=p.position||'';document.getElementById('modal-user-error').style.display='none';showModal('modal-user');
+}
+async function saveUser(){
+  const editId=document.getElementById('user-edit-id').value,code=document.getElementById('u-code').value.trim().toUpperCase(),
+    name=document.getElementById('u-name').value.trim(),email=document.getElementById('u-email').value.trim().toLowerCase(),
+    password=document.getElementById('u-password').value,role=document.getElementById('u-role').value,
+    manager=document.getElementById('u-manager').value.trim().toUpperCase()||null,
+    dept=document.getElementById('u-dept').value.trim()||null,position=document.getElementById('u-position').value.trim()||null;
+  const errEl=document.getElementById('modal-user-error');
+  if(!code||!name||!email){errEl.textContent='Employee Code, Name and Email are required.';errEl.style.display='';return;}
+  if(!editId&&password.length<6){errEl.textContent='Password must be at least 6 characters.';errEl.style.display='';return;}
+  setLoading(editId?'Saving changes…':'Creating user…');
+  if(editId){
+    const {error}=await supabase.from('profiles').update({employee_code:code,full_name:name,email,role,manager_code:manager,department:dept,position}).eq('id',editId);
+    clearLoading();if(error){errEl.textContent=error.message;errEl.style.display='';return;}
+  }else{
+    const tempClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON,{auth:{storageKey:'epa-temp-signup',persistSession:false}});
+    const {data:authData,error:authErr}=await tempClient.auth.signUp({email,password});
+    if(authErr||!authData.user){clearLoading();errEl.textContent=authErr?authErr.message:'Auth creation failed.';errEl.style.display='';return;}
+    const {error:profErr}=await supabase.from('profiles').insert({id:authData.user.id,employee_code:code,full_name:name,email,role,manager_code:manager,department:dept,position});
+    clearLoading();if(profErr){errEl.textContent=profErr.message;errEl.style.display='';return;}
+  }
+  closeModal('modal-user');toast(editId?'User updated.':'Employee created — they can now sign in.');loadAllProfiles();
+}
+async function toggleUserActive(profileId,active){
+  setLoading(active?'Reactivating…':'Deactivating…');
+  await supabase.from('profiles').update({is_active:active}).eq('id',profileId);
+  clearLoading();toast(active?'User reactivated.':'User deactivated.');loadAllProfiles();
 }
 
-// ══════════════════════════════════════════════
-// MODAL + TOAST
-// ══════════════════════════════════════════════
-function showModal(id) { document.getElementById(id).classList.add('show'); }
-function closeModal(id) { document.getElementById(id).classList.remove('show'); }
-function toast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg; t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 3000);
+// ── HR CYCLE MANAGEMENT ──
+async function loadCycles(){
+  setLoading('Loading cycles…');
+  const {data}=await supabase.from('cycles').select('*').order('start_date',{ascending:false});
+  state.allCycles=data||[];clearLoading();renderCyclesTable();
+}
+function renderCyclesTable(){
+  const tbl=document.getElementById('cycles-table');if(!tbl)return;
+  tbl.innerHTML=state.allCycles.map(c=>`<tr><td><strong>${c.name}</strong></td><td>${c.start_date}</td><td>${c.end_date}</td><td><span class="badge ${c.is_active?'badge-approved':'badge-draft'}">${c.is_active?'● Active':'Inactive'}</span></td><td>${!c.is_active?'<button class="btn btn-primary btn-sm" onclick="setActiveCycle(\''+c.id+'\')">Set Active</button>':'<span style="font-size:12px;color:var(--gray-text);">Current</span>'}</td></tr>`).join('')||'<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--gray-text);">No cycles yet.</td></tr>';
+}
+function openAddCycle(){
+  ['c-name','c-start','c-end'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('c-active').checked=false;document.getElementById('modal-cycle-error').style.display='none';showModal('modal-cycle');
+}
+async function saveCycle(){
+  const name=document.getElementById('c-name').value.trim(),start=document.getElementById('c-start').value,end=document.getElementById('c-end').value,active=document.getElementById('c-active').checked;
+  const errEl=document.getElementById('modal-cycle-error');
+  if(!name||!start||!end){errEl.textContent='All fields are required.';errEl.style.display='';return;}
+  if(start>=end){errEl.textContent='End date must be after start date.';errEl.style.display='';return;}
+  setLoading('Creating cycle…');
+  if(active)await supabase.from('cycles').update({is_active:false}).neq('id','00000000-0000-0000-0000-000000000000');
+  const {error}=await supabase.from('cycles').insert({name,start_date:start,end_date:end,is_active:active});
+  clearLoading();if(error){errEl.textContent=error.message;errEl.style.display='';return;}
+  closeModal('modal-cycle');toast('Cycle created.');
+  if(active){const {data:cycle}=await supabase.from('cycles').select('*').eq('is_active',true).single();state.activeCycle=cycle;}
+  loadCycles();
+}
+async function setActiveCycle(cycleId){
+  setLoading('Updating active cycle…');
+  await supabase.from('cycles').update({is_active:false}).neq('id','00000000-0000-0000-0000-000000000000');
+  await supabase.from('cycles').update({is_active:true}).eq('id',cycleId);
+  const {data:cycle}=await supabase.from('cycles').select('*').eq('id',cycleId).single();
+  state.activeCycle=cycle;clearLoading();toast('Active cycle updated to: '+cycle.name);loadCycles();
 }
 
-// ══════════════════════════════════════════════
-// INIT
-// ══════════════════════════════════════════════
-document.addEventListener('DOMContentLoaded', () => {
-  // Enter key on login inputs
-  ['login-code','login-name'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.addEventListener('keydown', e => { if (e.key==='Enter') doLogin(); });
-  });
-
-  initData();
-
-  const savedSession = lsGet('session');
-  if (savedSession) {
-    state.currentUser = savedSession;
-    updateTimeline();
-    renderMgrTeam();
-    renderHRTables();
-    applyLogin();
-  } else {
+// ── INIT ──
+document.addEventListener('DOMContentLoaded',async()=>{
+  ['login-email','login-password'].forEach(id=>{const el=document.getElementById(id);if(el)el.addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});});
+  setLoading('Loading…');
+  const {data:{session}}=await supabase.auth.getSession();
+  if(session){await loadUserProfile(session.user.id,session.user.email);clearLoading();if(state.currentUser)applyLogin();else{clearLoading();showScreen('scrLogin');}}
+  else{
+    const {data:cycle}=await supabase.from('cycles').select('name').eq('is_active',true).maybeSingle();
+    clearLoading();
+    const badge=document.getElementById('login-cycle-badge');if(badge)badge.textContent=cycle?cycle.name:'Contact HR for access';
     showScreen('scrLogin');
   }
 });
+
 </script>
 </body>
 </html>
