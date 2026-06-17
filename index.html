@@ -769,7 +769,7 @@
       <div id="mgrDashboard">
         <div class="page-header"><h1>Manager Dashboard</h1><p>Performance Appraisal Cycle 2026 — Your Team</p></div>
         <div class="stats-row">
-          <div class="stat-card"><div class="stat-num">4</div><div class="stat-label">Team Members</div></div>
+          <div class="stat-card"><div class="stat-num" id="mgr-team-count">—</div><div class="stat-label">Team Members</div></div>
           <div class="stat-card green"><div class="stat-num" id="mgr-approved-count">0</div><div class="stat-label">Approved</div></div>
           <div class="stat-card orange"><div class="stat-num" id="mgr-pending-count">0</div><div class="stat-label">Pending Review</div></div>
           <div class="stat-card red"><div class="stat-num" id="mgr-draft-count">0</div><div class="stat-label">Not Yet Submitted</div></div>
@@ -1181,6 +1181,12 @@
     </div>
   </div>
 </div>
+
+<div class="modal-overlay" id="modal-deactivate">
+  <div class="modal"><div class="modal-icon">⚠️</div><div class="modal-title">Deactivate User?</div>
+    <div class="modal-msg">This will prevent the user from signing in. You can reactivate them at any time from User Management.</div>
+    <div class="modal-actions"><button class="btn btn-ghost" onclick="closeModal('modal-deactivate')">Cancel</button><button class="btn btn-danger" onclick="confirmDeactivate()">Yes, Deactivate</button></div>
+  </div></div>
 
 <div id="toast"></div>
 
@@ -1829,10 +1835,15 @@ async function loadPAHistory(){
     .order('submitted_at',{ascending:false});
   if(error){tbl.innerHTML='<tr><td colspan="5" style="text-align:center;padding:16px;color:var(--red);">Error loading history.</td></tr>';return;}
   if(!subs||subs.length===0){tbl.innerHTML='<tr><td colspan="5" style="text-align:center;padding:24px;color:var(--gray-text);">No previous PA cycles found.</td></tr>';return;}
+  // B2 fix: allProfiles is empty in employee context — fetch manager names directly
+  let managerNames={};
+  if(state.allProfiles.length===0){
+    const codes=[...new Set(subs.map(s=>s.manager_code).filter(Boolean))];
+    if(codes.length>0){const {data:mgrs}=await db.from('profiles').select('employee_code,full_name').in('employee_code',codes);if(mgrs)mgrs.forEach(m=>managerNames[m.employee_code]=m.full_name);}
+  }else{state.allProfiles.forEach(p=>{managerNames[p.employee_code]=p.full_name;});}
   tbl.innerHTML=subs.map(s=>{
     const cycleName=s.cycles?.name||s.cycle_name||'—';
-    const mgrProfile=state.allProfiles.find(p=>p.employee_code===s.manager_code);
-    const mgrName=mgrProfile?mgrProfile.full_name:(s.manager_code||'—');
+    const mgrName=managerNames[s.manager_code]||(s.manager_code||'—');
     const finalScore=s.manager_section_comments?.final_score??s.manager_overall_rating??null;
     return`<tr>
       <td>${cycleName}</td>
@@ -1867,6 +1878,7 @@ function renderMgrTeam(){
   const html=state.teamData.map(row).join('');
   ['mgr-team-preview','mgr-team-full'].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML=html||'<tr><td colspan="5" style="text-align:center;padding:24px;color:var(--gray-text);">No direct reports found.</td></tr>';});
   const el=id=>document.getElementById(id);
+  if(el('mgr-team-count'))     el('mgr-team-count').textContent=state.teamData.length;
   if(el('mgr-approved-count')) el('mgr-approved-count').textContent=state.teamData.filter(i=>i.status==='Approved').length;
   if(el('mgr-pending-count'))  el('mgr-pending-count').textContent=state.teamData.filter(i=>i.status==='Submitted'||i.status==='Under Review').length;
   if(el('mgr-draft-count'))    el('mgr-draft-count').textContent=state.teamData.filter(i=>i.status==='Draft'||i.status==='Not Started').length;
@@ -2117,7 +2129,7 @@ function renderProfilesTable(){
   const tbl=document.getElementById('users-table');if(!tbl)return;
   tbl.innerHTML=state.allProfiles.map(p=>{
     const mgr=state.allProfiles.find(x=>x.employee_code===p.manager_code);
-    return`<tr><td><strong>${p.employee_code}</strong></td><td>${p.full_name}<br><span style="font-size:11px;color:var(--gray-text)">${p.email||''}</span></td><td><span class="badge ${p.role==='hr'?'badge-approved':p.role==='manager'?'badge-review':'badge-draft'}">${p.role}</span></td><td>${p.department||'—'}</td><td>${mgr?mgr.full_name:(p.manager_code||'—')}</td><td><span class="badge ${p.is_active?'badge-active':'badge-inactive'}">${p.is_active?'Active':'Inactive'}</span></td><td style="white-space:nowrap;"><button class="btn btn-outline btn-sm" onclick="openEditUser('${p.id}')">Edit</button>${p.is_active?'<button class="btn-danger-sm" style="margin-left:6px;" onclick="toggleUserActive(\''+p.id+'\',false)">Deactivate</button>':'<button class="btn btn-outline btn-sm" style="margin-left:6px;" onclick="toggleUserActive(\''+p.id+'\',true)">Reactivate</button>'}</td></tr>`;
+    return`<tr><td><strong>${p.employee_code}</strong></td><td>${p.full_name}<br><span style="font-size:11px;color:var(--gray-text)">${p.email||''}</span></td><td><span class="badge ${p.role==='hr'?'badge-approved':p.role==='manager'?'badge-review':'badge-draft'}">${p.role}</span></td><td>${p.department||'—'}</td><td>${mgr?mgr.full_name:(p.manager_code||'—')}</td><td><span class="badge ${p.is_active?'badge-active':'badge-inactive'}">${p.is_active?'Active':'Inactive'}</span></td><td style="white-space:nowrap;"><button class="btn btn-outline btn-sm" onclick="openEditUser('${p.id}')">Edit</button><button class="btn btn-outline btn-sm" style="margin-left:6px;" onclick="resetUserPassword('${p.email||''}')">Reset Pwd</button>${p.is_active?'<button class="btn-danger-sm" style="margin-left:6px;" onclick="confirmDeactivateUser(\''+p.id+'\')">Deactivate</button>':'<button class="btn btn-outline btn-sm" style="margin-left:6px;" onclick="toggleUserActive(\''+p.id+'\',true)">Reactivate</button>'}</td></tr>`;
   }).join('')||'<tr><td colspan="7" style="text-align:center;padding:20px;color:var(--gray-text);">No users yet.</td></tr>';
 }
 function openAddUser(){
@@ -2144,6 +2156,11 @@ async function saveUser(){
   const errEl=document.getElementById('modal-user-error');
   if(!code||!name||!email){errEl.textContent='Employee Code, Name and Email are required.';errEl.style.display='';return;}
   if(!editId&&password.length<6){errEl.textContent='Password must be at least 6 characters.';errEl.style.display='';return;}
+  // B3: validate manager code exists before saving
+  if(manager){
+    const {data:mgrCheck}=await db.from('profiles').select('id').eq('employee_code',manager).maybeSingle();
+    if(!mgrCheck){errEl.textContent='Manager Code "'+manager+'" does not exist. Check the code and try again.';errEl.style.display='';return;}
+  }
   setLoading(editId?'Saving changes…':'Creating user…');
   if(editId){
     const {error}=await db.from('profiles').update({employee_code:code,full_name:name,email,role,manager_code:manager,department:dept,position}).eq('id',editId);
@@ -2224,7 +2241,12 @@ async function uploadAllEmployees(){
     try{
       const tempClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON,{auth:{storageKey:'epa-bulk-'+i,persistSession:false}});
       const {data:authData,error:authErr}=await tempClient.auth.signUp({email:r.email,password:r.temp_password});
-      if(authErr)throw new Error(authErr.message);
+      if(authErr){
+        // B5: duplicate email — show warning and skip, don't abort whole upload
+        const isdup=authErr.message&&(authErr.message.toLowerCase().includes('already registered')||authErr.message.toLowerCase().includes('user already'));
+        if(isdup){if(statusEl)statusEl.innerHTML='<span style="color:var(--orange);font-size:11px;">⚠️ Already registered</span>';if(rowEl)rowEl.classList.add('bulk-row-err');fail++;continue;}
+        throw new Error(authErr.message);
+      }
       const uid=authData.user?.id;
       if(!uid)throw new Error('Auth created but no user ID returned.');
       const {error:profErr}=await db.from('profiles').upsert({id:uid,employee_code:r.employee_code,full_name:r.full_name,email:r.email,role:r.role,department:r.department||null,position:r.position||null,manager_code:r.manager_code||null,is_active:true},{onConflict:'employee_code'});
@@ -2242,6 +2264,29 @@ async function uploadAllEmployees(){
   btn.disabled=false;btn.textContent='⬆️ Upload All';
   toast(ok+' uploaded'+(fail?' · '+fail+' failed':'')+'.');
   if(ok>0)loadAllProfiles();
+}
+
+// C1: Password reset for HR
+async function resetUserPassword(email){
+  if(!email){toast('No email on file for this user.');return;}
+  if(!confirm('Send password reset email to '+email+'?'))return;
+  setLoading('Sending reset email…');
+  const {error}=await db.auth.resetPasswordForEmail(email);
+  clearLoading();
+  if(error){toast('Error: '+error.message);return;}
+  toast('Password reset email sent to '+email);
+}
+// U4: Confirm before deactivate
+let _pendingDeactivateId=null;
+function confirmDeactivateUser(profileId){
+  _pendingDeactivateId=profileId;
+  showModal('modal-deactivate');
+}
+async function confirmDeactivate(){
+  closeModal('modal-deactivate');
+  if(!_pendingDeactivateId)return;
+  await toggleUserActive(_pendingDeactivateId,false);
+  _pendingDeactivateId=null;
 }
 
 // ── HR CYCLE MANAGEMENT ──
