@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ePA Portal v2 — Performance Appraisal</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
   :root {
     --blue: #0055A5;
@@ -359,6 +360,7 @@
   /* ── HR badge colours ── */
   .badge-active   { background:#e8f8f0;color:#1a7f4b;border:1px solid #a8dfc3; }
   .badge-inactive { background:#fef0e0;color:#c05c00;border:1px solid #f9c985; }
+  .badge-locked   { background:#fdecea;color:#c62828;border:1px solid #ffcdd2; }
   .btn-danger-sm  { background:#d32f2f;color:#fff;border:none;padding:4px 10px;border-radius:4px;font-size:11px;cursor:pointer; }
   .btn-danger-sm:hover { background:#b71c1c; }
   /* ── BULK UPLOAD ── */
@@ -550,8 +552,8 @@
             <div class="stat-num" id="emp-status-stat">Draft</div>
             <div class="stat-label">Current Status</div>
           </div>
-          <div class="stat-card green">
-            <div class="stat-num">30 Jun</div>
+          <div class="stat-card green" id="emp-deadline-card">
+            <div class="stat-num" id="emp-deadline-stat">—</div>
             <div class="stat-label">Submission Deadline</div>
           </div>
         </div>
@@ -585,6 +587,12 @@
         </div>
         <div id="emp-approved-notice" style="display:none;">
           <div class="success-box">🎉 Your PA has been <strong>Approved</strong>! Manager and agreed scores are now shown in Sections 2 &amp; 3, and your final rating appears in Section 9.</div>
+        </div>
+        <div id="emp-deadline-warning" style="display:none;">
+          <div class="warning-box">🔒 <strong>Submission deadline has passed</strong> (<span id="emp-deadline-warning-date">—</span>). No new submissions are accepted. Contact HR if you need an extension.</div>
+        </div>
+        <div id="emp-locked-warning" style="display:none;">
+          <div class="warning-box">🔒 <strong>This cycle is locked by HR</strong> for payroll processing. Submissions are temporarily paused.</div>
         </div>
 
         <!-- WIZARD TABS -->
@@ -1021,6 +1029,7 @@
       <div class="sidebar-item" onclick="hrNav('hrReports')"><span class="si-icon">📊</span> Reports</div>
       <div class="sidebar-item" onclick="hrNav('hrUsers')"><span class="si-icon">👤</span> User Management</div>
       <div class="sidebar-item" onclick="hrNav('hrCycles')"><span class="si-icon">🔄</span> PA Cycles</div>
+      <div class="sidebar-item" onclick="hrNav('hrIncrement')"><span class="si-icon">📈</span> Increment Engine</div>
     </div>
     <div class="content">
 
@@ -1121,6 +1130,11 @@
           <table><thead><tr><th>Cycle</th><th>Submitted</th><th>Status</th><th>Avg Self Score</th><th>Final Rating</th></tr></thead>
           <tbody id="hr-emp-history-tbody"><tr><td colspan="5" style="text-align:center;padding:20px;color:var(--gray-text);">Loading…</td></tr></tbody></table>
         </div>
+        <!-- I3: Trend chart -->
+        <div class="card" style="padding:24px;margin-top:8px;" id="hr-trend-card" style="display:none;">
+          <div class="form-section-title" style="margin-bottom:14px;">📈 Score Trend Across Cycles</div>
+          <canvas id="hr-trend-chart" height="100"></canvas>
+        </div>
       </div>
 
       <div id="hrReports" style="display:none;">
@@ -1153,12 +1167,36 @@
 
       <div id="hrCycles" style="display:none;">
         <div class="page-header"><h1>PA Cycles</h1><p>Manage appraisal cycles — only one can be active at a time</p></div>
-        <div style="margin-bottom:20px;">
+        <div style="margin-bottom:20px;display:flex;gap:10px;flex-wrap:wrap;">
           <button class="btn btn-primary" onclick="openAddCycle()">+ New Cycle</button>
+          <button class="btn btn-outline" onclick="openHistImport()">📥 Import History</button>
         </div>
         <div class="card">
-          <table><thead><tr><th>Cycle Name</th><th>Start Date</th><th>End Date</th><th>Status</th><th>Action</th></tr></thead>
+          <table><thead><tr><th>Cycle Name</th><th>Start Date</th><th>End Date</th><th>Status</th><th>Lock</th><th>Action</th></tr></thead>
           <tbody id="cycles-table"></tbody></table>
+        </div>
+        <div class="info-box" style="margin-top:16px;">🔒 <strong>Lock</strong> a cycle to freeze all submissions and manager actions during payroll processing. Unlock when done.</div>
+      </div>
+
+      <div id="hrIncrement" style="display:none;">
+        <div class="page-header"><h1>Increment Engine</h1><p id="inc-cycle-sub">Recommended salary increment based on current cycle PA scores</p></div>
+        <div class="card" style="padding:20px;margin-bottom:20px;">
+          <div class="form-section-title" style="margin-bottom:10px;">Increment Bands</div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;font-size:12px;color:var(--gray-text);">
+            <span style="background:#ffebee;color:#b71c1c;border:1px solid #ffcdd2;padding:3px 10px;border-radius:4px;">Score &lt; 2.0 → 0% (PIP)</span>
+            <span style="background:#fff8e1;color:#7a4500;border:1px solid #ffe082;padding:3px 10px;border-radius:4px;">2.0–2.9 → 3%</span>
+            <span style="background:#e8f5e9;color:#1b5e20;border:1px solid #a5d6a7;padding:3px 10px;border-radius:4px;">3.0–3.9 → 5%</span>
+            <span style="background:#e3f2fd;color:#1565c0;border:1px solid #90caf9;padding:3px 10px;border-radius:4px;">4.0–4.5 → 7%</span>
+            <span style="background:#f3e5f5;color:#6a1b9a;border:1px solid #ce93d8;padding:3px 10px;border-radius:4px;">4.6–5.0 → 10%</span>
+          </div>
+          <div style="margin-top:12px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+            <button class="btn btn-ghost btn-sm" onclick="exportIncrementCSV()">⬇️ Export Payroll CSV</button>
+            <span style="font-size:11px;color:var(--gray-text);">Only employees with Approved PA are included.</span>
+          </div>
+        </div>
+        <div class="card">
+          <table><thead><tr><th>Employee</th><th>Department</th><th>Manager</th><th>Final Score</th><th>Band</th><th>Recommended Increment</th></tr></thead>
+          <tbody id="increment-table"></tbody></table>
         </div>
       </div>
 
@@ -1280,6 +1318,41 @@
     <div class="modal-msg">This will prevent the user from signing in. You can reactivate them at any time from User Management.</div>
     <div class="modal-actions"><button class="btn btn-ghost" onclick="closeModal('modal-deactivate')">Cancel</button><button class="btn btn-danger" onclick="confirmDeactivate()">Yes, Deactivate</button></div>
   </div></div>
+
+<div class="modal-overlay" id="modal-hist-import">
+  <div class="modal" style="max-width:680px;width:95%;text-align:left;">
+    <div class="modal-title" style="text-align:center;margin-bottom:4px;">📥 Import Historical PA Data</div>
+    <p style="font-size:12px;color:var(--gray-text);text-align:center;margin-bottom:14px;">Import past-cycle PA scores to enable trend charts and increment history.</p>
+    <div style="display:flex;gap:10px;align-items:center;margin-bottom:12px;flex-wrap:wrap;">
+      <button class="btn btn-outline btn-sm" onclick="downloadHistTemplate()">⬇️ Download CSV Template</button>
+      <span style="font-size:11px;color:var(--gray-text);">Columns: employee_code · cycle_name · final_score · status · submitted_date</span>
+    </div>
+    <div style="margin-bottom:12px;">
+      <label style="font-size:11px;font-weight:700;color:#6b7a8d;text-transform:uppercase;display:block;margin-bottom:6px;">Select CSV File</label>
+      <input type="file" id="hist-csv-input" accept=".csv" onchange="parseHistCSV(this)" style="font-size:13px;width:100%;">
+    </div>
+    <div id="hist-preview-wrap" style="display:none;">
+      <div style="font-size:12px;font-weight:600;margin-bottom:6px;color:var(--text);" id="hist-preview-count"></div>
+      <div style="max-height:200px;overflow-y:auto;border:1px solid var(--gray-border);border-radius:6px;">
+        <table style="width:100%;border-collapse:collapse;font-size:12px;">
+          <thead><tr style="background:var(--gray-bg);">
+            <th style="padding:5px 8px;text-align:left;position:sticky;top:0;background:var(--gray-bg);">Code</th>
+            <th style="padding:5px 8px;text-align:left;position:sticky;top:0;background:var(--gray-bg);">Cycle</th>
+            <th style="padding:5px 8px;text-align:center;position:sticky;top:0;background:var(--gray-bg);">Score</th>
+            <th style="padding:5px 8px;text-align:left;position:sticky;top:0;background:var(--gray-bg);">Status</th>
+            <th style="padding:5px 8px;text-align:left;position:sticky;top:0;background:var(--gray-bg);">Result</th>
+          </tr></thead>
+          <tbody id="hist-preview-body"></tbody>
+        </table>
+      </div>
+    </div>
+    <div id="hist-error" style="display:none;background:#fff0f0;border:1px solid #f5c6cb;border-radius:6px;padding:8px 12px;font-size:12px;color:#c0392b;margin-top:10px;"></div>
+    <div style="display:flex;gap:10px;justify-content:center;margin-top:16px;flex-wrap:wrap;">
+      <button class="btn btn-ghost" onclick="closeModal('modal-hist-import')">Cancel</button>
+      <button class="btn btn-primary" id="hist-upload-btn" style="display:none;" onclick="uploadHistData()">⬆️ Import All</button>
+    </div>
+  </div>
+</div>
 
 <div id="toast"></div>
 
@@ -1754,20 +1827,37 @@ function mgrNav(section){
   renderMgrTeam();
 }
 function hrNav(section){
-  ['hrDashboard','hrAll','hrDetail','hrReports','hrUsers','hrCycles'].forEach(s=>{const el=document.getElementById(s);if(el)el.style.display='none';});
+  ['hrDashboard','hrAll','hrDetail','hrReports','hrUsers','hrCycles','hrIncrement'].forEach(s=>{const el=document.getElementById(s);if(el)el.style.display='none';});
   document.getElementById(section).style.display='';
   document.querySelectorAll('#scrHRHome .sidebar-item').forEach(el=>el.classList.remove('active'));
-  const idx={hrDashboard:0,hrAll:1,hrReports:2,hrUsers:3,hrCycles:4};
+  const idx={hrDashboard:0,hrAll:1,hrReports:2,hrUsers:3,hrCycles:4,hrIncrement:5};
   if(idx[section]!==undefined) document.querySelectorAll('#scrHRHome .sidebar-item')[idx[section]].classList.add('active');
   if(section==='hrAll') renderHRAll();
   if(section==='hrReports') renderReports();
   if(section==='hrUsers') loadAllProfiles();
   if(section==='hrCycles') loadCycles();
+  if(section==='hrIncrement') renderHRIncrement();
 }
 
 // ── EMPLOYEE ──
+// C3/S3 helpers
+function isCycleDeadlinePassed(){
+  if(!state.activeCycle||!state.activeCycle.end_date)return false;
+  const today=new Date().toISOString().split('T')[0];
+  return today>state.activeCycle.end_date;
+}
+function isCycleLocked(){return !!(state.activeCycle&&state.activeCycle.is_locked);}
+
 async function loadEmployeeData(){
   if(!state.activeCycle){toast('No active PA cycle. Contact HR.');return;}
+  // Update deadline stat card
+  const dStat=document.getElementById('emp-deadline-stat');
+  if(dStat&&state.activeCycle.end_date){
+    const d=new Date(state.activeCycle.end_date);
+    dStat.textContent=d.toLocaleDateString('en-GB',{day:'numeric',month:'short'});
+    const card=document.getElementById('emp-deadline-card');
+    if(card&&isCycleDeadlinePassed()){card.classList.add('red');card.style.borderTopColor='var(--red)';}
+  }
   setLoading('Loading your PA…');
   const empCode=state.currentUser.employee_code, cycleId=state.activeCycle.id;
   let {data:sub}=await db.from('pa_submissions').select('*').eq('employee_code',empCode).eq('cycle_id',cycleId).maybeSingle();
@@ -1851,6 +1941,13 @@ function loadEmployeeForm(){
   const returned=document.getElementById('emp-returned-notice'); if(returned) returned.style.display=(status==='Returned')?'':'none';
   const approved=document.getElementById('emp-approved-notice'); if(approved) approved.style.display=(status==='Approved')?'':'none';
   const btn=document.getElementById('emp-submit-btn'); if(btn) btn.textContent=['Submitted','Under Review','Approved'].includes(status)?'🔄 Resubmit PA':'🚀 Submit PA';
+  // C3: deadline enforcement + S3: lock enforcement
+  const deadlinePassed=isCycleDeadlinePassed(), cycleLocked=isCycleLocked();
+  const dWarn=document.getElementById('emp-deadline-warning'); if(dWarn) dWarn.style.display=deadlinePassed?'':'none';
+  const lWarn=document.getElementById('emp-locked-warning'); if(lWarn) lWarn.style.display=cycleLocked?'':'none';
+  const dDate=document.getElementById('emp-deadline-warning-date');
+  if(dDate&&state.activeCycle?.end_date) dDate.textContent=new Date(state.activeCycle.end_date).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
+  if(btn){const block=deadlinePassed||cycleLocked||status==='Approved';btn.disabled=block;btn.style.opacity=block?'.45':'';btn.title=deadlinePassed?'Deadline passed':cycleLocked?'Cycle locked by HR':'';}
   // C4: overlay manager scores when PA has been reviewed
   if(['Under Review','Approved','Returned'].includes(status)){overlayManagerScores(sub);}
   updateTimeline(); updateFormProgress();
@@ -1933,6 +2030,8 @@ async function saveForm(){
 function submitForm(){showModal('modal-submit');}
 async function confirmSubmit(){
   closeModal('modal-submit'); if(!state.mySubmission) return;
+  if(isCycleLocked()){toast('Submission blocked — cycle is locked by HR.');return;}
+  if(isCycleDeadlinePassed()){toast('Submission deadline has passed. Contact HR.');return;}
   const formData=collectFormData(); setLoading('Submitting PA…');
   const {data:updated,error}=await db.from('pa_submissions').update({section_data:formData,status:'Submitted',submitted_at:new Date().toISOString()}).eq('id',state.mySubmission.id).select().single();
   clearLoading(); if(error){toast('Submit failed: '+error.message);return;}
@@ -2134,6 +2233,7 @@ function approvePA(){showModal('modal-approve');}
 function returnPA(){showModal('modal-return');}
 async function confirmApprove(){
   closeModal('modal-approve');const item=state.currentEmp;if(!item||!item.submission)return;
+  if(isCycleLocked()){toast('Cycle is locked by HR — no actions allowed during payroll processing.');return;}
   setLoading('Approving PA…');
   const {error}=await db.from('pa_submissions').update({status:'Approved',reviewed_at:new Date().toISOString(),...collectMgrReview()}).eq('id',item.submission.id);
   clearLoading();if(error){toast('Error: '+error.message);return;}
@@ -2141,6 +2241,7 @@ async function confirmApprove(){
 }
 async function confirmReturn(){
   closeModal('modal-return');const item=state.currentEmp;if(!item||!item.submission)return;
+  if(isCycleLocked()){toast('Cycle is locked by HR — no actions allowed during payroll processing.');return;}
   setLoading('Returning PA…');
   const {error}=await db.from('pa_submissions').update({status:'Returned',reviewed_at:new Date().toISOString(),...collectMgrReview()}).eq('id',item.submission.id);
   clearLoading();if(error){toast('Error: '+error.message);return;}
@@ -2279,6 +2380,7 @@ async function loadHREmployeeHistory(empCode){
     .order('submitted_at',{ascending:false});
   if(error){tbl.innerHTML='<tr><td colspan="5" style="text-align:center;color:var(--red);">Error loading history.</td></tr>';return;}
   if(!subs||!subs.length){tbl.innerHTML='<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--gray-text);">No history found across cycles.</td></tr>';return;}
+  // Build ordered for table (newest first for display)
   tbl.innerHTML=subs.map(s=>{
     const cycleName=s.cycles?.name||s.cycle_name||'—';
     const finalScore=s.manager_section_comments?.final_score??s.manager_overall_rating??null;
@@ -2292,6 +2394,38 @@ async function loadHREmployeeHistory(empCode){
       <td>${finalScore!==null?Number(finalScore).toFixed(1):'—'}</td>
     </tr>`;
   }).join('');
+  // I3: Trend chart — reverse to chronological order for chart
+  const chartCard=document.getElementById('hr-trend-card');
+  if(chartCard&&typeof Chart!=='undefined'){
+    chartCard.style.display='';
+    const sorted=[...subs].reverse();
+    const labels=sorted.map(s=>s.cycles?.name||s.cycle_name||'—');
+    const selfData=sorted.map(s=>{
+      const objs=(s.section_data?.objectives||[]).map(o=>parseFloat(o.self_score)).filter(v=>!isNaN(v));
+      return objs.length?+(objs.reduce((a,b)=>a+b,0)/objs.length).toFixed(2):null;
+    });
+    const finalData=sorted.map(s=>{
+      const fs=s.manager_section_comments?.final_score??s.manager_overall_rating??null;
+      return fs!==null?+Number(fs).toFixed(2):null;
+    });
+    const canvas=document.getElementById('hr-trend-chart');
+    if(canvas._chart){canvas._chart.destroy();}
+    canvas._chart=new Chart(canvas,{
+      type:'line',
+      data:{
+        labels,
+        datasets:[
+          {label:'Self Score Avg',data:selfData,borderColor:'#1976d2',backgroundColor:'rgba(25,118,210,0.08)',tension:0.3,pointRadius:4,spanGaps:true},
+          {label:'Final Score',data:finalData,borderColor:'#388e3c',backgroundColor:'rgba(56,142,60,0.08)',tension:0.3,pointRadius:4,spanGaps:true}
+        ]
+      },
+      options:{
+        responsive:true,maintainAspectRatio:true,
+        plugins:{legend:{position:'top'},tooltip:{mode:'index',intersect:false}},
+        scales:{y:{min:0,max:5,ticks:{stepSize:1},grid:{color:'rgba(0,0,0,0.06)'}},x:{grid:{display:false}}}
+      }
+    });
+  }else if(chartCard){chartCard.style.display='none';}
 }
 function renderReports(){
   if(!state.activeCycle)return;
@@ -2317,6 +2451,52 @@ function exportCSV(){
   const csv=rows.map(r=>r.map(v=>'"'+String(v||'').replace(/"/g,'""')+'"').join(',')).join('\n');
   const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);
   a.download='PA_Export_'+(state.activeCycle?state.activeCycle.name.replace(/[^a-z0-9]/gi,'_'):'all')+'.csv';a.click();toast('CSV exported!');
+}
+
+// I2: Increment recommendation engine
+function incBand(score){
+  if(!score||score<2) return {band:'Below Expectation',pct:0,label:'PIP'};
+  if(score<3) return {band:'Average',pct:3,label:'3%'};
+  if(score<4) return {band:'Meet Expectations',pct:5,label:'5%'};
+  if(score<4.6) return {band:'Excellent',pct:7,label:'7%'};
+  return {band:'Outstanding',pct:10,label:'10%'};
+}
+function renderHRIncrement(){
+  if(!state.activeCycle){const el=document.getElementById('increment-table');if(el)el.innerHTML='<tr><td colspan="6" style="text-align:center;padding:20px;color:var(--gray-text);">No active cycle.</td></tr>';return;}
+  const sub=document.getElementById('inc-cycle-sub');if(sub)sub.textContent=state.activeCycle.name+' — Approved PAs only';
+  const tbl=document.getElementById('increment-table');if(!tbl)return;
+  const approved=state.allData.filter(i=>i.status==='Approved');
+  if(!approved.length){tbl.innerHTML='<tr><td colspan="6" style="text-align:center;padding:20px;color:var(--gray-text);">No approved PAs yet in this cycle.</td></tr>';return;}
+  tbl.innerHTML=approved.map(item=>{
+    const p=item.profile,sub=item.submission;
+    const fs=sub?.manager_section_comments?.final_score??sub?.manager_overall_rating??null;
+    const {band,pct,label}=incBand(fs?parseFloat(fs):null);
+    const mgr=state.allProfiles.find(x=>x.employee_code===p.manager_code);
+    const scoreDisp=fs!==null?Number(fs).toFixed(2):'—';
+    const pctClass=pct===0?'badge-returned':pct<=3?'badge-draft':pct<=5?'badge-submitted':pct<=7?'badge-review':'badge-approved';
+    return`<tr>
+      <td><strong>${p.full_name}</strong><br><span style="font-size:12px;color:var(--gray-text)">${p.employee_code}</span></td>
+      <td>${p.department||'—'}</td>
+      <td>${mgr?mgr.full_name:(p.manager_code||'—')}</td>
+      <td style="font-family:monospace;font-weight:700;">${scoreDisp}</td>
+      <td>${band}</td>
+      <td><span class="badge ${pctClass}">${label}</span></td>
+    </tr>`;
+  }).join('');
+}
+function exportIncrementCSV(){
+  if(!state.activeCycle)return;
+  const approved=state.allData.filter(i=>i.status==='Approved');
+  const rows=[['Employee Code','Full Name','Department','Manager Code','Final Score','Band','Increment %']];
+  approved.forEach(item=>{
+    const p=item.profile,sub=item.submission;
+    const fs=sub?.manager_section_comments?.final_score??sub?.manager_overall_rating??null;
+    const {band,pct}=incBand(fs?parseFloat(fs):null);
+    rows.push([p.employee_code,p.full_name,p.department||'',p.manager_code||'',fs!==null?Number(fs).toFixed(2):'',band,pct+'%']);
+  });
+  const csv=rows.map(r=>r.map(v=>'"'+String(v||'').replace(/"/g,'""')+'"').join(',')).join('\n');
+  const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);
+  a.download='Increment_'+state.activeCycle.name.replace(/[^a-z0-9]/gi,'_')+'.csv';a.click();toast('Increment CSV exported!');
 }
 
 // ── HR USER MANAGEMENT ──
@@ -2483,6 +2663,100 @@ async function uploadAllEmployees(){
   if(ok>0)loadAllProfiles();
 }
 
+// I1: Historical PA import
+let histRows=[];
+function openHistImport(){
+  histRows=[];
+  const input=document.getElementById('hist-csv-input');if(input)input.value='';
+  const pw=document.getElementById('hist-preview-wrap');if(pw)pw.style.display='none';
+  const err=document.getElementById('hist-error');if(err)err.style.display='none';
+  const btn=document.getElementById('hist-upload-btn');if(btn)btn.style.display='none';
+  showModal('modal-hist-import');
+}
+function downloadHistTemplate(){
+  const csv='employee_code,cycle_name,final_score,status,submitted_date\nEMP001,FY2024,3.5,Approved,2024-06-30\nEMP002,FY2024,4.2,Approved,2024-06-28';
+  const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);
+  a.download='epa_historical_template.csv';a.click();toast('Template downloaded.');
+}
+function parseHistCSV(input){
+  const errEl=document.getElementById('hist-error');errEl.style.display='none';
+  const file=input.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=function(e){
+    const lines=e.target.result.split('\n').map(l=>l.trim()).filter(l=>l);
+    if(lines.length<2){errEl.textContent='CSV must have a header row and at least one data row.';errEl.style.display='';return;}
+    const headers=lines[0].split(',').map(h=>h.trim().toLowerCase().replace(/"/g,''));
+    const required=['employee_code','cycle_name','final_score'];
+    const missing=required.filter(r=>!headers.includes(r));
+    if(missing.length){errEl.textContent='Missing required columns: '+missing.join(', ');errEl.style.display='';return;}
+    histRows=[];
+    for(let i=1;i<lines.length;i++){
+      const vals=lines[i].split(',').map(v=>v.trim().replace(/^"|"$/g,''));
+      const row={};headers.forEach((h,idx)=>{row[h]=vals[idx]||'';});
+      const score=parseFloat(row.final_score);
+      histRows.push({
+        employee_code:(row.employee_code||'').toUpperCase(),
+        cycle_name:row.cycle_name||'',
+        final_score:isNaN(score)?null:score,
+        status:row.status||'Approved',
+        submitted_date:row.submitted_date||new Date().toISOString().split('T')[0],
+      });
+    }
+    const tbody=document.getElementById('hist-preview-body');
+    tbody.innerHTML=histRows.map((r,i)=>{
+      const warn=!r.final_score||!r.cycle_name||!r.employee_code?'<span style="color:var(--red);font-size:11px;">⚠️ Missing required field</span>':'<span style="color:var(--gray-text);font-size:11px;">Pending</span>';
+      return`<tr id="hist-row-${i}"><td style="padding:5px 8px;">${r.employee_code}</td><td style="padding:5px 8px;">${r.cycle_name}</td><td style="padding:5px 8px;text-align:center;">${r.final_score??'—'}</td><td style="padding:5px 8px;">${r.status}</td><td style="padding:5px 8px;" id="hist-status-${i}">${warn}</td></tr>`;
+    }).join('');
+    document.getElementById('hist-preview-count').textContent=histRows.length+' row(s) ready to import';
+    document.getElementById('hist-preview-wrap').style.display='';
+    document.getElementById('hist-upload-btn').style.display='';
+  };
+  reader.readAsText(file);
+}
+async function uploadHistData(){
+  if(!histRows.length)return;
+  const btn=document.getElementById('hist-upload-btn');btn.disabled=true;btn.textContent='Importing…';
+  // Pre-fetch cycles for name matching
+  const {data:allCycs}=await db.from('cycles').select('*');
+  const cyclesMap={};(allCycs||[]).forEach(c=>{cyclesMap[c.name.toLowerCase()]=c;});
+  let ok=0,fail=0;
+  for(let i=0;i<histRows.length;i++){
+    const r=histRows[i];const statusEl=document.getElementById('hist-status-'+i);
+    if(!r.final_score||!r.cycle_name||!r.employee_code){
+      if(statusEl)statusEl.innerHTML='<span style="color:var(--red);font-size:11px;">❌ Skipped — missing field</span>';
+      fail++;continue;
+    }
+    if(statusEl)statusEl.innerHTML='<span style="color:var(--gray-text);font-size:11px;">⏳ Working…</span>';
+    try{
+      // Find or create cycle
+      let cycleId=null;
+      const matchedCycle=cyclesMap[r.cycle_name.toLowerCase()];
+      if(matchedCycle){cycleId=matchedCycle.id;}
+      else{
+        const {data:newCyc,error:cycErr}=await db.from('cycles').insert({name:r.cycle_name,start_date:'2000-01-01',end_date:'2000-01-02',is_active:false}).select().single();
+        if(cycErr)throw new Error('Could not create cycle: '+cycErr.message);
+        cycleId=newCyc.id;cyclesMap[r.cycle_name.toLowerCase()]=newCyc;
+      }
+      // Upsert submission
+      const payload={
+        employee_code:r.employee_code,cycle_id:cycleId,cycle_name:r.cycle_name,
+        status:r.status,submitted_at:r.submitted_date+'T00:00:00Z',
+        section_data:{},
+        manager_section_comments:{final_score:r.final_score},
+        manager_overall_rating:r.final_score,
+      };
+      const {error:subErr}=await db.from('pa_submissions').insert(payload);
+      if(subErr)throw new Error(subErr.message);
+      if(statusEl)statusEl.innerHTML='<span style="color:var(--accent-dark);font-size:11px;">✅ Imported</span>';ok++;
+    }catch(ex){
+      const msg=String(ex.message||ex).substring(0,60);
+      if(statusEl)statusEl.innerHTML=`<span style="color:var(--red);font-size:11px;" title="${ex.message}">❌ ${msg}</span>`;fail++;
+    }
+  }
+  btn.disabled=false;btn.textContent='⬆️ Import All';
+  toast(ok+' imported'+(fail?' · '+fail+' failed':'')+'.');
+}
+
 // C1: Password reset for HR
 async function resetUserPassword(email){
   if(!email){toast('No email on file for this user.');return;}
@@ -2514,7 +2788,14 @@ async function loadCycles(){
 }
 function renderCyclesTable(){
   const tbl=document.getElementById('cycles-table');if(!tbl)return;
-  tbl.innerHTML=state.allCycles.map(c=>`<tr><td><strong>${c.name}</strong></td><td>${c.start_date}</td><td>${c.end_date}</td><td><span class="badge ${c.is_active?'badge-approved':'badge-draft'}">${c.is_active?'● Active':'Inactive'}</span></td><td>${!c.is_active?'<button class="btn btn-primary btn-sm" onclick="setActiveCycle(\''+c.id+'\')">Set Active</button>':'<span style="font-size:12px;color:var(--gray-text);">Current</span>'}</td></tr>`).join('')||'<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--gray-text);">No cycles yet.</td></tr>';
+  tbl.innerHTML=state.allCycles.map(c=>{
+    const lockBadge=c.is_locked?'<span class="badge badge-locked">🔒 Locked</span>':'<span class="badge badge-active">🔓 Open</span>';
+    const lockBtn=c.is_locked
+      ?`<button class="btn btn-outline btn-sm" onclick="unlockCycle('${c.id}')">🔓 Unlock</button>`
+      :`<button class="btn btn-ghost btn-sm" onclick="lockCycle('${c.id}')">🔒 Lock</button>`;
+    const actionBtn=!c.is_active?`<button class="btn btn-primary btn-sm" onclick="setActiveCycle('${c.id}')">Set Active</button>`:'<span style="font-size:12px;color:var(--gray-text);">Current</span>';
+    return`<tr><td><strong>${c.name}</strong></td><td>${c.start_date||'—'}</td><td>${c.end_date||'—'}</td><td><span class="badge ${c.is_active?'badge-approved':'badge-draft'}">${c.is_active?'● Active':'Inactive'}</span></td><td>${lockBadge}&nbsp;${lockBtn}</td><td>${actionBtn}</td></tr>`;
+  }).join('')||'<tr><td colspan="6" style="text-align:center;padding:20px;color:var(--gray-text);">No cycles yet.</td></tr>';
 }
 function openAddCycle(){
   ['c-name','c-start','c-end'].forEach(id=>document.getElementById(id).value='');
@@ -2539,6 +2820,24 @@ async function setActiveCycle(cycleId){
   await db.from('cycles').update({is_active:true}).eq('id',cycleId);
   const {data:cycle}=await db.from('cycles').select('*').eq('id',cycleId).single();
   state.activeCycle=cycle;clearLoading();toast('Active cycle updated to: '+cycle.name);loadCycles();
+}
+// S3: lock/unlock cycle
+async function lockCycle(cycleId){
+  if(!confirm('Lock this cycle? Employees and managers cannot submit or approve while locked.'))return;
+  setLoading('Locking cycle…');
+  const {error}=await db.from('cycles').update({is_locked:true}).eq('id',cycleId);
+  clearLoading();if(error){toast('Error: '+error.message);return;}
+  if(state.activeCycle&&state.activeCycle.id===cycleId)state.activeCycle.is_locked=true;
+  const cyc=state.allCycles.find(c=>c.id===cycleId);if(cyc)cyc.is_locked=true;
+  renderCyclesTable();toast('Cycle locked. All submissions and manager actions are frozen.');
+}
+async function unlockCycle(cycleId){
+  setLoading('Unlocking cycle…');
+  const {error}=await db.from('cycles').update({is_locked:false}).eq('id',cycleId);
+  clearLoading();if(error){toast('Error: '+error.message);return;}
+  if(state.activeCycle&&state.activeCycle.id===cycleId)state.activeCycle.is_locked=false;
+  const cyc=state.allCycles.find(c=>c.id===cycleId);if(cyc)cyc.is_locked=false;
+  renderCyclesTable();toast('Cycle unlocked. Submissions are open again.');
 }
 
 // ── INIT ──
