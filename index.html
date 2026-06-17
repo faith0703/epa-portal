@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ePA Portal v2 ‚Äî Performance Appraisal</title>
+<title>ePA Portal v2 &#8212; Performance Appraisal</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -30,7 +30,7 @@
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: 'Segoe UI', Arial, sans-serif; background: var(--gray-bg); color: var(--text); min-height: 100vh; }
 
-  /* ‚îÄ‚îÄ TOPBAR ‚îÄ‚îÄ */
+  /* == TOPBAR == */
   .topbar {
     background: var(--blue);
     color: #fff;
@@ -68,11 +68,11 @@
   .btn-logout { background: rgba(255,80,80,0.2); border-color: rgba(255,150,150,0.4); }
   .btn-logout:hover { background: rgba(255,80,80,0.35); }
 
-  /* ‚îÄ‚îÄ SCREENS ‚îÄ‚îÄ */
+  /* == SCREENS == */
   .screen { display: none; min-height: calc(100vh - 58px); }
   .screen.active { display: block; }
 
-  /* ‚îÄ‚îÄ LOGIN SCREEN ‚îÄ‚îÄ */
+  /* == LOGIN SCREEN == */
   #scrLogin { display: none; align-items: center; justify-content: center; background: linear-gradient(135deg, #003f7f 0%, #0055A5 60%, #1a6cc4 100%); min-height: 100vh; }
   #scrLogin.active { display: flex; }
   .login-card { background: var(--white); border-radius: 18px; box-shadow: 0 12px 48px rgba(0,0,0,0.28); padding: 40px 36px; width: 100%; max-width: 430px; }
@@ -97,7 +97,7 @@
   .login-demo-item .demo-name { color: var(--text); display: block; margin-top: 1px; font-size: 10px; font-weight: 500; }
   .login-note { font-size: 11px; color: var(--gray-text); text-align: center; margin-top: 14px; }
 
-  /* ‚îÄ‚îÄ ROLE PICKER ‚îÄ‚îÄ */
+  /* == ROLE PICKER == */
   #scrRolePicker { display: none; align-items: center; justify-content: center; background: var(--gray-bg); }
   #scrRolePicker.active { display: flex; flex-direction: column; }
   .role-card-wrap { display: flex; gap: 24px; flex-wrap: wrap; justify-content: center; margin-top: 12px; }
@@ -120,7 +120,7 @@
   .picker-sub { font-size: 14px; color: var(--gray-text); margin-bottom: 32px; }
   .picker-demo-note { font-size: 11px; color: var(--gray-text); margin-top: 24px; background: var(--blue-light); padding: 8px 16px; border-radius: 20px; }
 
-  /* ‚îÄ‚îÄ MAIN LAYOUT ‚îÄ‚îÄ */
+  /* == MAIN LAYOUT == */
   .main-layout { display: flex; min-height: calc(100vh - 58px); }
   .sidebar {
     width: 230px;
@@ -142,12 +142,12 @@
   .sidebar-item .si-icon { font-size: 17px; width: 22px; text-align: center; }
   .content { flex: 1; padding: 32px 36px; overflow-y: auto; }
 
-  /* ‚îÄ‚îÄ PAGE HEADER ‚îÄ‚îÄ */
+  /* == PAGE HEADER == */
   .page-header { margin-bottom: 28px; }
   .page-header h1 { font-size: 22px; font-weight: 700; color: var(--blue-dark); }
   .page-header p { font-size: 14px; color: var(--gray-text); margin-top: 4px; }
 
-  /* ‚îÄ‚îÄ CARDS / STATS ‚îÄ‚îÄ */
+  /* == CARDS / STATS == */
   .stats-row { display: flex; gap: 18px; margin-bottom: 28px; flex-wrap: wrap; }
   .stat-card {
     background: var(--white);
@@ -166,13 +166,13 @@
   .stat-card.red .stat-num { color: var(--red); }
   .stat-label { font-size: 12px; color: var(--gray-text); margin-top: 4px; font-weight: 500; }
 
-  /* ‚îÄ‚îÄ TABLE ‚îÄ‚îÄ */
+  /* == TABLE == */
   .card {
     background: var(--white);
     border-radius: var(--radius);
     box-shadow: var(--shadow);
     overflow: hidden; /* fallback */
-    overflow: clip;   /* modern: visual clip only, no BFC ‚Äî lets child scroll divs work */
+    overflow: clip;   /* modern: visual clip only, no BFC - lets child scroll divs work */
     margin-bottom: 24px;
   }
   .card-header {
@@ -187,7 +187,7 @@
   tr:hover td { background: var(--blue-light); }
   tr.clickable { cursor: pointer; }
 
-  /* ‚îÄ‚îÄ BADGES ‚îÄ‚îÄ */
+  /* == BADGES == */
   .badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .3px; }
   .badge-draft { background: #f0f0f0; color: #666; }
   .badge-submitted { background: #e3f0ff; color: var(--blue); }
@@ -195,7 +195,7 @@
   .badge-approved { background: #e8f5e9; color: var(--accent-dark); }
   .badge-returned { background: #fdecea; color: var(--red); }
 
-  /* ‚îÄ‚îÄ BUTTONS ‚îÄ‚îÄ */
+  /* == BUTTONS == */
   .btn { display: inline-flex; align-items: center; gap: 6px; padding: 9px 20px; border-radius: var(--radius-sm); font-size: 13.5px; font-weight: 600; cursor: pointer; border: none; transition: all .18s; text-decoration: none; }
   .btn-primary { background: var(--blue); color: #fff; }
   .btn-primary:hover { background: var(--blue-dark); }
@@ -209,7 +209,7 @@
   .btn-ghost:hover { background: var(--gray-bg); color: var(--text); }
   .btn-sm { padding: 5px 12px; font-size: 12px; }
 
-  /* ‚îÄ‚îÄ FORM ‚îÄ‚îÄ */
+  /* == FORM == */
   .form-section { margin-bottom: 28px; }
   .form-section-title {
     font-size: 14px; font-weight: 700; color: var(--blue);
@@ -233,20 +233,20 @@
   input[readonly], textarea[readonly] { background: var(--gray-bg); color: var(--gray-text); cursor: default; }
   textarea { resize: vertical; min-height: 90px; }
 
-  /* ‚îÄ‚îÄ SCORE DROPDOWN (0.5 steps) ‚îÄ‚îÄ */
+  /* == SCORE DROPDOWN (0.5 steps) == */
   .rating-wrap { display: flex; align-items: center; gap: 12px; }
   .score-sel { width: 260px; border: 1.5px solid var(--gray-border); border-radius: 7px; padding: 7px 9px; font-size: 13px; color: var(--text); background: #fff; outline: none; cursor: pointer; transition: border-color .18s; }
   .score-sel:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(0,85,165,.1); }
   .score-sel.ro { background: var(--gray-bg); pointer-events: none; opacity: .8; }
   .rating-label { font-size: 13px; color: var(--gray-text); min-width: 140px; }
 
-  /* ‚îÄ‚îÄ PROGRESS BAR ‚îÄ‚îÄ */
+  /* == PROGRESS BAR == */
   .progress-bar-wrap { margin: 6px 0 18px; }
   .progress-bar-bg { background: var(--gray-border); border-radius: 8px; height: 8px; overflow: hidden; }
   .progress-bar-fill { background: var(--blue); height: 100%; border-radius: 8px; transition: width .4s; }
   .progress-label { font-size: 12px; color: var(--gray-text); margin-top: 4px; display: flex; justify-content: space-between; }
 
-  /* ‚îÄ‚îÄ PA STATUS TIMELINE ‚îÄ‚îÄ */
+  /* == PA STATUS TIMELINE == */
   .status-timeline { display: flex; align-items: center; gap: 0; margin: 18px 0 28px; }
   .tl-step { display: flex; flex-direction: column; align-items: center; flex: 1; }
   .tl-dot { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; z-index: 1; }
@@ -259,12 +259,12 @@
   .tl-line { flex: 1; height: 3px; background: var(--gray-border); margin-top: -19px; }
   .tl-line.done { background: var(--accent); }
 
-  /* ‚îÄ‚îÄ INFO BOX ‚îÄ‚îÄ */
+  /* == INFO BOX == */
   .info-box { background: var(--blue-light); border-left: 4px solid var(--blue); border-radius: var(--radius-sm); padding: 12px 16px; font-size: 13px; color: var(--blue-dark); margin-bottom: 20px; }
   .warning-box { background: #fff8e1; border-left: 4px solid var(--orange); border-radius: var(--radius-sm); padding: 12px 16px; font-size: 13px; color: #7a4500; margin-bottom: 20px; }
   .success-box { background: #e8f5e9; border-left: 4px solid var(--accent); border-radius: var(--radius-sm); padding: 12px 16px; font-size: 13px; color: var(--accent-dark); margin-bottom: 20px; }
 
-  /* ‚îÄ‚îÄ MODAL ‚îÄ‚îÄ */
+  /* == MODAL == */
   .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 500; align-items: center; justify-content: center; }
   .modal-overlay.show { display: flex; }
   .modal { background: var(--white); border-radius: 14px; box-shadow: var(--shadow-lg); padding: 32px; max-width: 480px; width: 90%; text-align: center; }
@@ -273,18 +273,18 @@
   .modal-msg { font-size: 14px; color: var(--gray-text); margin-bottom: 24px; }
   .modal-actions { display: flex; gap: 12px; justify-content: center; }
 
-  /* ‚îÄ‚îÄ EMPLOYEE PROFILE CARD ‚îÄ‚îÄ */
+  /* == EMPLOYEE PROFILE CARD == */
   .emp-profile-card { background: var(--white); border-radius: var(--radius); box-shadow: var(--shadow); padding: 24px; margin-bottom: 24px; display: flex; align-items: center; gap: 20px; }
   .emp-avatar { width: 56px; height: 56px; border-radius: 50%; background: var(--blue); color: #fff; font-size: 22px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
   .emp-name { font-size: 17px; font-weight: 700; color: var(--text); }
   .emp-meta { font-size: 13px; color: var(--gray-text); margin-top: 2px; }
   .emp-status-wrap { margin-left: auto; text-align: right; }
 
-  /* ‚îÄ‚îÄ BACK LINK ‚îÄ‚îÄ */
+  /* == BACK LINK == */
   .back-link { display: inline-flex; align-items: center; gap: 6px; color: var(--blue); font-size: 13px; font-weight: 600; cursor: pointer; margin-bottom: 20px; }
   .back-link:hover { text-decoration: underline; }
 
-  /* ‚îÄ‚îÄ TOAST ‚îÄ‚îÄ */
+  /* == TOAST == */
   #toast {
     position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%);
     background: #222; color: #fff; padding: 12px 24px; border-radius: 30px;
@@ -293,22 +293,22 @@
   }
   #toast.show { opacity: 1; }
 
-  /* ‚îÄ‚îÄ SCROLLBAR ‚îÄ‚îÄ */
+  /* == SCROLLBAR == */
   ::-webkit-scrollbar { width: 6px; }
   ::-webkit-scrollbar-track { background: transparent; }
   ::-webkit-scrollbar-thumb { background: var(--gray-border); border-radius: 3px; }
 
-  /* ‚îÄ‚îÄ PREVENT HORIZONTAL OVERFLOW (desktop + mobile) ‚îÄ‚îÄ */
+  /* == PREVENT HORIZONTAL OVERFLOW (desktop + mobile) == */
   /* flex content must be able to shrink below natural content width */
   .content { min-width: 0; }
   /* scroll wrapper injected by JS around every .card table */
   .tbl-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
 
-  /* mobile nav toggle ‚Äî hidden on desktop, shown via media query */
+  /* mobile nav toggle - hidden on desktop, shown via media query */
   .menu-toggle-btn { display: none; background: none; border: none; font-size: 22px;
     cursor: pointer; padding: 4px 10px; color: #fff; line-height: 1; }
 
-  /* ‚îÄ‚îÄ RESPONSIVE ‚îÄ‚îÄ */
+  /* == RESPONSIVE == */
   @media (max-width: 700px) {
     /* layout */
     .sidebar { display: none; }
@@ -330,7 +330,7 @@
     .stat-num { font-size: 24px; }
     .stat-label { font-size: 11px; }
 
-    /* table cells ‚Äî smaller on mobile */
+    /* table cells - smaller on mobile */
     td { padding: 10px 10px; font-size: 12.5px; }
     th { padding: 8px 10px; font-size: 10px; }
 
@@ -360,22 +360,22 @@
     .wtabs { overflow-x: auto; }
   }
 
-  /* ‚îÄ‚îÄ LOADING OVERLAY ‚îÄ‚îÄ */
+  /* == LOADING OVERLAY == */
   #loading-overlay { display:none; position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:9999;align-items:center;justify-content:center;flex-direction:column;gap:16px; }
   #loading-overlay.show { display:flex !important; }
   @keyframes spin { to { transform:rotate(360deg); } }
 
-  /* ‚îÄ‚îÄ HR badge colours ‚îÄ‚îÄ */
+  /* == HR badge colours == */
   .badge-active   { background:#e8f8f0;color:#1a7f4b;border:1px solid #a8dfc3; }
   .badge-inactive { background:#fef0e0;color:#c05c00;border:1px solid #f9c985; }
   .badge-locked   { background:#fdecea;color:#c62828;border:1px solid #ffcdd2; }
   .btn-danger-sm  { background:#d32f2f;color:#fff;border:none;padding:4px 10px;border-radius:4px;font-size:11px;cursor:pointer; }
   .btn-danger-sm:hover { background:#b71c1c; }
-  /* ‚îÄ‚îÄ BULK UPLOAD ‚îÄ‚îÄ */
+  /* == BULK UPLOAD == */
   .bulk-row-ok{background:#f0fff8;} .bulk-row-err{background:#fff0f0;}
   .bulk-status-ok{color:var(--accent-dark);font-size:11px;font-weight:600;} .bulk-status-err{color:var(--red);font-size:11px;font-weight:600;}
 
-  /* ‚îÄ‚îÄ WIZARD TABS (v4 port) ‚îÄ‚îÄ */
+  /* == WIZARD TABS (v4 port) == */
   .wtabs{display:flex;background:#fff;border:1px solid var(--gray-border);border-radius:var(--radius);overflow:hidden;margin-bottom:20px;box-shadow:var(--shadow);}
   .wtab{flex:1;padding:9px 4px;text-align:center;font-size:11px;font-weight:500;color:var(--gray-text);cursor:pointer;border-right:1px solid var(--gray-border);transition:all .18s;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   .wtab:last-child{border-right:none;}
@@ -383,11 +383,11 @@
   .wtab.active{background:var(--blue);color:#fff;font-weight:600;}
   .wtab.done{color:var(--accent);background:#f0fff8;}
   .wtab.done::before{content:'&#10003; ';}
-  /* ‚îÄ‚îÄ SECTION PANELS ‚îÄ‚îÄ */
+  /* == SECTION PANELS == */
   .sp{display:none;} .sp.active{display:block;}
-  /* ‚îÄ‚îÄ SUB-BAR ‚îÄ‚îÄ */
+  /* == SUB-BAR == */
   .sub-bar{display:flex;align-items:center;justify-content:space-between;padding:13px 0;margin-top:4px;}
-  /* ‚îÄ‚îÄ OBJECTIVES ‚îÄ‚îÄ */
+  /* == OBJECTIVES == */
   .obj-block{border:1px solid var(--gray-border);border-radius:8px;overflow:hidden;margin-bottom:14px;}
   .obj-num{background:var(--blue-dark);color:#fff;padding:7px 14px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;display:flex;align-items:center;justify-content:space-between;}
   .obj-body{background:var(--gray-bg);}
@@ -397,7 +397,7 @@
   .obj-score-row{padding:10px 14px;border-bottom:1px solid var(--gray-border);display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;}
   .obj-score-row:last-child{border-bottom:none;}
   .score-cell label{font-size:11px;font-weight:600;color:var(--gray-text);text-transform:uppercase;letter-spacing:.04em;display:block;margin-bottom:5px;}
-  /* ‚îÄ‚îÄ COMPETENCY TABLE ‚îÄ‚îÄ */
+  /* == COMPETENCY TABLE == */
   .ctbl{width:100%;border-collapse:collapse;}
   .ctbl th{text-align:left;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--gray-text);padding:8px 12px;background:var(--gray-bg);border-bottom:1.5px solid var(--gray-border);white-space:nowrap;}
   .ctbl td{padding:10px 12px;border-bottom:1px solid var(--gray-border);vertical-align:top;}
@@ -405,34 +405,34 @@
   .comp-group-header td{background:#f1f5f9;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--gray-text);padding:6px 12px;}
   .comp-name{font-weight:600;font-size:13px;color:var(--text);}
   .comp-desc{font-size:11.5px;color:var(--gray-text);margin-top:2px;line-height:1.5;}
-  /* ‚îÄ‚îÄ DEV ACTIONS TABLE ‚îÄ‚îÄ */
+  /* == DEV ACTIONS TABLE == */
   .devtbl{width:100%;border-collapse:collapse;}
   .devtbl th{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--gray-text);padding:8px 10px;background:var(--gray-bg);border-bottom:1.5px solid var(--gray-border);text-align:left;}
   .devtbl td{padding:6px 6px;border-bottom:1px solid var(--gray-border);vertical-align:middle;}
   .devtbl tr:last-child td{border-bottom:none;}
   .devtbl input[type=text],.devtbl input[type=date]{font-size:12.5px;padding:6px 9px;}
-  /* ‚îÄ‚îÄ SMILEY PICKER ‚îÄ‚îÄ */
+  /* == SMILEY PICKER == */
   .smiley-row{display:flex;gap:10px;margin-top:6px;}
   .smb{width:52px;height:52px;border:2px solid var(--gray-border);border-radius:12px;background:#fff;cursor:pointer;font-size:24px;display:flex;align-items:center;justify-content:center;transition:all .18s;flex-shrink:0;}
   .smb:hover{border-color:var(--blue);background:var(--blue-light);}
   .smb.sel-happy{border-color:var(--accent);background:#e8f5e9;}
   .smb.sel-neutral{border-color:var(--orange);background:#fff3e0;}
   .smb.sel-sad{border-color:var(--red);background:#fdecea;}
-  /* ‚îÄ‚îÄ SCORE DROPDOWN COLORS ‚îÄ‚îÄ */
+  /* == SCORE DROPDOWN COLORS == */
   .score-sel.s1{border-color:#ffcdd2;background:#ffebee;color:#b71c1c;}
   .score-sel.s2{border-color:#ffe082;background:#fff8e1;color:#7a4500;}
   .score-sel.s3{border-color:#a5d6a7;background:#e8f5e9;color:#1b5e20;}
   .score-sel.s4{border-color:#90caf9;background:#e3f2fd;color:#1565c0;}
   .score-sel.s5{border-color:#ce93d8;background:#f3e5f5;color:#6a1b9a;}
   .score-sel.ro{background:var(--gray-bg);pointer-events:none;opacity:.8;}
-  /* ‚îÄ‚îÄ SCORE PILL (read-only display) ‚îÄ‚îÄ */
+  /* == SCORE PILL (read-only display) == */
   .ps{display:inline-flex;align-items:center;justify-content:center;min-width:36px;height:26px;border-radius:5px;font-size:12px;font-weight:600;border:1.5px solid var(--gray-border);background:var(--gray-bg);color:var(--gray-text);padding:0 5px;font-family:monospace;}
   .ps.s1{background:#ffebee;color:#b71c1c;border-color:#ffcdd2;}
   .ps.s2{background:#fff8e1;color:#7a4500;border-color:#ffe082;}
   .ps.s3{background:#e8f5e9;color:#1b5e20;border-color:#a5d6a7;}
   .ps.s4{background:#e3f2fd;color:#1565c0;border-color:#90caf9;}
   .ps.s5{background:#f3e5f5;color:#6a1b9a;border-color:#ce93d8;}
-  /* ‚îÄ‚îÄ LIVE SCORE PANEL ‚îÄ‚îÄ */
+  /* == LIVE SCORE PANEL == */
   .score-panel{background:var(--blue-dark);border-radius:var(--radius);padding:16px 20px;margin-bottom:18px;color:#fff;display:flex;align-items:center;gap:20px;}
   .sp-main{text-align:center;flex-shrink:0;min-width:80px;}
   .sp-big{font-size:40px;font-weight:700;font-family:monospace;line-height:1;color:#7ec8f7;}
@@ -444,19 +444,19 @@
   .sp-cell{background:rgba(255,255,255,.07);border-radius:7px;padding:7px 10px;}
   .sp-cell .scl{font-size:10px;opacity:.45;text-transform:uppercase;letter-spacing:.05em;}
   .sp-cell .scv{font-size:14px;font-weight:600;font-family:monospace;color:#7ec8f7;}
-  /* ‚îÄ‚îÄ APPRAISAL OUTCOME ‚îÄ‚îÄ */
+  /* == APPRAISAL OUTCOME == */
   .outcome-row{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--gray-border);}
   .outcome-row:last-child{border-bottom:none;}
   .outcome-lbl{font-size:13px;font-weight:500;color:var(--text);}
   .outcome-val{font-family:monospace;font-size:14px;font-weight:600;color:var(--blue-dark);min-width:160px;text-align:right;}
   .outcome-val.na{color:var(--gray-text);}
-  /* ‚îÄ‚îÄ SIGN BOX ‚îÄ‚îÄ */
+  /* == SIGN BOX == */
   .sign-row{display:flex;gap:14px;margin-top:14px;}
   .sign-box{flex:1;border:1px dashed var(--gray-border);border-radius:8px;padding:16px;text-align:center;font-size:12px;color:var(--gray-text);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-height:72px;}
   .sign-name{font-weight:600;color:var(--text);font-size:13px;}
   .sign-role{font-size:11px;color:var(--gray-text);}
   .sign-date{font-size:11px;color:var(--blue);}
-  /* ‚îÄ‚îÄ WEIGHT PILL ‚îÄ‚îÄ */
+  /* == WEIGHT PILL == */
   .wt-pill{font-family:monospace;font-size:12px;color:var(--blue);background:var(--blue-light);padding:3px 8px;border-radius:5px;}
   @media(max-width:700px){.sign-row{flex-direction:column;}.score-panel{flex-direction:column;}.obj-score-row{grid-template-columns:1fr;}.wtabs{overflow-x:auto;}}
 </style>
@@ -485,7 +485,7 @@
       <span class="login-logo-icon">&#128203;</span>
       <div class="login-logo-title">ePA Portal</div>
       <div class="login-logo-sub">Electronic Performance Appraisal System</div>
-      <span class="login-cycle-badge" id="login-cycle-badge">Loading‚Ä¶</span>
+      <span class="login-cycle-badge" id="login-cycle-badge">Loading&#8230;</span>
     </div>
     <div id="login-error" style="display:none;background:#fff0f0;border:1.5px solid #f5c6cb;border-radius:6px;padding:10px 14px;font-size:13px;color:#c0392b;margin-bottom:14px;"></div>
     <div class="login-field">
@@ -496,7 +496,7 @@
       <label>Password</label>
       <input type="password" id="login-password" placeholder="Enter your password" autocomplete="current-password">
     </div>
-    <button class="login-btn" id="login-btn" onclick="doLogin()">Sign In ‚Üí</button>
+    <button class="login-btn" id="login-btn" onclick="doLogin()">Sign In &#8594;</button>
     <div class="login-note" style="margin-top:16px;">&#128272; Contact your HR Administrator for login credentials</div>
   </div>
 </div>
@@ -509,7 +509,7 @@
 </div>
 
 
-<!-- ‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê EMPLOYEE HOME -->
+<!-- ======================================================= EMPLOYEE HOME -->
 <div id="scrEmployeeHome" class="screen">
   <div class="main-layout">
     <div class="sidebar">
@@ -524,7 +524,7 @@
       <div id="empDashboard">
         <div class="page-header">
           <h1 id="emp-dash-title">My Dashboard</h1>
-          <p>Performance Appraisal ‚Äî Cycle 2026</p>
+          <p>Performance Appraisal &#8212; Cycle 2026</p>
         </div>
 
         <div class="card" style="padding:24px;">
@@ -562,7 +562,7 @@
             <div class="stat-label">Current Status</div>
           </div>
           <div class="stat-card green" id="emp-deadline-card">
-            <div class="stat-num" id="emp-deadline-stat">‚Äî</div>
+            <div class="stat-num" id="emp-deadline-stat">&#8212;</div>
             <div class="stat-label">Submission Deadline</div>
           </div>
         </div>
@@ -582,7 +582,7 @@
 
       <!-- EMP FORM -->
       <div id="empForm" style="display:none;">
-        <span class="back-link" onclick="empNav('empDashboard')">‚Üê Back to Dashboard</span>
+        <span class="back-link" onclick="empNav('empDashboard')">&#8592; Back to Dashboard</span>
         <div class="page-header">
           <h1>My Performance Appraisal Form</h1>
           <p id="form-cycle-name-sub">Complete all sections before submitting</p>
@@ -598,7 +598,7 @@
           <div class="success-box">&#127881; Your PA has been <strong>Approved</strong>! Manager and agreed scores are now shown in Sections 2 &amp; 3, and your final rating appears in Section 9.</div>
         </div>
         <div id="emp-deadline-warning" style="display:none;">
-          <div class="warning-box">&#128274; <strong>Submission deadline has passed</strong> (<span id="emp-deadline-warning-date">‚Äî</span>). No new submissions are accepted. Contact HR if you need an extension.</div>
+          <div class="warning-box">&#128274; <strong>Submission deadline has passed</strong> (<span id="emp-deadline-warning-date">&#8212;</span>). No new submissions are accepted. Contact HR if you need an extension.</div>
         </div>
         <div id="emp-locked-warning" style="display:none;">
           <div class="warning-box">&#128274; <strong>This cycle is locked by HR</strong> for payroll processing. Submissions are temporarily paused.</div>
@@ -614,13 +614,13 @@
           <div class="wtab" onclick="goTab('ee',5)">S6 Satisfaction</div>
           <div class="wtab" onclick="goTab('ee',6)">S7 Expectations</div>
           <div class="wtab" onclick="goTab('ee',7)">S8 Remarks</div>
-          <div class="wtab" onclick="goTab('ee',8)">S9‚Äì10 Submit</div>
+          <div class="wtab" onclick="goTab('ee',8)">S9&#8211;10 Submit</div>
         </div>
 
         <!-- S1: PERSONAL DATA -->
         <div class="sp active" id="ee-p0">
           <div class="card" style="padding:0;">
-            <div class="card-header"><span class="card-title">1 ‚Äî Personal Data</span><span style="font-size:12px;color:var(--gray-text)">Pre-filled from HR records ¬∑ contact HR to correct any detail</span></div>
+            <div class="card-header"><span class="card-title">1 &#8212; Personal Data</span><span style="font-size:12px;color:var(--gray-text)">Pre-filled from HR records &#183; contact HR to correct any detail</span></div>
             <div style="padding:20px;">
               <div class="form-row">
                 <div class="form-group"><label>E/No</label><input type="text" id="p1-eno" readonly style="background:var(--gray-bg);color:var(--gray-text);cursor:default;"></div>
@@ -634,15 +634,15 @@
               </div>
             </div>
           </div>
-          <div class="sub-bar"><div></div><button class="btn btn-primary" onclick="goTab('ee',1)">Next: Objectives ‚Üí</button></div>
+          <div class="sub-bar"><div></div><button class="btn btn-primary" onclick="goTab('ee',1)">Next: Objectives &#8594;</button></div>
         </div>
 
         <!-- S2: RATING OF OBJECTIVES -->
         <div class="sp" id="ee-p1">
           <div class="card" style="padding:0;">
-            <div class="card-header"><span class="card-title">2 ‚Äî Rating of Objectives</span><span style="font-size:12px;color:var(--gray-text)">5 objectives ¬∑ Agreement on Setting + Final Review ¬∑ Weight % ¬∑ Self Score</span></div>
+            <div class="card-header"><span class="card-title">2 &#8212; Rating of Objectives</span><span style="font-size:12px;color:var(--gray-text)">5 objectives &#183; Agreement on Setting + Final Review &#183; Weight % &#183; Self Score</span></div>
             <div style="padding:20px;">
-              <div class="info-box"><strong>Score guide:</strong> 1 = Insignificant / Far behind &nbsp;|&nbsp; 2 = Partially achieved &nbsp;|&nbsp; 3 = On Schedule &nbsp;|&nbsp; 4 = Beyond expectation &nbsp;|&nbsp; 5 = Highly exceeds expectation<br><span style="font-size:11px;opacity:.8">Half-point scores allowed: 1 ¬∑ 1.5 ¬∑ 2 ¬∑ 2.5 ¬∑ 3 ¬∑ 3.5 ¬∑ 4 ¬∑ 4.5 ¬∑ 5</span></div>
+              <div class="info-box"><strong>Score guide:</strong> 1 = Insignificant / Far behind &nbsp;|&nbsp; 2 = Partially achieved &nbsp;|&nbsp; 3 = On Schedule &nbsp;|&nbsp; 4 = Beyond expectation &nbsp;|&nbsp; 5 = Highly exceeds expectation<br><span style="font-size:11px;opacity:.8">Half-point scores allowed: 1 &#183; 1.5 &#183; 2 &#183; 2.5 &#183; 3 &#183; 3.5 &#183; 4 &#183; 4.5 &#183; 5</span></div>
               <div class="warning-box" id="wt-notice" style="display:none;">&#9888;&#65039; <span id="wt-msg"></span></div>
               <div id="ee-obj-wrap"></div>
               <div style="display:flex;justify-content:flex-end;align-items:center;gap:10px;margin-top:8px;font-size:13px">
@@ -651,13 +651,13 @@
               </div>
             </div>
           </div>
-          <div class="sub-bar"><button class="btn btn-ghost" onclick="goTab('ee',0)">‚Üê Back</button><button class="btn btn-primary" onclick="goTab('ee',2)">Next: Competencies ‚Üí</button></div>
+          <div class="sub-bar"><button class="btn btn-ghost" onclick="goTab('ee',0)">&#8592; Back</button><button class="btn btn-primary" onclick="goTab('ee',2)">Next: Competencies &#8594;</button></div>
         </div>
 
         <!-- S3: RATING OF COMPETENCIES -->
         <div class="sp" id="ee-p2">
           <div class="card" style="padding:0;">
-            <div class="card-header"><span class="card-title">3 ‚Äî Rating of Competencies</span><span style="font-size:12px;color:var(--gray-text)">8 competencies (3 result-oriented + 4 behaviour + 1 job skills) ¬∑ Self Score</span></div>
+            <div class="card-header"><span class="card-title">3 &#8212; Rating of Competencies</span><span style="font-size:12px;color:var(--gray-text)">8 competencies (3 result-oriented + 4 behaviour + 1 job skills) &#183; Self Score</span></div>
             <div style="padding:20px;">
               <div class="info-box"><strong>Score guide:</strong> 1 = Unacceptable/Below Expectation &nbsp;|&nbsp; 2 = Average/Meet Most &nbsp;|&nbsp; 3 = Good/Meet Expectations &nbsp;|&nbsp; 4 = Excellent/Above &nbsp;|&nbsp; 5 = Outstanding/Beyond Expectations</div>
               <table class="ctbl">
@@ -696,13 +696,13 @@
               </table>
             </div>
           </div>
-          <div class="sub-bar"><button class="btn btn-ghost" onclick="goTab('ee',1)">‚Üê Back</button><button class="btn btn-primary" onclick="goTab('ee',3)">Next: Dev Actions ‚Üí</button></div>
+          <div class="sub-bar"><button class="btn btn-ghost" onclick="goTab('ee',1)">&#8592; Back</button><button class="btn btn-primary" onclick="goTab('ee',3)">Next: Dev Actions &#8594;</button></div>
         </div>
 
         <!-- S4: PLANNED DEVELOPMENT ACTIONS -->
         <div class="sp" id="ee-p3">
           <div class="card" style="padding:0;">
-            <div class="card-header"><span class="card-title">4 ‚Äî Planned Development Actions</span><span style="font-size:12px;color:var(--gray-text)">Actions with fixed date and responsible party</span></div>
+            <div class="card-header"><span class="card-title">4 &#8212; Planned Development Actions</span><span style="font-size:12px;color:var(--gray-text)">Actions with fixed date and responsible party</span></div>
             <div style="padding:20px;">
               <table class="devtbl" id="dev-table">
                 <thead><tr><th style="width:55%">Actions (professional, behaviour, leadership, others)</th><th style="width:20%">Fixed Date</th><th style="width:20%">Responsible</th><th style="width:5%"></th></tr></thead>
@@ -710,16 +710,16 @@
               </table>
               <button class="btn btn-ghost btn-sm" onclick="addDevRow()" style="margin-top:10px">+ Add Action</button>
               <hr style="margin:16px 0;border:none;border-top:1px solid var(--gray-border);">
-              <div><label>Remarks</label><textarea id="dev_remarks" rows="3" placeholder="Any additional remarks on development actions‚Ä¶"></textarea></div>
+              <div><label>Remarks</label><textarea id="dev_remarks" rows="3" placeholder="Any additional remarks on development actions&#8230;"></textarea></div>
             </div>
           </div>
-          <div class="sub-bar"><button class="btn btn-ghost" onclick="goTab('ee',2)">‚Üê Back</button><button class="btn btn-primary" onclick="goTab('ee',4)">Next: Next Year Objectives ‚Üí</button></div>
+          <div class="sub-bar"><button class="btn btn-ghost" onclick="goTab('ee',2)">&#8592; Back</button><button class="btn btn-primary" onclick="goTab('ee',4)">Next: Next Year Objectives &#8594;</button></div>
         </div>
 
         <!-- S5: OBJECTIVES SETTING FOR THE NEW YEAR -->
         <div class="sp" id="ee-p4">
           <div class="card" style="padding:0;">
-            <div class="card-header"><span class="card-title">5 ‚Äî Objectives Setting for the New Year</span><span style="font-size:12px;color:var(--gray-text)">Set agreed objectives and weights for the upcoming appraisal cycle</span></div>
+            <div class="card-header"><span class="card-title">5 &#8212; Objectives Setting for the New Year</span><span style="font-size:12px;color:var(--gray-text)">Set agreed objectives and weights for the upcoming appraisal cycle</span></div>
             <div style="padding:20px;">
               <table class="devtbl" id="ny-table">
                 <thead><tr><th style="width:75%">Descriptions of the Objectives</th><th style="width:20%">Weight (%)</th><th style="width:5%"></th></tr></thead>
@@ -728,13 +728,13 @@
               <button class="btn btn-ghost btn-sm" onclick="addNYRow()" style="margin-top:10px">+ Add Objective</button>
             </div>
           </div>
-          <div class="sub-bar"><button class="btn btn-ghost" onclick="goTab('ee',3)">‚Üê Back</button><button class="btn btn-primary" onclick="goTab('ee',5)">Next: Employee Satisfaction ‚Üí</button></div>
+          <div class="sub-bar"><button class="btn btn-ghost" onclick="goTab('ee',3)">&#8592; Back</button><button class="btn btn-primary" onclick="goTab('ee',5)">Next: Employee Satisfaction &#8594;</button></div>
         </div>
 
         <!-- S6: EMPLOYEE SATISFACTION -->
         <div class="sp" id="ee-p5">
           <div class="card" style="padding:0;">
-            <div class="card-header"><span class="card-title">6 ‚Äî Employee Satisfaction</span><span style="font-size:12px;color:var(--gray-text)">Prepared by the employee ¬∑ discussed at appraisal outcome</span></div>
+            <div class="card-header"><span class="card-title">6 &#8212; Employee Satisfaction</span><span style="font-size:12px;color:var(--gray-text)">Prepared by the employee &#183; discussed at appraisal outcome</span></div>
             <div style="padding:20px;">
               <div class="success-box">&#9989; These declarations <strong>DO NOT HAVE ANY IMPACT</strong> on the performance appraisal.</div>
               <div style="margin-bottom:16px;">
@@ -746,64 +746,64 @@
                 </div>
                 <div style="font-size:11px;color:var(--gray-text);margin-top:6px;" id="smiley-lbl">Select your overall job satisfaction level</div>
               </div>
-              <div style="margin-bottom:12px;"><label>Remarks ‚Äî On the job training / on the working conditions</label><textarea id="sat_training" rows="3" placeholder="Your thoughts on training opportunities and working conditions‚Ä¶"></textarea></div>
-              <div><label>On the teamwork with colleagues / subordinates and other areas</label><textarea id="sat_teamwork" rows="3" placeholder="Your thoughts on teamwork, collaboration, and working relationships‚Ä¶"></textarea></div>
+              <div style="margin-bottom:12px;"><label>Remarks &#8212; On the job training / on the working conditions</label><textarea id="sat_training" rows="3" placeholder="Your thoughts on training opportunities and working conditions&#8230;"></textarea></div>
+              <div><label>On the teamwork with colleagues / subordinates and other areas</label><textarea id="sat_teamwork" rows="3" placeholder="Your thoughts on teamwork, collaboration, and working relationships&#8230;"></textarea></div>
             </div>
           </div>
-          <div class="sub-bar"><button class="btn btn-ghost" onclick="goTab('ee',4)">‚Üê Back</button><button class="btn btn-primary" onclick="goTab('ee',6)">Next: Expectations ‚Üí</button></div>
+          <div class="sub-bar"><button class="btn btn-ghost" onclick="goTab('ee',4)">&#8592; Back</button><button class="btn btn-primary" onclick="goTab('ee',6)">Next: Expectations &#8594;</button></div>
         </div>
 
         <!-- S7: EMPLOYEE EXPECTATIONS -->
         <div class="sp" id="ee-p6">
           <div class="card" style="padding:0;">
-            <div class="card-header"><span class="card-title">7 ‚Äî Employee Expectations</span><span style="font-size:12px;color:var(--gray-text)">Opportunity to express future expectations ‚Äî discussed with supervisor noncommittally</span></div>
+            <div class="card-header"><span class="card-title">7 &#8212; Employee Expectations</span><span style="font-size:12px;color:var(--gray-text)">Opportunity to express future expectations &#8212; discussed with supervisor noncommittally</span></div>
             <div style="padding:20px;">
-              <div style="margin-bottom:12px;"><label>Employee Expectations</label><textarea id="ee_expectations" rows="4" placeholder="Opportunity for you to express your future expectations and discuss them with your supervisor noncommittally‚Ä¶"></textarea></div>
-              <div><label>Comment of the Supervisor</label><textarea id="sup_expectations_comment" rows="3" readonly placeholder="To be completed by supervisor during appraisal discussion‚Ä¶"></textarea></div>
+              <div style="margin-bottom:12px;"><label>Employee Expectations</label><textarea id="ee_expectations" rows="4" placeholder="Opportunity for you to express your future expectations and discuss them with your supervisor noncommittally&#8230;"></textarea></div>
+              <div><label>Comment of the Supervisor</label><textarea id="sup_expectations_comment" rows="3" readonly placeholder="To be completed by supervisor during appraisal discussion&#8230;"></textarea></div>
             </div>
           </div>
-          <div class="sub-bar"><button class="btn btn-ghost" onclick="goTab('ee',5)">‚Üê Back</button><button class="btn btn-primary" onclick="goTab('ee',7)">Next: Additional Remarks ‚Üí</button></div>
+          <div class="sub-bar"><button class="btn btn-ghost" onclick="goTab('ee',5)">&#8592; Back</button><button class="btn btn-primary" onclick="goTab('ee',7)">Next: Additional Remarks &#8594;</button></div>
         </div>
 
         <!-- S8: ADDITIONAL REMARKS -->
         <div class="sp" id="ee-p7">
           <div class="card" style="padding:0;">
-            <div class="card-header"><span class="card-title">8 ‚Äî Additional Remarks</span></div>
+            <div class="card-header"><span class="card-title">8 &#8212; Additional Remarks</span></div>
             <div style="padding:20px;">
-              <div style="margin-bottom:12px;"><label>Additional Remarks from Employee</label><textarea id="ee_add_remarks" rows="4" placeholder="Any additional remarks you wish to add‚Ä¶"></textarea></div>
-              <div><label>Additional Remarks from Supervisor</label><textarea id="sup_add_remarks" rows="4" readonly placeholder="To be completed by supervisor‚Ä¶"></textarea></div>
+              <div style="margin-bottom:12px;"><label>Additional Remarks from Employee</label><textarea id="ee_add_remarks" rows="4" placeholder="Any additional remarks you wish to add&#8230;"></textarea></div>
+              <div><label>Additional Remarks from Supervisor</label><textarea id="sup_add_remarks" rows="4" readonly placeholder="To be completed by supervisor&#8230;"></textarea></div>
             </div>
           </div>
-          <div class="sub-bar"><button class="btn btn-ghost" onclick="goTab('ee',6)">‚Üê Back</button><button class="btn btn-primary" onclick="goTab('ee',8)">Next: Outcome &amp; Submit ‚Üí</button></div>
+          <div class="sub-bar"><button class="btn btn-ghost" onclick="goTab('ee',6)">&#8592; Back</button><button class="btn btn-primary" onclick="goTab('ee',8)">Next: Outcome &amp; Submit &#8594;</button></div>
         </div>
 
         <!-- S9 + S10: APPRAISAL OUTCOME & DECLARATION -->
         <div class="sp" id="ee-p8">
           <div class="card" style="padding:0;">
-            <div class="card-header"><span class="card-title">9 ‚Äî Appraisal Outcome</span><span style="font-size:12px;color:var(--gray-text)">Auto-calculated from scores ¬∑ finalised after manager review</span></div>
+            <div class="card-header"><span class="card-title">9 &#8212; Appraisal Outcome</span><span style="font-size:12px;color:var(--gray-text)">Auto-calculated from scores &#183; finalised after manager review</span></div>
             <div>
               <div class="outcome-row"><span class="outcome-lbl">Overall Rating of objectives and achievements</span><span class="outcome-val na" id="oc-obj">Pending manager review</span></div>
               <div class="outcome-row"><span class="outcome-lbl">Overall Rating of skill analysis</span><span class="outcome-val na" id="oc-skill">Pending manager review</span></div>
               <div class="outcome-row" style="background:var(--gray-bg);"><span class="outcome-lbl" style="font-weight:600">Final overall / result rating</span><span class="outcome-val na" id="oc-final">Pending manager review</span></div>
-              <div style="padding:12px 16px;font-size:12px;color:var(--gray-text)">1 = Unacceptable/Below Expectation (1‚Äì1.9) &nbsp;¬∑&nbsp; 2 = Average/Meet Most (2‚Äì2.9) &nbsp;¬∑&nbsp; 3 = Good/Meet Expectations (3‚Äì3.9) &nbsp;¬∑&nbsp; 4 = Excellent/Above (4‚Äì4.5) &nbsp;¬∑&nbsp; 5 = Outstanding/Beyond (4.6‚Äì5)</div>
+              <div style="padding:12px 16px;font-size:12px;color:var(--gray-text)">1 = Unacceptable/Below Expectation (1&#8211;1.9) &nbsp;&#183;&nbsp; 2 = Average/Meet Most (2&#8211;2.9) &nbsp;&#183;&nbsp; 3 = Good/Meet Expectations (3&#8211;3.9) &nbsp;&#183;&nbsp; 4 = Excellent/Above (4&#8211;4.5) &nbsp;&#183;&nbsp; 5 = Outstanding/Beyond (4.6&#8211;5)</div>
             </div>
           </div>
           <div class="card" style="padding:0;">
-            <div class="card-header"><span class="card-title">10 ‚Äî Agreement and Approval</span></div>
+            <div class="card-header"><span class="card-title">10 &#8212; Agreement and Approval</span></div>
             <div style="padding:20px;">
               <p style="font-size:12.5px;color:var(--gray-text);line-height:1.8;margin-bottom:4px;">The employee confirms with his/her signature that a discussion about the performance appraisal (results and behaviour) and the development actions has taken place and that at the beginning of the period of the appraisal the objective have been agreed respectively.</p>
               <div class="sign-row">
-                <div class="sign-box"><div class="sign-name" id="ee-sign-name">‚Äî</div><div class="sign-role">Agreed By ¬∑ Employee</div><div class="sign-date" id="ee-sign-date">Pending submission</div></div>
-                <div class="sign-box"><div class="sign-name" id="ee-mgr-sign-name">‚Äî</div><div class="sign-role">Approved By ¬∑ Immediate Manager</div><div class="sign-date">Pending manager review</div></div>
-                <div class="sign-box"><div class="sign-name">‚Äî</div><div class="sign-role">Approved By ¬∑ Department Head</div><div class="sign-date">Pending</div></div>
+                <div class="sign-box"><div class="sign-name" id="ee-sign-name">&#8212;</div><div class="sign-role">Agreed By &#183; Employee</div><div class="sign-date" id="ee-sign-date">Pending submission</div></div>
+                <div class="sign-box"><div class="sign-name" id="ee-mgr-sign-name">&#8212;</div><div class="sign-role">Approved By &#183; Immediate Manager</div><div class="sign-date">Pending manager review</div></div>
+                <div class="sign-box"><div class="sign-name">&#8212;</div><div class="sign-role">Approved By &#183; Department Head</div><div class="sign-date">Pending</div></div>
               </div>
             </div>
           </div>
           <div class="sub-bar">
-            <button class="btn btn-ghost" onclick="goTab('ee',7)">‚Üê Back</button>
+            <button class="btn btn-ghost" onclick="goTab('ee',7)">&#8592; Back</button>
             <div style="display:flex;gap:10px;">
               <button class="btn btn-ghost" onclick="saveForm()">&#128190; Save Draft</button>
-              <button class="btn btn-primary" id="emp-submit-btn" onclick="submitForm()">&#128640; Submit PA ‚Üí</button>
+              <button class="btn btn-primary" id="emp-submit-btn" onclick="submitForm()">&#128640; Submit PA &#8594;</button>
             </div>
           </div>
         </div>
@@ -815,7 +815,7 @@
         <div class="card">
           <table>
             <thead><tr><th>Cycle</th><th>Submitted</th><th>Manager</th><th>Status</th><th>Final Rating</th></tr></thead>
-            <tbody id="history-tbody"><tr><td colspan="5" style="text-align:center;padding:24px;color:var(--gray-text);">Loading history‚Ä¶</td></tr></tbody>
+            <tbody id="history-tbody"><tr><td colspan="5" style="text-align:center;padding:24px;color:var(--gray-text);">Loading history&#8230;</td></tr></tbody>
           </table>
         </div>
       </div>
@@ -824,7 +824,7 @@
 </div>
 
 
-<!-- ‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê MANAGER HOME -->
+<!-- ======================================================= MANAGER HOME -->
 <div id="scrManagerHome" class="screen">
   <div class="main-layout">
     <div class="sidebar">
@@ -834,16 +834,16 @@
     </div>
     <div class="content">
       <div id="mgrDashboard">
-        <div class="page-header"><h1>Manager Dashboard</h1><p>Performance Appraisal Cycle 2026 ‚Äî Your Team</p></div>
+        <div class="page-header"><h1>Manager Dashboard</h1><p>Performance Appraisal Cycle 2026 &#8212; Your Team</p></div>
         <div class="stats-row">
-          <div class="stat-card"><div class="stat-num" id="mgr-team-count">‚Äî</div><div class="stat-label">Team Members</div></div>
+          <div class="stat-card"><div class="stat-num" id="mgr-team-count">&#8212;</div><div class="stat-label">Team Members</div></div>
           <div class="stat-card green"><div class="stat-num" id="mgr-approved-count">0</div><div class="stat-label">Approved</div></div>
           <div class="stat-card orange"><div class="stat-num" id="mgr-pending-count">0</div><div class="stat-label">Pending Review</div></div>
           <div class="stat-card red"><div class="stat-num" id="mgr-draft-count">0</div><div class="stat-label">Not Yet Submitted</div></div>
         </div>
         <div class="info-box" id="mgr-action-info">&#128204; Loading team status...</div>
         <div class="card">
-          <div class="card-header"><span class="card-title">Team PA Status</span><button class="btn btn-outline btn-sm" onclick="mgrNav('mgrTeam')">View All ‚Üí</button></div>
+          <div class="card-header"><span class="card-title">Team PA Status</span><button class="btn btn-outline btn-sm" onclick="mgrNav('mgrTeam')">View All &#8594;</button></div>
           <table><thead><tr><th>Employee</th><th>Department</th><th>Status</th><th>Submitted</th><th>Action</th></tr></thead>
           <tbody id="mgr-team-preview"></tbody></table>
         </div>
@@ -858,7 +858,7 @@
       </div>
 
       <div id="mgrReview" style="display:none;">
-        <span class="back-link" onclick="mgrNav('mgrTeam')">‚Üê Back to Team</span>
+        <span class="back-link" onclick="mgrNav('mgrTeam')">&#8592; Back to Team</span>
         <div id="mgr-emp-profile-card"></div>
         <div id="mgr-approved-notice" style="display:none;"><div class="success-box">&#9989; This PA has been <strong>Approved</strong>. No further action required.</div></div>
         <div id="mgr-returned-notice" style="display:none;"><div class="warning-box">&#9888;&#65039; This PA was <strong>Returned</strong> to the employee for revision.</div></div>
@@ -866,13 +866,13 @@
 
         <!-- LIVE SCORE PANEL -->
         <div class="score-panel">
-          <div class="sp-main"><div class="sp-big" id="mgr-big">‚Äî</div><div class="sp-lbl">Overall Score</div></div>
+          <div class="sp-main"><div class="sp-big" id="mgr-big">&#8212;</div><div class="sp-lbl">Overall Score</div></div>
           <div class="sp-right">
             <div class="sp-rating" id="mgr-rating">Enter all scores to calculate</div>
-            <div class="sp-band" id="mgr-band">‚Äî</div>
+            <div class="sp-band" id="mgr-band">&#8212;</div>
             <div class="sp-grid">
-              <div class="sp-cell"><div class="scl">Obj Avg (wtd)</div><div class="scv" id="sp-oa">‚Äî</div></div>
-              <div class="sp-cell"><div class="scl">Comp Avg</div><div class="scv" id="sp-ca">‚Äî</div></div>
+              <div class="sp-cell"><div class="scl">Obj Avg (wtd)</div><div class="scv" id="sp-oa">&#8212;</div></div>
+              <div class="sp-cell"><div class="scl">Comp Avg</div><div class="scv" id="sp-ca">&#8212;</div></div>
               <div class="sp-cell"><div class="scl">Filled</div><div class="scv" id="sp-filled">0/13</div></div>
             </div>
           </div>
@@ -891,25 +891,25 @@
           <div class="wtab" onclick="goTab('mgr',3)">S5 Next Year</div>
           <div class="wtab" onclick="goTab('mgr',4)">S7 Expectations</div>
           <div class="wtab" onclick="goTab('mgr',5)">S8 Remarks</div>
-          <div class="wtab" onclick="goTab('mgr',6)">S9‚Äì10 Outcome</div>
+          <div class="wtab" onclick="goTab('mgr',6)">S9&#8211;10 Outcome</div>
         </div>
 
         <!-- MGR S2: OBJECTIVES -->
         <div class="sp active" id="mgr-p0">
           <div class="card" style="padding:0;">
-            <div class="card-header"><span class="card-title">2 ‚Äî Objectives: Manager &amp; Agreed Scores</span><span style="font-size:12px;color:var(--gray-text)">Self scores shown read-only ¬∑ enter Manager Score and Agreed Score</span></div>
+            <div class="card-header"><span class="card-title">2 &#8212; Objectives: Manager &amp; Agreed Scores</span><span style="font-size:12px;color:var(--gray-text)">Self scores shown read-only &#183; enter Manager Score and Agreed Score</span></div>
             <div style="padding:20px;">
               <div class="info-box">Score guide: 1 = Insignificant &nbsp;|&nbsp; 2 = Partially achieved &nbsp;|&nbsp; 3 = On Schedule &nbsp;|&nbsp; 4 = Beyond expectation &nbsp;|&nbsp; 5 = Highly exceeds</div>
               <div id="mgr-obj-wrap"></div>
             </div>
           </div>
-          <div class="sub-bar"><div></div><button class="btn btn-primary" onclick="goTab('mgr',1)">Next: Competencies ‚Üí</button></div>
+          <div class="sub-bar"><div></div><button class="btn btn-primary" onclick="goTab('mgr',1)">Next: Competencies &#8594;</button></div>
         </div>
 
         <!-- MGR S3: COMPETENCIES -->
         <div class="sp" id="mgr-p1">
           <div class="card" style="padding:0;">
-            <div class="card-header"><span class="card-title">3 ‚Äî Competencies: Manager &amp; Agreed Scores</span><span style="font-size:12px;color:var(--gray-text)">Self scores read-only ¬∑ enter Manager Score, Agreed Score, and Explanation</span></div>
+            <div class="card-header"><span class="card-title">3 &#8212; Competencies: Manager &amp; Agreed Scores</span><span style="font-size:12px;color:var(--gray-text)">Self scores read-only &#183; enter Manager Score, Agreed Score, and Explanation</span></div>
             <div style="padding:20px;">
               <div class="info-box">Score guide: 1 = Unacceptable &nbsp;|&nbsp; 2 = Average/Meet Most &nbsp;|&nbsp; 3 = Good/Meet &nbsp;|&nbsp; 4 = Excellent/Above &nbsp;|&nbsp; 5 = Outstanding/Beyond</div>
               <table class="ctbl">
@@ -924,65 +924,65 @@
               </table>
             </div>
           </div>
-          <div class="sub-bar"><button class="btn btn-ghost" onclick="goTab('mgr',0)">‚Üê Back</button><button class="btn btn-primary" onclick="goTab('mgr',2)">Next: Dev Actions ‚Üí</button></div>
+          <div class="sub-bar"><button class="btn btn-ghost" onclick="goTab('mgr',0)">&#8592; Back</button><button class="btn btn-primary" onclick="goTab('mgr',2)">Next: Dev Actions &#8594;</button></div>
         </div>
 
         <!-- MGR S4: DEV ACTIONS (read-only) -->
         <div class="sp" id="mgr-p2">
           <div class="card" style="padding:0;">
-            <div class="card-header"><span class="card-title">4 ‚Äî Planned Development Actions</span><span style="font-size:12px;color:var(--gray-text)">Employee's development plan ¬∑ read-only</span></div>
+            <div class="card-header"><span class="card-title">4 &#8212; Planned Development Actions</span><span style="font-size:12px;color:var(--gray-text)">Employee's development plan &#183; read-only</span></div>
             <div style="padding:20px;">
               <div id="mgr-dev-view"><span style="color:var(--gray-text);font-size:13px;">(Not filled by employee)</span></div>
               <div id="mgr-dev-remarks-wrap" style="display:none;margin-top:14px;"><label>Remarks</label><textarea readonly id="mgr-dev-remarks" rows="3" style="margin-top:6px;"></textarea></div>
             </div>
           </div>
-          <div class="sub-bar"><button class="btn btn-ghost" onclick="goTab('mgr',1)">‚Üê Back</button><button class="btn btn-primary" onclick="goTab('mgr',3)">Next: Next Year Objectives ‚Üí</button></div>
+          <div class="sub-bar"><button class="btn btn-ghost" onclick="goTab('mgr',1)">&#8592; Back</button><button class="btn btn-primary" onclick="goTab('mgr',3)">Next: Next Year Objectives &#8594;</button></div>
         </div>
 
         <!-- MGR S5: NEXT YEAR OBJECTIVES (read-only) -->
         <div class="sp" id="mgr-p3">
           <div class="card" style="padding:0;">
-            <div class="card-header"><span class="card-title">5 ‚Äî Objectives Setting for the New Year</span><span style="font-size:12px;color:var(--gray-text)">Employee's next-year plan ¬∑ read-only</span></div>
+            <div class="card-header"><span class="card-title">5 &#8212; Objectives Setting for the New Year</span><span style="font-size:12px;color:var(--gray-text)">Employee's next-year plan &#183; read-only</span></div>
             <div style="padding:20px;">
               <div id="mgr-ny-view"><span style="color:var(--gray-text);font-size:13px;">(Not filled by employee)</span></div>
             </div>
           </div>
-          <div class="sub-bar"><button class="btn btn-ghost" onclick="goTab('mgr',2)">‚Üê Back</button><button class="btn btn-primary" onclick="goTab('mgr',4)">Next: Expectations ‚Üí</button></div>
+          <div class="sub-bar"><button class="btn btn-ghost" onclick="goTab('mgr',2)">&#8592; Back</button><button class="btn btn-primary" onclick="goTab('mgr',4)">Next: Expectations &#8594;</button></div>
         </div>
 
         <!-- MGR S7: EXPECTATIONS -->
         <div class="sp" id="mgr-p4">
           <div class="card" style="padding:0;">
-            <div class="card-header"><span class="card-title">7 ‚Äî Employee Expectations</span></div>
+            <div class="card-header"><span class="card-title">7 &#8212; Employee Expectations</span></div>
             <div style="padding:20px;">
               <div style="margin-bottom:12px;"><label>Employee Expectations</label><textarea readonly id="mgr-ee-expectations" rows="4" placeholder="(Not filled by employee)"></textarea></div>
-              <div><label>Comment of the Supervisor <span style="color:var(--red);">*</span></label><textarea id="mgr_sup_expectations" rows="3" placeholder="Your comments on the employee's expectations‚Ä¶"></textarea></div>
+              <div><label>Comment of the Supervisor <span style="color:var(--red);">*</span></label><textarea id="mgr_sup_expectations" rows="3" placeholder="Your comments on the employee's expectations&#8230;"></textarea></div>
             </div>
           </div>
-          <div class="sub-bar"><button class="btn btn-ghost" onclick="goTab('mgr',3)">‚Üê Back</button><button class="btn btn-primary" onclick="goTab('mgr',5)">Next: Remarks ‚Üí</button></div>
+          <div class="sub-bar"><button class="btn btn-ghost" onclick="goTab('mgr',3)">&#8592; Back</button><button class="btn btn-primary" onclick="goTab('mgr',5)">Next: Remarks &#8594;</button></div>
         </div>
 
         <!-- MGR S8: REMARKS -->
         <div class="sp" id="mgr-p5">
           <div class="card" style="padding:0;">
-            <div class="card-header"><span class="card-title">8 ‚Äî Additional Remarks</span></div>
+            <div class="card-header"><span class="card-title">8 &#8212; Additional Remarks</span></div>
             <div style="padding:20px;">
               <div style="margin-bottom:12px;"><label>Additional Remarks from Employee</label><textarea readonly id="mgr-ee-remarks" rows="3" placeholder="(Not filled by employee)"></textarea></div>
-              <div><label>Additional Remarks from Supervisor <span style="color:var(--red);">*</span></label><textarea id="mgr_sup_remarks" rows="4" placeholder="Your overall additional remarks‚Ä¶"></textarea></div>
+              <div><label>Additional Remarks from Supervisor <span style="color:var(--red);">*</span></label><textarea id="mgr_sup_remarks" rows="4" placeholder="Your overall additional remarks&#8230;"></textarea></div>
             </div>
           </div>
-          <div class="sub-bar"><button class="btn btn-ghost" onclick="goTab('mgr',4)">‚Üê Back</button><button class="btn btn-primary" onclick="goTab('mgr',6)">Next: Outcome ‚Üí</button></div>
+          <div class="sub-bar"><button class="btn btn-ghost" onclick="goTab('mgr',4)">&#8592; Back</button><button class="btn btn-primary" onclick="goTab('mgr',6)">Next: Outcome &#8594;</button></div>
         </div>
 
         <!-- MGR S9+10 -->
         <div class="sp" id="mgr-p6">
           <div class="card" style="padding:0;">
-            <div class="card-header"><span class="card-title">9 ‚Äî Appraisal Outcome</span><span style="font-size:12px;color:var(--gray-text)">Calculated from agreed scores (falls back to manager scores if agreed is blank)</span></div>
+            <div class="card-header"><span class="card-title">9 &#8212; Appraisal Outcome</span><span style="font-size:12px;color:var(--gray-text)">Calculated from agreed scores (falls back to manager scores if agreed is blank)</span></div>
             <div>
-              <div class="outcome-row"><span class="outcome-lbl">Overall Rating of objectives and achievements</span><span class="outcome-val" id="mgr-oc-obj">‚Äî</span></div>
-              <div class="outcome-row"><span class="outcome-lbl">Overall Rating of skill analysis</span><span class="outcome-val" id="mgr-oc-skill">‚Äî</span></div>
-              <div class="outcome-row" style="background:var(--gray-bg);"><span class="outcome-lbl" style="font-weight:600">Final overall / result rating</span><span class="outcome-val" id="mgr-oc-final">‚Äî</span></div>
-              <div style="padding:12px 16px;font-size:12px;color:var(--gray-text)">1 = Unacceptable/Below (1‚Äì1.9) &nbsp;¬∑&nbsp; 2 = Average/Meet Most (2‚Äì2.9) &nbsp;¬∑&nbsp; 3 = Good/Meet (3‚Äì3.9) &nbsp;¬∑&nbsp; 4 = Excellent/Above (4‚Äì4.5) &nbsp;¬∑&nbsp; 5 = Outstanding/Beyond (4.6‚Äì5)</div>
+              <div class="outcome-row"><span class="outcome-lbl">Overall Rating of objectives and achievements</span><span class="outcome-val" id="mgr-oc-obj">&#8212;</span></div>
+              <div class="outcome-row"><span class="outcome-lbl">Overall Rating of skill analysis</span><span class="outcome-val" id="mgr-oc-skill">&#8212;</span></div>
+              <div class="outcome-row" style="background:var(--gray-bg);"><span class="outcome-lbl" style="font-weight:600">Final overall / result rating</span><span class="outcome-val" id="mgr-oc-final">&#8212;</span></div>
+              <div style="padding:12px 16px;font-size:12px;color:var(--gray-text)">1 = Unacceptable/Below (1&#8211;1.9) &nbsp;&#183;&nbsp; 2 = Average/Meet Most (2&#8211;2.9) &nbsp;&#183;&nbsp; 3 = Good/Meet (3&#8211;3.9) &nbsp;&#183;&nbsp; 4 = Excellent/Above (4&#8211;4.5) &nbsp;&#183;&nbsp; 5 = Outstanding/Beyond (4.6&#8211;5)</div>
             </div>
           </div>
           <div class="card" style="padding:0;">
@@ -991,7 +991,7 @@
               <div class="form-row">
                 <div class="form-group"><label>Recommended Action</label>
                   <select id="mgr-recommendation">
-                    <option value="">‚Äî Select ‚Äî</option>
+                    <option value="">&#8212; Select &#8212;</option>
                     <option value="Confirm">Confirm Performance</option>
                     <option value="PIP">Performance Improvement Plan</option>
                     <option value="Promote">Recommend for Promotion</option>
@@ -999,26 +999,26 @@
                   </select>
                 </div>
               </div>
-              <div><label>Overall Comments to Employee</label><textarea id="mgr-overall-comment" style="min-height:80px;" placeholder="Provide overall feedback to the employee‚Ä¶"></textarea></div>
+              <div><label>Overall Comments to Employee</label><textarea id="mgr-overall-comment" style="min-height:80px;" placeholder="Provide overall feedback to the employee&#8230;"></textarea></div>
             </div>
           </div>
           <div class="card" style="padding:0;">
-            <div class="card-header"><span class="card-title">10 ‚Äî Agreement and Approval</span></div>
+            <div class="card-header"><span class="card-title">10 &#8212; Agreement and Approval</span></div>
             <div style="padding:20px;">
               <p style="font-size:12.5px;color:var(--gray-text);line-height:1.8;margin-bottom:12px;">The employee confirms with his/her signature that a discussion about the performance appraisal (results and behaviour) and the development actions has taken place.</p>
               <div class="sign-row">
-                <div class="sign-box"><div class="sign-name" id="mgr-ee-sign-name">‚Äî</div><div class="sign-role">Agreed By ¬∑ Employee</div><div class="sign-date" id="mgr-ee-sign-date">Pending</div></div>
-                <div class="sign-box"><div class="sign-name" id="mgr-sign-name">‚Äî</div><div class="sign-role">Approved By ¬∑ Immediate Manager</div><div class="sign-date" id="mgr-sign-date">Pending submission</div></div>
-                <div class="sign-box"><div class="sign-name">‚Äî</div><div class="sign-role">Approved By ¬∑ Department Head</div><div class="sign-date">Pending</div></div>
+                <div class="sign-box"><div class="sign-name" id="mgr-ee-sign-name">&#8212;</div><div class="sign-role">Agreed By &#183; Employee</div><div class="sign-date" id="mgr-ee-sign-date">Pending</div></div>
+                <div class="sign-box"><div class="sign-name" id="mgr-sign-name">&#8212;</div><div class="sign-role">Approved By &#183; Immediate Manager</div><div class="sign-date" id="mgr-sign-date">Pending submission</div></div>
+                <div class="sign-box"><div class="sign-name">&#8212;</div><div class="sign-role">Approved By &#183; Department Head</div><div class="sign-date">Pending</div></div>
               </div>
             </div>
           </div>
           <div class="sub-bar">
-            <button class="btn btn-ghost" onclick="goTab('mgr',5)">‚Üê Back</button>
+            <button class="btn btn-ghost" onclick="goTab('mgr',5)">&#8592; Back</button>
             <div id="mgr-action-btns" style="display:flex;gap:12px;flex-wrap:wrap;">
               <button class="btn btn-ghost" onclick="saveMgrReview()">&#128190; Save Draft</button>
               <button class="btn btn-success" onclick="approvePA()">&#9989; Approve PA</button>
-              <button class="btn btn-danger" onclick="returnPA()">‚Ü©&#65039; Return to Employee</button>
+              <button class="btn btn-danger" onclick="returnPA()">&#8617;&#65039; Return to Employee</button>
             </div>
           </div>
         </div>
@@ -1028,7 +1028,7 @@
 </div>
 
 
-<!-- ‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê HR HOME -->
+<!-- ======================================================= HR HOME -->
 <div id="scrHRHome" class="screen">
   <div class="main-layout">
     <div class="sidebar">
@@ -1044,35 +1044,35 @@
     <div class="content">
 
       <div id="hrDashboard">
-        <div class="page-header"><h1>HR Admin Dashboard</h1><p id="hr-dash-sub">PA Tracker ‚Äî Overview</p></div>
+        <div class="page-header"><h1>HR Admin Dashboard</h1><p id="hr-dash-sub">PA Tracker &#8212; Overview</p></div>
         <div class="stats-row">
-          <div class="stat-card"><div class="stat-num" id="hr-total">‚Äî</div><div class="stat-label">Total Employees</div></div>
-          <div class="stat-card green"><div class="stat-num" id="hr-approved">‚Äî</div><div class="stat-label">Approved</div></div>
-          <div class="stat-card orange"><div class="stat-num" id="hr-review">‚Äî</div><div class="stat-label">Under Review</div></div>
-          <div class="stat-card"><div class="stat-num" id="hr-submitted">‚Äî</div><div class="stat-label">Submitted</div></div>
-          <div class="stat-card red"><div class="stat-num" id="hr-draft">‚Äî</div><div class="stat-label">Draft / Not Started</div></div>
+          <div class="stat-card"><div class="stat-num" id="hr-total">&#8212;</div><div class="stat-label">Total Employees</div></div>
+          <div class="stat-card green"><div class="stat-num" id="hr-approved">&#8212;</div><div class="stat-label">Approved</div></div>
+          <div class="stat-card orange"><div class="stat-num" id="hr-review">&#8212;</div><div class="stat-label">Under Review</div></div>
+          <div class="stat-card"><div class="stat-num" id="hr-submitted">&#8212;</div><div class="stat-label">Submitted</div></div>
+          <div class="stat-card red"><div class="stat-num" id="hr-draft">&#8212;</div><div class="stat-label">Draft / Not Started</div></div>
         </div>
         <div class="card" style="padding:24px;margin-bottom:24px;">
           <div class="card-title" style="margin-bottom:16px;">&#128200; Overall Cycle Completion</div>
           <div class="progress-bar-wrap">
             <div class="progress-bar-bg"><div class="progress-bar-fill" id="hr-completion-bar" style="width:0%"></div></div>
-            <div class="progress-label"><span id="hr-completion-text">Loading‚Ä¶</span><span id="hr-completion-pct">0%</span></div>
+            <div class="progress-label"><span id="hr-completion-text">Loading&#8230;</span><span id="hr-completion-pct">0%</span></div>
           </div>
         </div>
         <div class="card">
-          <div class="card-header"><span class="card-title">Recent Activity</span><button class="btn btn-outline btn-sm" onclick="hrNav('hrAll')">View All ‚Üí</button></div>
+          <div class="card-header"><span class="card-title">Recent Activity</span><button class="btn btn-outline btn-sm" onclick="hrNav('hrAll')">View All &#8594;</button></div>
           <table><thead><tr><th>Employee</th><th>Manager</th><th>Dept</th><th>Status</th><th>Last Updated</th></tr></thead>
           <tbody id="hr-recent-table"></tbody></table>
         </div>
         <div class="card" id="hr-my-pa-card" style="padding:24px;margin-top:4px;">
           <div class="card-title" style="margin-bottom:10px;">&#128100; My Performance Appraisal</div>
           <p style="font-size:13px;color:var(--gray-text);margin-bottom:14px;">You also have an employee role. Access your own PA form here.</p>
-          <button class="btn btn-primary" onclick="selectRole('employee')">&#128221; Open My PA Form ‚Üí</button>
+          <button class="btn btn-primary" onclick="selectRole('employee')">&#128221; Open My PA Form &#8594;</button>
         </div>
       </div>
 
       <div id="hrAll" style="display:none;">
-        <div class="page-header"><h1>All PA Submissions</h1><p>Full list ‚Äî click a record to view details</p></div>
+        <div class="page-header"><h1>All PA Submissions</h1><p>Full list &#8212; click a record to view details</p></div>
         <div class="card" style="padding:16px 20px;margin-bottom:20px;">
           <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center;">
             <div><label style="font-size:11px;">Filter by Status</label>
@@ -1105,35 +1105,35 @@
 
       <div id="hrDetail" style="display:none;">
         <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;">
-          <span class="back-link" onclick="hrNav('hrAll')">‚Üê Back to All Submissions</span>
+          <span class="back-link" onclick="hrNav('hrAll')">&#8592; Back to All Submissions</span>
           <button class="btn btn-outline btn-sm" onclick="exportEmployeePDF()">&#128196; Export PDF</button>
         </div>
         <div id="hr-detail-profile"></div>
-        <div class="info-box">&#128065;&#65039; HR view ‚Äî read only. Changes must be made by the employee or their manager.</div>
+        <div class="info-box">&#128065;&#65039; HR view &#8212; read only. Changes must be made by the employee or their manager.</div>
         <!-- S2 Objectives summary -->
         <div class="card" style="padding:24px;">
-          <div class="form-section-title">&#127919; S2 ‚Äî Rating of Objectives</div>
-          <div id="hr-detail-objectives">‚Äî</div>
+          <div class="form-section-title">&#127919; S2 &#8212; Rating of Objectives</div>
+          <div id="hr-detail-objectives">&#8212;</div>
         </div>
         <!-- S3 Competencies summary -->
         <div class="card" style="padding:24px;">
-          <div class="form-section-title">&#128202; S3 ‚Äî Rating of Competencies</div>
-          <div id="hr-detail-comps">‚Äî</div>
+          <div class="form-section-title">&#128202; S3 &#8212; Rating of Competencies</div>
+          <div id="hr-detail-comps">&#8212;</div>
         </div>
         <!-- S6 Satisfaction -->
         <div class="card" style="padding:24px;">
-          <div class="form-section-title">&#128522; S6 ‚Äî Employee Satisfaction</div>
-          <div id="hr-detail-satisfaction">‚Äî</div>
+          <div class="form-section-title">&#128522; S6 &#8212; Employee Satisfaction</div>
+          <div id="hr-detail-satisfaction">&#8212;</div>
         </div>
         <!-- S7 Expectations -->
         <div class="card" style="padding:24px;">
-          <div class="form-section-title">&#128172; S7 ‚Äî Employee Expectations</div>
+          <div class="form-section-title">&#128172; S7 &#8212; Employee Expectations</div>
           <label>Employee</label><textarea readonly id="hr-s7-text" style="margin-top:6px;min-height:72px;"></textarea>
           <label style="margin-top:10px;display:block;">Supervisor Comment</label><textarea readonly id="hr-s7-sup" style="margin-top:6px;min-height:60px;"></textarea>
         </div>
         <!-- S8 Remarks -->
         <div class="card" style="padding:24px;">
-          <div class="form-section-title">&#128221; S8 ‚Äî Additional Remarks</div>
+          <div class="form-section-title">&#128221; S8 &#8212; Additional Remarks</div>
           <label>Employee</label><textarea readonly id="hr-s8-ee" style="margin-top:6px;min-height:60px;"></textarea>
           <label style="margin-top:10px;display:block;">Supervisor</label><textarea readonly id="hr-s8-sup" style="margin-top:6px;min-height:60px;"></textarea>
         </div>
@@ -1141,7 +1141,7 @@
         <div class="card" style="padding:0;margin-top:8px;">
           <div class="card-header"><span class="card-title">&#128197; History Across All Cycles</span></div>
           <table><thead><tr><th>Cycle</th><th>Submitted</th><th>Status</th><th>Avg Self Score</th><th>Final Rating</th></tr></thead>
-          <tbody id="hr-emp-history-tbody"><tr><td colspan="5" style="text-align:center;padding:20px;color:var(--gray-text);">Loading‚Ä¶</td></tr></tbody></table>
+          <tbody id="hr-emp-history-tbody"><tr><td colspan="5" style="text-align:center;padding:20px;color:var(--gray-text);">Loading&#8230;</td></tr></tbody></table>
         </div>
         <!-- I3: Trend chart -->
         <div class="card" style="padding:24px;margin-top:8px;" id="hr-trend-card" style="display:none;">
@@ -1160,17 +1160,17 @@
       </div>
 
       <div id="hrReports" style="display:none;">
-        <div class="page-header"><h1>Reports</h1><p id="rpt-cycle-sub">PA Cycle ‚Äî Summary Analytics</p></div>
+        <div class="page-header"><h1>Reports</h1><p id="rpt-cycle-sub">PA Cycle &#8212; Summary Analytics</p></div>
         <div class="stats-row">
-          <div class="stat-card"><div class="stat-num" id="rpt-avg-self">‚Äî</div><div class="stat-label">Avg Self-Rating</div></div>
-          <div class="stat-card green"><div class="stat-num" id="rpt-avg-mgr">‚Äî</div><div class="stat-label">Avg Manager Rating</div></div>
-          <div class="stat-card orange"><div class="stat-num" id="rpt-days">‚Äî</div><div class="stat-label">Days to Deadline</div></div>
+          <div class="stat-card"><div class="stat-num" id="rpt-avg-self">&#8212;</div><div class="stat-label">Avg Self-Rating</div></div>
+          <div class="stat-card green"><div class="stat-num" id="rpt-avg-mgr">&#8212;</div><div class="stat-label">Avg Manager Rating</div></div>
+          <div class="stat-card orange"><div class="stat-num" id="rpt-days">&#8212;</div><div class="stat-label">Days to Deadline</div></div>
           <div class="stat-card red" style="cursor:pointer" onclick="hrNav('hrAll')">
-            <div class="stat-num" id="rpt-flight-risk">‚Äî</div>
+            <div class="stat-num" id="rpt-flight-risk">&#8212;</div>
             <div class="stat-label">&#128308; Flight Risk</div>
           </div>
           <div class="stat-card green" style="cursor:pointer" onclick="hrNav('hrAll')">
-            <div class="stat-num" id="rpt-promo-ready">‚Äî</div>
+            <div class="stat-num" id="rpt-promo-ready">&#8212;</div>
             <div class="stat-label">&#128994; Promo Ready</div>
           </div>
         </div>
@@ -1181,14 +1181,14 @@
         </div>
         <div class="card" id="rpt-bell-card">
           <div class="card-header"><span class="card-title">Score Distribution</span>
-            <span style="font-size:12px;color:var(--gray-text)">Approved PAs ‚Äî current cycle</span></div>
+            <span style="font-size:12px;color:var(--gray-text)">Approved PAs &#8212; current cycle</span></div>
           <canvas id="rpt-bell-chart" height="120"></canvas>
           <div id="rpt-bell-empty" style="display:none;text-align:center;padding:20px;color:var(--gray-text);font-size:13px;">No approved PAs yet.</div>
         </div>
         <div class="card">
           <div class="card-header"><span class="card-title">Manager Calibration Check</span></div>
           <p style="font-size:13px;color:var(--gray-text);margin:0 0 12px;">
-            Flags managers whose avg final score deviates ¬±0.5 from the company average (Approved PAs only).
+            Flags managers whose avg final score deviates &#177;0.5 from the company average (Approved PAs only).
           </p>
           <table class="data-table">
             <thead><tr><th>Manager</th><th>Code</th><th># Approved</th><th>Their Avg</th><th>Co. Avg</th><th>Delta</th><th>Flag</th></tr></thead>
@@ -1202,7 +1202,7 @@
         <div style="margin-bottom:20px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
           <button class="btn btn-primary" onclick="openAddUser()">+ Add Employee</button>
           <button class="btn btn-outline" onclick="openBulkUpload()">&#128228; Bulk Upload</button>
-          <input type="text" id="user-search" placeholder="&#128269; Search by name, code, email, dept‚Ä¶" oninput="renderProfilesTable()" style="flex:1;min-width:200px;padding:9px 12px;border:1.5px solid var(--gray-border);border-radius:6px;font-size:13px;">
+          <input type="text" id="user-search" placeholder="&#128269; Search by name, code, email, dept&#8230;" oninput="renderProfilesTable()" style="flex:1;min-width:200px;padding:9px 12px;border:1.5px solid var(--gray-border);border-radius:6px;font-size:13px;">
         </div>
         <div class="card">
           <table><thead><tr><th>Code</th><th>Name</th><th>Role</th><th>Department</th><th>Manager</th><th>Status</th><th>Action</th></tr></thead>
@@ -1212,7 +1212,7 @@
       </div>
 
       <div id="hrCycles" style="display:none;">
-        <div class="page-header"><h1>PA Cycles</h1><p>Manage appraisal cycles ‚Äî only one can be active at a time</p></div>
+        <div class="page-header"><h1>PA Cycles</h1><p>Manage appraisal cycles &#8212; only one can be active at a time</p></div>
         <div style="margin-bottom:20px;display:flex;gap:10px;flex-wrap:wrap;">
           <button class="btn btn-primary" onclick="openAddCycle()">+ New Cycle</button>
           <button class="btn btn-outline" onclick="openHistImport()">&#128229; Import History</button>
@@ -1229,11 +1229,11 @@
         <div class="card" style="padding:20px;margin-bottom:20px;">
           <div class="form-section-title" style="margin-bottom:10px;">Increment Bands</div>
           <div style="display:flex;gap:10px;flex-wrap:wrap;font-size:12px;color:var(--gray-text);">
-            <span style="background:#ffebee;color:#b71c1c;border:1px solid #ffcdd2;padding:3px 10px;border-radius:4px;">Score &lt; 2.0 ‚Üí 0% (PIP)</span>
-            <span style="background:#fff8e1;color:#7a4500;border:1px solid #ffe082;padding:3px 10px;border-radius:4px;">2.0‚Äì2.9 ‚Üí 3%</span>
-            <span style="background:#e8f5e9;color:#1b5e20;border:1px solid #a5d6a7;padding:3px 10px;border-radius:4px;">3.0‚Äì3.9 ‚Üí 5%</span>
-            <span style="background:#e3f2fd;color:#1565c0;border:1px solid #90caf9;padding:3px 10px;border-radius:4px;">4.0‚Äì4.5 ‚Üí 7%</span>
-            <span style="background:#f3e5f5;color:#6a1b9a;border:1px solid #ce93d8;padding:3px 10px;border-radius:4px;">4.6‚Äì5.0 ‚Üí 10%</span>
+            <span style="background:#ffebee;color:#b71c1c;border:1px solid #ffcdd2;padding:3px 10px;border-radius:4px;">Score &lt; 2.0 &#8594; 0% (PIP)</span>
+            <span style="background:#fff8e1;color:#7a4500;border:1px solid #ffe082;padding:3px 10px;border-radius:4px;">2.0&#8211;2.9 &#8594; 3%</span>
+            <span style="background:#e8f5e9;color:#1b5e20;border:1px solid #a5d6a7;padding:3px 10px;border-radius:4px;">3.0&#8211;3.9 &#8594; 5%</span>
+            <span style="background:#e3f2fd;color:#1565c0;border:1px solid #90caf9;padding:3px 10px;border-radius:4px;">4.0&#8211;4.5 &#8594; 7%</span>
+            <span style="background:#f3e5f5;color:#6a1b9a;border:1px solid #ce93d8;padding:3px 10px;border-radius:4px;">4.6&#8211;5.0 &#8594; 10%</span>
           </div>
           <div style="margin-top:12px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
             <button class="btn btn-ghost btn-sm" onclick="exportIncrementCSV()">&#11015;&#65039; Export Payroll CSV</button>
@@ -1273,7 +1273,7 @@
   </div></div>
 
 <div class="modal-overlay" id="modal-return">
-  <div class="modal"><div class="modal-icon">‚Ü©&#65039;</div><div class="modal-title">Return PA to Employee?</div>
+  <div class="modal"><div class="modal-icon">&#8617;&#65039;</div><div class="modal-title">Return PA to Employee?</div>
     <div class="modal-msg">The employee will be notified to revise and resubmit. Please ensure you have added comments explaining what needs updating.</div>
     <div class="modal-actions"><button class="btn btn-ghost" onclick="closeModal('modal-return')">Cancel</button><button class="btn btn-danger" onclick="confirmReturn()">Yes, Return</button></div>
   </div></div>
@@ -1302,7 +1302,7 @@
           <option value="employee">Employee</option><option value="manager">Manager</option><option value="hr">HR Admin</option>
         </select></div>
       <div><label style="font-size:11px;font-weight:700;color:#6b7a8d;text-transform:uppercase;display:block;margin-bottom:4px;">Manager</label>
-        <select id="u-manager" style="width:100%;padding:9px 12px;border:1.5px solid #d1d9e0;border-radius:6px;font-size:13px;"><option value="">‚Äî No Manager ‚Äî</option></select></div>
+        <select id="u-manager" style="width:100%;padding:9px 12px;border:1.5px solid #d1d9e0;border-radius:6px;font-size:13px;"><option value="">&#8212; No Manager &#8212;</option></select></div>
       <div><label style="font-size:11px;font-weight:700;color:#6b7a8d;text-transform:uppercase;display:block;margin-bottom:4px;">Department</label>
         <input type="text" id="u-dept" placeholder="Payroll" style="width:100%;padding:9px 12px;border:1.5px solid #d1d9e0;border-radius:6px;font-size:13px;"></div>
       <div><label style="font-size:11px;font-weight:700;color:#6b7a8d;text-transform:uppercase;display:block;margin-bottom:4px;">Position</label>
@@ -1317,7 +1317,7 @@
     <div class="modal-title">New PA Cycle</div>
     <div style="display:grid;gap:12px;margin:16px 0;text-align:left;">
       <div><label style="font-size:11px;font-weight:700;color:#6b7a8d;text-transform:uppercase;display:block;margin-bottom:4px;">Cycle Name *</label>
-        <input type="text" id="c-name" placeholder="FY2027 (Apr 2027 ‚Äì Mar 2028)" style="width:100%;padding:9px 12px;border:1.5px solid #d1d9e0;border-radius:6px;font-size:13px;"></div>
+        <input type="text" id="c-name" placeholder="FY2027 (Apr 2027 &#8211; Mar 2028)" style="width:100%;padding:9px 12px;border:1.5px solid #d1d9e0;border-radius:6px;font-size:13px;"></div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
         <div><label style="font-size:11px;font-weight:700;color:#6b7a8d;text-transform:uppercase;display:block;margin-bottom:4px;">Start Date *</label>
           <input type="date" id="c-start" style="width:100%;padding:9px 12px;border:1.5px solid #d1d9e0;border-radius:6px;font-size:13px;"></div>
@@ -1338,7 +1338,7 @@
     <p style="font-size:12px;color:var(--gray-text);text-align:center;margin-bottom:14px;">Upload multiple employees at once. Each row creates an auth account and a profile.</p>
     <div style="display:flex;gap:10px;align-items:center;margin-bottom:12px;flex-wrap:wrap;">
       <button class="btn btn-outline btn-sm" onclick="downloadCSVTemplate()">&#11015;&#65039; Download CSV Template</button>
-      <span style="font-size:11px;color:var(--gray-text);">Columns: employee_code ¬∑ full_name ¬∑ email ¬∑ temp_password ¬∑ role ¬∑ department ¬∑ position ¬∑ manager_code</span>
+      <span style="font-size:11px;color:var(--gray-text);">Columns: employee_code &#183; full_name &#183; email &#183; temp_password &#183; role &#183; department &#183; position &#183; manager_code</span>
     </div>
     <div style="margin-bottom:12px;">
       <label style="font-size:11px;font-weight:700;color:#6b7a8d;text-transform:uppercase;display:block;margin-bottom:6px;">Select CSV File</label>
@@ -1381,7 +1381,7 @@
     <p style="font-size:12px;color:var(--gray-text);text-align:center;margin-bottom:14px;">Import past-cycle PA scores to enable trend charts and increment history.</p>
     <div style="display:flex;gap:10px;align-items:center;margin-bottom:12px;flex-wrap:wrap;">
       <button class="btn btn-outline btn-sm" onclick="downloadHistTemplate()">&#11015;&#65039; Download CSV Template</button>
-      <span style="font-size:11px;color:var(--gray-text);">Columns: employee_code ¬∑ cycle_name ¬∑ final_score ¬∑ status ¬∑ submitted_date</span>
+      <span style="font-size:11px;color:var(--gray-text);">Columns: employee_code &#183; cycle_name &#183; final_score &#183; status &#183; submitted_date</span>
     </div>
     <div style="margin-bottom:12px;">
       <label style="font-size:11px;font-weight:700;color:#6b7a8d;text-transform:uppercase;display:block;margin-bottom:6px;">Select CSV File</label>
@@ -1418,8 +1418,8 @@ const SUPABASE_URL  = 'https://rfayekgpmrrzmyxtchzr.supabase.co';
 const SUPABASE_ANON = 'sb_publishable_j3Q6d10J3LbIeT45dAmFHQ_e1rjEZ7g';
 const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
 
-const OBJ_LBL = {1:'Insignificant Achievement',1.5:'Between 1‚Äì2',2:'Partially Achieved',2.5:'Between 2‚Äì3',3:'Objective Achieved / On Schedule',3.5:'Between 3‚Äì4',4:'Beyond Expectation',4.5:'Between 4‚Äì5',5:'Highly Exceeds Expectation'};
-const COMP_LBL = {1:'Unacceptable/Below Expectation',1.5:'Between 1‚Äì2',2:'Average/Meet Most Expectation',2.5:'Between 2‚Äì3',3:'Good/Meet Expectations',3.5:'Between 3‚Äì4',4:'Excellent/Above Expectations',4.5:'Between 4‚Äì5',5:'Outstanding/Beyond Expectations'};
+const OBJ_LBL = {1:'Insignificant Achievement',1.5:'Between 1\u{2013}2',2:'Partially Achieved',2.5:'Between 2\u{2013}3',3:'Objective Achieved / On Schedule',3.5:'Between 3\u{2013}4',4:'Beyond Expectation',4.5:'Between 4\u{2013}5',5:'Highly Exceeds Expectation'};
+const COMP_LBL = {1:'Unacceptable/Below Expectation',1.5:'Between 1\u{2013}2',2:'Average/Meet Most Expectation',2.5:'Between 2\u{2013}3',3:'Good/Meet Expectations',3.5:'Between 3\u{2013}4',4:'Excellent/Above Expectations',4.5:'Between 4\u{2013}5',5:'Outstanding/Beyond Expectations'};
 const OUT_LBL = {1:'Unacceptable/Below Expectation',2:'Average/Meet Most Expectation',3:'Good/Meet Expectations',4:'Excellent/Above Expectations',5:'Outstanding/Beyond Expectations'};
 const HALFPOINTS = [1,1.5,2,2.5,3,3.5,4,4.5,5];
 const OBJS = [
@@ -1454,14 +1454,14 @@ const state = {
   mgrRatings: { s1:0, s2:0, s3:0, s4:0, s5:0, overall:0 },
 };
 
-// S2: Audit log ‚Äî fire-and-forget (no await at call sites)
+// S2: Audit log \u{2014} fire-and-forget (no await at call sites)
 function logAudit(action,targetCode,details={}){
   if(!state.currentUser)return;
   db.from('audit_log')
     .insert({actor_code:state.currentUser.employee_code,action,target_code:targetCode||null,details})
     .then(({error})=>{if(error)console.warn('Audit log error:',error);});
 }
-// S1: Email notifications ‚Äî stub only. Wire calls once Edge Function deployed at Supabase Dashboard ‚Üí Edge Functions.
+// S1: Email notifications \u{2014} stub only. Wire calls once Edge Function deployed at Supabase Dashboard \u{2192} Edge Functions.
 const NOTIFY_EDGE_FN_URL=''; // TODO: fill URL after deploying
 async function callNotifyEdgeFunction(event,payload){
   if(!NOTIFY_EDGE_FN_URL)return;
@@ -1476,7 +1476,7 @@ async function callNotifyEdgeFunction(event,payload){
 // S2: Audit log viewer (HR)
 async function loadAuditLog(){
   const tbl=document.getElementById('audit-log-tbody');if(!tbl)return;
-  tbl.innerHTML='<tr><td colspan="5" style="text-align:center;padding:16px;">Loading‚Ä¶</td></tr>';
+  tbl.innerHTML='<tr><td colspan="5" style="text-align:center;padding:16px;">Loading\u{2026}</td></tr>';
   const {data,error}=await db.from('audit_log')
     .select('*').order('created_at',{ascending:false}).limit(100);
   if(error||!data?.length){
@@ -1485,14 +1485,14 @@ async function loadAuditLog(){
   }
   tbl.innerHTML=data.map(e=>`<tr>
     <td style="font-size:12px;white-space:nowrap;">${new Date(e.created_at).toLocaleString('en-GB',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'})}</td>
-    <td>${e.actor_code||'‚Äî'}</td>
-    <td><code style="font-size:12px;background:var(--blue-light);padding:2px 6px;border-radius:4px;">${e.action||'‚Äî'}</code></td>
-    <td>${e.target_code||'‚Äî'}</td>
+    <td>${e.actor_code||'\u{2014}'}</td>
+    <td><code style="font-size:12px;background:var(--blue-light);padding:2px 6px;border-radius:4px;">${e.action||'\u{2014}'}</code></td>
+    <td>${e.target_code||'\u{2014}'}</td>
     <td style="font-size:12px;color:var(--gray-text);">${e.details?JSON.stringify(e.details):''}</td>
   </tr>`).join('');
 }
 
-// ‚îÄ‚îÄ UTILITIES ‚îÄ‚îÄ
+// == UTILITIES ==
 function setLoading(msg) {
   document.getElementById('loading-msg').textContent = msg||'';
   document.getElementById('loading-overlay').classList.add('show');
@@ -1509,21 +1509,21 @@ function getBadge(s) {
           Approved:'badge-approved',Returned:'badge-returned'}[s]||'badge-draft';
 }
 function fmtDate(iso) {
-  if(!iso) return '‚Äî';
+  if(!iso) return '\u{2014}';
   return new Date(iso).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
 }
 
-// ‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê
+// ==================================================
 //  FORM BUILDER HELPERS (mirrors WS7_PA_Form_v4)
-// ‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê
+// ==================================================
 
 function outcomeLabel(s) {
-  if (!s) return '‚Äî';
-  if (s >= 4.6) return '5 ‚Äî ' + OUT_LBL[5];
-  if (s >= 4)   return '4 ‚Äî ' + OUT_LBL[4];
-  if (s >= 3)   return '3 ‚Äî ' + OUT_LBL[3];
-  if (s >= 2)   return '2 ‚Äî ' + OUT_LBL[2];
-  return '1 ‚Äî ' + OUT_LBL[1];
+  if (!s) return '\u{2014}';
+  if (s >= 4.6) return '5 \u{2014} ' + OUT_LBL[5];
+  if (s >= 4)   return '4 \u{2014} ' + OUT_LBL[4];
+  if (s >= 3)   return '3 \u{2014} ' + OUT_LBL[3];
+  if (s >= 2)   return '2 \u{2014} ' + OUT_LBL[2];
+  return '1 \u{2014} ' + OUT_LBL[1];
 }
 
 function scClass(v) {
@@ -1539,13 +1539,13 @@ function scoreDD(fid, val, ro, lblType) {
   const lbl = lblType === 'obj' ? OBJ_LBL : (lblType === 'comp' ? COMP_LBL : OBJ_LBL);
   const cls = scClass(val);
   if (ro) {
-    const txt = val ? (val + ' ‚Äî ' + (lbl[val]||'')) : '‚Äî';
+    const txt = val ? (val + ' \u{2014} ' + (lbl[val]||'')) : '\u{2014}';
     return `<span id="${fid}" class="ps ${cls}">${txt}</span>`;
   }
-  let opts = '<option value="">‚Äî Select ‚Äî</option>';
+  let opts = '<option value="">\u{2014} Select \u{2014}</option>';
   HALFPOINTS.forEach(v => {
     const sel = (v === val) ? ' selected' : '';
-    opts += `<option value="${v}"${sel}>${v} ‚Äî ${lbl[v]||''}</option>`;
+    opts += `<option value="${v}"${sel}>${v} \u{2014} ${lbl[v]||''}</option>`;
   });
   return `<select id="${fid}" class="score-sel ${cls}" onchange="onDD('${fid}',this)">${opts}</select>`;
 }
@@ -1563,8 +1563,8 @@ function buildObjSection(wrapId, isEE) {
   if (!wrap) return;
   let html = '';
   OBJS.forEach(o => {
-    const agree = isEE ? `<input id="obj${o.id}_agree" placeholder="Describe the objective‚Ä¶" value="${o.agree||''}">` : `<input readonly value="${o.agree||'(not set)'}">`;
-    const review = isEE ? `<input id="obj${o.id}_review" placeholder="Final review / outcome‚Ä¶" value="${o.review||''}">` : `<input readonly value="${o.review||'(not set)'}">`;
+    const agree = isEE ? `<input id="obj${o.id}_agree" placeholder="Describe the objective\u{2026}" value="${o.agree||''}">` : `<input readonly value="${o.agree||'(not set)'}">`;
+    const review = isEE ? `<input id="obj${o.id}_review" placeholder="Final review / outcome\u{2026}" value="${o.review||''}">` : `<input readonly value="${o.review||'(not set)'}">`;
     const wInput = isEE ? `<input id="obj${o.id}_w" type="number" min="0" max="100" value="${o.w||20}" style="width:70px;" onchange="updateWeightTotal()">%` : `<span class="wt-pill">${o.w||20}%</span>`;
     const selfDD = scoreDD('obj'+o.id+'_self', o.self||null, !isEE, 'obj');
     const mgrDD  = isEE ? scoreDD('obj'+o.id+'_mgr', null, true, 'obj') : scoreDD('obj'+o.id+'_mgr', SC['obj'+o.id+'_mgr']||null, false, 'obj');
@@ -1597,7 +1597,7 @@ function buildCompSection(bodyId, mgmtId, isEE) {
       html += `<tr><td colspan="5" style="background:#f0f4ff;font-weight:600;font-size:12px;padding:6px 10px;color:var(--blue);">${c.grp}</td></tr>`;
       lastGrp = c.grp;
     }
-    const expl = isEE ? `<textarea id="${c.id}_expl" rows="2" placeholder="Explanation (if applicable)‚Ä¶"></textarea>` : `<input readonly value="">`;
+    const expl = isEE ? `<textarea id="${c.id}_expl" rows="2" placeholder="Explanation (if applicable)\u{2026}"></textarea>` : `<input readonly value="">`;
     const selfDD = scoreDD(c.id+'_self', null, !isEE, 'comp');
     const mgrDD  = scoreDD(c.id+'_mgr', null, true, 'comp');
     const agrDD  = scoreDD(c.id+'_agr', null, true, 'comp');
@@ -1618,7 +1618,7 @@ function buildMgmtSection(mgmtId, isEE) {
   if (!body) return;
   let html = '';
   MGMT.forEach(c => {
-    const expl = isEE ? `<textarea id="${c.id}_expl" rows="2" placeholder="Explanation (if applicable)‚Ä¶"></textarea>` : `<input readonly value="">`;
+    const expl = isEE ? `<textarea id="${c.id}_expl" rows="2" placeholder="Explanation (if applicable)\u{2026}"></textarea>` : `<input readonly value="">`;
     const selfDD = scoreDD(c.id+'_self', null, !isEE, 'comp');
     const mgrDD  = scoreDD(c.id+'_mgr', null, true, 'comp');
     const agrDD  = scoreDD(c.id+'_agr', null, true, 'comp');
@@ -1644,8 +1644,8 @@ function buildCompSectionMgr(bodyId) {
       lastGrp = c.grp;
     }
     const selfVal = SC[c.id+'_self'] || null;
-    const selfPill = selfVal ? `<span class="ps ${scClass(selfVal)}">${selfVal}</span>` : '<span class="ps">‚Äî</span>';
-    const expl = `<textarea id="mgr_${c.id}_expl" rows="2" placeholder="Explanation (if applicable)‚Ä¶"></textarea>`;
+    const selfPill = selfVal ? `<span class="ps ${scClass(selfVal)}">${selfVal}</span>` : '<span class="ps">\u{2014}</span>';
+    const expl = `<textarea id="mgr_${c.id}_expl" rows="2" placeholder="Explanation (if applicable)\u{2026}"></textarea>`;
     const mgrDD = scoreDD('mgr_'+c.id+'_mgr', SC['mgr_'+c.id+'_mgr']||null, false, 'comp');
     const agrDD = scoreDD('mgr_'+c.id+'_agr', SC['mgr_'+c.id+'_agr']||null, false, 'comp');
     html += `<tr>
@@ -1663,7 +1663,7 @@ function addDevRow(act, dt, resp) {
   const tb = document.getElementById('dev-tbody');
   if (!tb) return;
   const tr = document.createElement('tr');
-  tr.innerHTML = `<td><input placeholder="Development action‚Ä¶" value="${act||''}"></td><td><input type="date" value="${dt||''}"></td><td><input placeholder="Responsible‚Ä¶" value="${resp||''}"></td><td><button class="btn btn-ghost" style="padding:3px 8px;" onclick="this.closest('tr').remove()">\u{2715}</button></td>`;
+  tr.innerHTML = `<td><input placeholder="Development action\u{2026}" value="${act||''}"></td><td><input type="date" value="${dt||''}"></td><td><input placeholder="Responsible\u{2026}" value="${resp||''}"></td><td><button class="btn btn-ghost" style="padding:3px 8px;" onclick="this.closest('tr').remove()">\u{2715}</button></td>`;
   tb.appendChild(tr);
 }
 
@@ -1679,7 +1679,7 @@ function addNYRow(desc, w) {
   const tb = document.getElementById('ny-tbody');
   if (!tb) return;
   const tr = document.createElement('tr');
-  tr.innerHTML = `<td><input placeholder="New year objective‚Ä¶" value="${desc||''}"></td><td><input type="number" min="0" max="100" placeholder="Weight %" value="${w||''}"></td><td><button class="btn btn-ghost" style="padding:3px 8px;" onclick="this.closest('tr').remove()">\u{2715}</button></td>`;
+  tr.innerHTML = `<td><input placeholder="New year objective\u{2026}" value="${desc||''}"></td><td><input type="number" min="0" max="100" placeholder="Weight %" value="${w||''}"></td><td><button class="btn btn-ghost" style="padding:3px 8px;" onclick="this.closest('tr').remove()">\u{2715}</button></td>`;
   tb.appendChild(tr);
 }
 
@@ -1706,7 +1706,7 @@ function updateWeightTotal() {
   const notice = document.getElementById('wt-notice');
   const msg    = document.getElementById('wt-msg');
   if (notice) notice.style.display = (total !== 100) ? '' : 'none';
-  if (msg)    msg.textContent = `Weights total ${total}% ‚Äî must equal 100%.`;
+  if (msg)    msg.textContent = `Weights total ${total}% \u{2014} must equal 100%.`;
 }
 
 function setSmiley(v) {
@@ -1741,7 +1741,7 @@ function calcMgrLive() {
   });
   const objAvg = wSum > 0 ? (wsSum / wSum) : null;
 
-  // Competency avg (agreed ‚Üí mgr fallback)
+  // Competency avg (agreed \u{2192} mgr fallback)
   // SC keys stored by onDD: 'mgr_{id}_mgr', 'mgr_{id}_agr'
   let cSum = 0, cCount = 0;
   COMPS.forEach(c => {
@@ -1754,22 +1754,22 @@ function calcMgrLive() {
   const final   = (objAvg && compAvg) ? ((objAvg + compAvg) / 2) : null;
 
   // Update live panel
-  const fmt = v => v ? v.toFixed(2) : '‚Äî';
+  const fmt = v => v ? v.toFixed(2) : '\u{2014}';
   const oaEl = document.getElementById('sp-oa'); if (oaEl) oaEl.textContent = fmt(objAvg);
   const caEl = document.getElementById('sp-ca'); if (caEl) caEl.textContent = fmt(compAvg);
-  const bigEl = document.getElementById('mgr-big'); if (bigEl) bigEl.textContent = final ? final.toFixed(2) : '‚Äî';
+  const bigEl = document.getElementById('mgr-big'); if (bigEl) bigEl.textContent = final ? final.toFixed(2) : '\u{2014}';
   const ratingEl = document.getElementById('mgr-rating'); if (ratingEl) ratingEl.textContent = final ? outcomeLabel(final) : 'Enter all scores to calculate';
-  const bandEl = document.getElementById('mgr-band'); if (bandEl) bandEl.textContent = final ? final.toFixed(2) : '‚Äî';
+  const bandEl = document.getElementById('mgr-band'); if (bandEl) bandEl.textContent = final ? final.toFixed(2) : '\u{2014}';
   const filledEl = document.getElementById('sp-filled'); if (filledEl) filledEl.textContent = objCount+'/'+OBJS.length+' obj, '+cCount+'/'+COMPS.length+' comp';
 
   // Outcome section
-  const ocObjEl = document.getElementById('mgr-oc-obj'); if (ocObjEl) ocObjEl.textContent = objAvg ? (objAvg.toFixed(2)+' ‚Äî '+outcomeLabel(objAvg)) : '‚Äî';
-  const ocSkillEl = document.getElementById('mgr-oc-skill'); if (ocSkillEl) ocSkillEl.textContent = compAvg ? (compAvg.toFixed(2)+' ‚Äî '+outcomeLabel(compAvg)) : '‚Äî';
-  const ocFinalEl = document.getElementById('mgr-oc-final'); if (ocFinalEl) ocFinalEl.textContent = final ? (final.toFixed(2)+' ‚Äî '+outcomeLabel(final)) : '‚Äî';
+  const ocObjEl = document.getElementById('mgr-oc-obj'); if (ocObjEl) ocObjEl.textContent = objAvg ? (objAvg.toFixed(2)+' \u{2014} '+outcomeLabel(objAvg)) : '\u{2014}';
+  const ocSkillEl = document.getElementById('mgr-oc-skill'); if (ocSkillEl) ocSkillEl.textContent = compAvg ? (compAvg.toFixed(2)+' \u{2014} '+outcomeLabel(compAvg)) : '\u{2014}';
+  const ocFinalEl = document.getElementById('mgr-oc-final'); if (ocFinalEl) ocFinalEl.textContent = final ? (final.toFixed(2)+' \u{2014} '+outcomeLabel(final)) : '\u{2014}';
   // Also mirror to ee outcome if visible
-  const eeObjEl = document.getElementById('oc-obj'); if (eeObjEl && objAvg) eeObjEl.textContent = objAvg.toFixed(2)+' ‚Äî '+outcomeLabel(objAvg);
-  const eeSkillEl = document.getElementById('oc-skill'); if (eeSkillEl && compAvg) eeSkillEl.textContent = compAvg.toFixed(2)+' ‚Äî '+outcomeLabel(compAvg);
-  const eeFinalEl = document.getElementById('oc-final'); if (eeFinalEl && final) eeFinalEl.textContent = final.toFixed(2)+' ‚Äî '+outcomeLabel(final);
+  const eeObjEl = document.getElementById('oc-obj'); if (eeObjEl && objAvg) eeObjEl.textContent = objAvg.toFixed(2)+' \u{2014} '+outcomeLabel(objAvg);
+  const eeSkillEl = document.getElementById('oc-skill'); if (eeSkillEl && compAvg) eeSkillEl.textContent = compAvg.toFixed(2)+' \u{2014} '+outcomeLabel(compAvg);
+  const eeFinalEl = document.getElementById('oc-final'); if (eeFinalEl && final) eeFinalEl.textContent = final.toFixed(2)+' \u{2014} '+outcomeLabel(final);
 }
 
 // C4: overlay manager/agreed scores into employee form after PA is reviewed
@@ -1781,7 +1781,7 @@ function overlayManagerScores(sub){
   Object.keys(objScores).forEach(fid=>{
     const val=objScores[fid]; SC[fid]=val;
     const el=document.getElementById(fid);
-    if(el&&el.tagName==='SPAN'){el.className='ps '+scClass(val);el.textContent=val+' ‚Äî '+(OBJ_LBL[val]||val);}
+    if(el&&el.tagName==='SPAN'){el.className='ps '+scClass(val);el.textContent=val+' \u{2014} '+(OBJ_LBL[val]||val);}
   });
   // Competency scores: keys = 'mgr_c1_mgr', 'mgr_c1_agr', etc.
   // Employee form elements use IDs without 'mgr_' prefix: 'c1_mgr', 'c1_agr'
@@ -1790,7 +1790,7 @@ function overlayManagerScores(sub){
     const val=compScores[fid]; SC[fid]=val;
     const eeId=fid.replace(/^mgr_/,'');
     const el=document.getElementById(eeId);
-    if(el&&el.tagName==='SPAN'){el.className='ps '+scClass(val);el.textContent=val+' ‚Äî '+(COMP_LBL[val]||val);}
+    if(el&&el.tagName==='SPAN'){el.className='ps '+scClass(val);el.textContent=val+' \u{2014} '+(COMP_LBL[val]||val);}
   });
   // S7 supervisor comment (manager saves to msc.s7_comment, not section_data)
   const s7El=document.getElementById('sup_expectations_comment');
@@ -1819,14 +1819,14 @@ function goTab(prefix, i) {
   window.scrollTo({top:0,behavior:'smooth'});
 }
 
-// ‚îÄ‚îÄ AUTH ‚îÄ‚îÄ
+// == AUTH ==
 async function doLogin() {
   const email    = (document.getElementById('login-email').value||'').trim();
   const password = document.getElementById('login-password').value;
   const errEl    = document.getElementById('login-error');
   errEl.style.display='none';
   if(!email||!password){showLoginErr('Please enter your email and password.');return;}
-  setLoading('Signing in‚Ä¶');
+  setLoading('Signing in\u{2026}');
   const {data,error} = await db.auth.signInWithPassword({email,password});
   if(error){clearLoading();showLoginErr(error.message);return;}
   await loadUserProfile(data.user.id,data.user.email);
@@ -1836,7 +1836,7 @@ async function doLogin() {
 function showLoginErr(msg){const el=document.getElementById('login-error');el.textContent=msg;el.style.display='';}
 
 async function doLogout(){
-  setLoading('Signing out‚Ä¶');
+  setLoading('Signing out\u{2026}');
   await db.auth.signOut();
   clearLoading();
   Object.assign(state,{currentUser:null,currentRole:null,activeCycle:null,mySubmission:null,teamData:[],allData:[]});
@@ -1855,7 +1855,7 @@ async function loadUserProfile(userId,email){
   if(badge) badge.textContent = cycle ? cycle.name : 'No active cycle';
 }
 
-// ‚îÄ‚îÄ NAVIGATION ‚îÄ‚îÄ
+// == NAVIGATION ==
 function showScreen(id){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
@@ -1894,7 +1894,7 @@ function buildRolePicker(){
   const wrap=document.getElementById('role-card-wrap'); if(wrap) wrap.innerHTML=html;
   const note=document.getElementById('picker-demo-note'); if(note) note.textContent='';
 }
-function goRolePicker(){document.getElementById('topbar-role-label').textContent='‚Äî';buildRolePicker();showScreen('scrRolePicker');}
+function goRolePicker(){document.getElementById('topbar-role-label').textContent='\u{2014}';buildRolePicker();showScreen('scrRolePicker');}
 function selectRole(role){
   if(!getUserRoles().includes(role)){toast('Access denied.');return;}
   state.currentRole=role;
@@ -1940,7 +1940,7 @@ function hrNav(section){
   if(section==='hrAuditLog') loadAuditLog();
 }
 
-// ‚îÄ‚îÄ EMPLOYEE ‚îÄ‚îÄ
+// == EMPLOYEE ==
 // C3/S3 helpers
 function isCycleDeadlinePassed(){
   if(!state.activeCycle||!state.activeCycle.end_date)return false;
@@ -1959,7 +1959,7 @@ async function loadEmployeeData(){
     const card=document.getElementById('emp-deadline-card');
     if(card&&isCycleDeadlinePassed()){card.classList.add('red');card.style.borderTopColor='var(--red)';}
   }
-  setLoading('Loading your PA‚Ä¶');
+  setLoading('Loading your PA\u{2026}');
   const empCode=state.currentUser.employee_code, cycleId=state.activeCycle.id;
   let {data:sub}=await db.from('pa_submissions').select('*').eq('employee_code',empCode).eq('cycle_id',cycleId).maybeSingle();
   if(!sub){
@@ -1978,7 +1978,7 @@ function loadEmployeeForm(){
   const titleEl=document.getElementById('emp-dash-title'); if(titleEl) titleEl.textContent=firstName+"'s Dashboard";
   const sd=sub.section_data||{};
 
-  // S1 ‚Äî Personal Data (read-only)
+  // S1 \u{2014} Personal Data (read-only)
   const setV=(id,v)=>{const el=document.getElementById(id);if(el)el.value=v||'';};
   setV('p1-eno',  user.employee_code);
   setV('p1-name', user.full_name);
@@ -1987,7 +1987,7 @@ function loadEmployeeForm(){
   setV('p1-mgr',  user.manager_code);
   setV('p1-cycle',state.activeCycle?state.activeCycle.name:'');
 
-  // S2 ‚Äî build objectives; overlay saved self scores
+  // S2 \u{2014} build objectives; overlay saved self scores
   const savedObjs = sd.objectives || [];
   savedObjs.forEach((o,i)=>{
     if(OBJS[i]){OBJS[i].agree=o.agree||'';OBJS[i].review=o.review||'';OBJS[i].w=o.weight||20;OBJS[i].self=o.self_score||null;}
@@ -1997,7 +1997,7 @@ function loadEmployeeForm(){
   savedObjs.forEach((o,i)=>{if(o.self_score)SC['obj'+(i+1)+'_self']=o.self_score;});
   updateWeightTotal();
 
-  // S3 ‚Äî build competencies; overlay saved self scores
+  // S3 \u{2014} build competencies; overlay saved self scores
   buildCompSection('ee-comp-body','ee-mgmt-body',true);
   const cSelf=sd.comp_self||{};
   const cExpl=sd.comp_expl||{};
@@ -2007,25 +2007,25 @@ function loadEmployeeForm(){
     const expl=document.getElementById(id+'_expl'); if(expl) expl.value=cExpl[id]||'';
   });
 
-  // S4 ‚Äî dev actions
+  // S4 \u{2014} dev actions
   buildDevRows(sd.dev_actions||[]);
   const devR=document.getElementById('dev_remarks'); if(devR) devR.value=sd.dev_remarks||'';
 
-  // S5 ‚Äî new year objectives
+  // S5 \u{2014} new year objectives
   buildNYRows(sd.ny_objectives||[]);
 
-  // S6 ‚Äî satisfaction
+  // S6 \u{2014} satisfaction
   smileySel = sd.smiley || null;
   if(sd.smiley) setSmiley(sd.smiley);
   setV('sat_training', sd.sat_training);
   setV('sat_teamwork', sd.sat_teamwork);
 
-  // S7 ‚Äî expectations
+  // S7 \u{2014} expectations
   setV('ee_expectations', sd.ee_expectations);
   // S7 sup comment is readonly (filled by manager), but populate if stored
   setV('sup_expectations_comment', sd.sup_expectations_comment||'');
 
-  // S8 ‚Äî remarks
+  // S8 \u{2014} remarks
   setV('ee_add_remarks', sd.ee_add_remarks);
   setV('sup_add_remarks', sd.sup_add_remarks||'');
 
@@ -2121,7 +2121,7 @@ function collectFormData(){
 }
 async function saveForm(){
   if(!state.mySubmission) return;
-  setLoading('Saving draft‚Ä¶');
+  setLoading('Saving draft\u{2026}');
   const {error}=await db.from('pa_submissions').update({section_data:collectFormData()}).eq('id',state.mySubmission.id);
   clearLoading();
   if(error){toast('Save failed: '+error.message);return;}
@@ -2131,9 +2131,9 @@ async function saveForm(){
 function submitForm(){showModal('modal-submit');}
 async function confirmSubmit(){
   closeModal('modal-submit'); if(!state.mySubmission) return;
-  if(isCycleLocked()){toast('Submission blocked ‚Äî cycle is locked by HR.');return;}
+  if(isCycleLocked()){toast('Submission blocked \u{2014} cycle is locked by HR.');return;}
   if(isCycleDeadlinePassed()){toast('Submission deadline has passed. Contact HR.');return;}
-  const formData=collectFormData(); setLoading('Submitting PA‚Ä¶');
+  const formData=collectFormData(); setLoading('Submitting PA\u{2026}');
   const {data:updated,error}=await db.from('pa_submissions').update({section_data:formData,status:'Submitted',submitted_at:new Date().toISOString()}).eq('id',state.mySubmission.id).select().single();
   clearLoading(); if(error){toast('Submit failed: '+error.message);return;}
   state.mySubmission=updated; loadEmployeeForm(); empNav('empDashboard');
@@ -2155,7 +2155,7 @@ function updateTimeline(){
 async function loadPAHistory(){
   const tbl=document.getElementById('history-tbody'); if(!tbl) return;
   const empCode=state.currentUser?.employee_code; if(!empCode) return;
-  tbl.innerHTML='<tr><td colspan="5" style="text-align:center;padding:16px;color:var(--gray-text);">Loading‚Ä¶</td></tr>';
+  tbl.innerHTML='<tr><td colspan="5" style="text-align:center;padding:16px;color:var(--gray-text);">Loading\u{2026}</td></tr>';
   const {data:subs,error}=await db.from('pa_submissions')
     .select('*, cycles(name)')
     .eq('employee_code',empCode)
@@ -2163,30 +2163,30 @@ async function loadPAHistory(){
     .order('submitted_at',{ascending:false});
   if(error){tbl.innerHTML='<tr><td colspan="5" style="text-align:center;padding:16px;color:var(--red);">Error loading history.</td></tr>';return;}
   if(!subs||subs.length===0){tbl.innerHTML='<tr><td colspan="5" style="text-align:center;padding:24px;color:var(--gray-text);">No previous PA cycles found.</td></tr>';return;}
-  // B2 fix: allProfiles is empty in employee context ‚Äî fetch manager names directly
+  // B2 fix: allProfiles is empty in employee context \u{2014} fetch manager names directly
   let managerNames={};
   if(state.allProfiles.length===0){
     const codes=[...new Set(subs.map(s=>s.manager_code).filter(Boolean))];
     if(codes.length>0){const {data:mgrs}=await db.from('profiles').select('employee_code,full_name').in('employee_code',codes);if(mgrs)mgrs.forEach(m=>managerNames[m.employee_code]=m.full_name);}
   }else{state.allProfiles.forEach(p=>{managerNames[p.employee_code]=p.full_name;});}
   tbl.innerHTML=subs.map(s=>{
-    const cycleName=s.cycles?.name||s.cycle_name||'‚Äî';
-    const mgrName=managerNames[s.manager_code]||(s.manager_code||'‚Äî');
+    const cycleName=s.cycles?.name||s.cycle_name||'\u{2014}';
+    const mgrName=managerNames[s.manager_code]||(s.manager_code||'\u{2014}');
     const finalScore=s.manager_section_comments?.final_score??s.manager_overall_rating??null;
     return`<tr>
       <td>${cycleName}</td>
       <td>${fmtDate(s.submitted_at)}</td>
       <td>${mgrName}</td>
       <td><span class="badge ${getBadge(s.status)}">${s.status}</span></td>
-      <td>${finalScore!==null?Number(finalScore).toFixed(1):'‚Äî'}</td>
+      <td>${finalScore!==null?Number(finalScore).toFixed(1):'\u{2014}'}</td>
     </tr>`;
   }).join('');
 }
 
-// ‚îÄ‚îÄ MANAGER ‚îÄ‚îÄ
+// == MANAGER ==
 async function loadManagerData(){
   if(!state.activeCycle){toast('No active PA cycle.');return;}
-  setLoading('Loading team data‚Ä¶');
+  setLoading('Loading team data\u{2026}');
   const myCode=state.currentUser.employee_code,cycleId=state.activeCycle.id;
   const {data:reportProfiles}=await db.from('profiles').select('*').eq('manager_code',myCode).eq('is_active',true);
   const empCodes=(reportProfiles||[]).map(p=>p.employee_code);
@@ -2197,12 +2197,12 @@ async function loadManagerData(){
 }
 function renderMgrTeam(){
   const row=item=>{
-    const p=item.profile,status=item.status,sub=item.submission,submittedAt=sub?fmtDate(sub.submitted_at):'‚Äî';
+    const p=item.profile,status=item.status,sub=item.submission,submittedAt=sub?fmtDate(sub.submitted_at):'\u{2014}';
     const canReview=status==='Submitted'||status==='Under Review';
     return `<tr class="clickable" onclick="openMgrReview('${p.employee_code}')">
       <td><strong>${p.full_name}</strong><br><span style="font-size:12px;color:var(--gray-text)">${p.email||''}</span></td>
-      <td>${p.department||'‚Äî'}</td><td><span class="badge ${getBadge(status)}">${status}</span></td><td>${submittedAt}</td>
-      <td>${canReview?'<button class="btn btn-primary btn-sm" onclick="event.stopPropagation();openMgrReview(\''+p.employee_code+'\')">Review ‚Üí</button>':'<span style="color:var(--gray-text);font-size:12px;">'+(status==='Approved'?'\u{2705} Done':'‚Äî')+'</span>'}</td></tr>`;};
+      <td>${p.department||'\u{2014}'}</td><td><span class="badge ${getBadge(status)}">${status}</span></td><td>${submittedAt}</td>
+      <td>${canReview?'<button class="btn btn-primary btn-sm" onclick="event.stopPropagation();openMgrReview(\''+p.employee_code+'\')">Review \u{2192}</button>':'<span style="color:var(--gray-text);font-size:12px;">'+(status==='Approved'?'\u{2705} Done':'\u{2014}')+'</span>'}</td></tr>`;};
   const html=state.teamData.map(row).join('');
   ['mgr-team-preview','mgr-team-full'].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML=html||'<tr><td colspan="5" style="text-align:center;padding:24px;color:var(--gray-text);">No direct reports found.</td></tr>';});
   const el=id=>document.getElementById(id);
@@ -2223,7 +2223,7 @@ async function openMgrReview(empCode){
   const msc=sub?(sub.manager_section_comments||{}):{};
 
   const av=p.full_name.split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase();
-  document.getElementById('mgr-emp-profile-card').innerHTML=`<div class="emp-profile-card"><div class="emp-avatar">${av}</div><div><div class="emp-name">${p.full_name}</div><div class="emp-meta">${p.department||'‚Äî'} ¬∑ ${p.position||''}</div><div class="emp-meta">${p.email||''}</div></div><div class="emp-status-wrap"><span class="badge ${getBadge(item.status)}">${item.status}</span><div style="font-size:12px;color:var(--gray-text);margin-top:6px;">Submitted: ${sub?fmtDate(sub.submitted_at):'‚Äî'}</div></div></div>`;
+  document.getElementById('mgr-emp-profile-card').innerHTML=`<div class="emp-profile-card"><div class="emp-avatar">${av}</div><div><div class="emp-name">${p.full_name}</div><div class="emp-meta">${p.department||'\u{2014}'} \u{B7} ${p.position||''}</div><div class="emp-meta">${p.email||''}</div></div><div class="emp-status-wrap"><span class="badge ${getBadge(item.status)}">${item.status}</span><div style="font-size:12px;color:var(--gray-text);margin-top:6px;">Submitted: ${sub?fmtDate(sub.submitted_at):'\u{2014}'}</div></div></div>`;
 
   // Overlay employee self scores into SC for display
   const savedObjs=sd.objectives||[];
@@ -2231,7 +2231,7 @@ async function openMgrReview(empCode){
   const cSelf=sd.comp_self||{};
   Object.keys(cSelf).forEach(id=>{SC[id+'_self']=cSelf[id];});
 
-  // S2 ‚Äî build mgr objective section (manager + agreed dropdowns live, self read-only pill)
+  // S2 \u{2014} build mgr objective section (manager + agreed dropdowns live, self read-only pill)
   buildObjSection('mgr-obj-wrap', false);
   // Restore saved mgr/agreed scores into SC and re-render dropdowns
   const objScores=msc.obj_scores||{};
@@ -2240,7 +2240,7 @@ async function openMgrReview(empCode){
     const sel=document.getElementById(fid); if(sel){sel.value=objScores[fid];sel.className='score-sel '+scClass(objScores[fid]);}
   });
 
-  // S3 ‚Äî build mgr competency section
+  // S3 \u{2014} build mgr competency section
   buildCompSectionMgr('mgr-comp-body');
   const compScores=msc.comp_scores||{};
   Object.keys(compScores).forEach(fid=>{
@@ -2256,7 +2256,7 @@ async function openMgrReview(empCode){
     const devActions=(sd.dev_actions||[]).filter(a=>a.action);
     if(devActions.length){
       let html='<table style="width:100%;border-collapse:collapse;font-size:13px;"><thead><tr style="background:var(--gray-bg);"><th style="padding:6px 10px;text-align:left;width:55%">Action</th><th style="padding:6px 10px;white-space:nowrap;">Fixed Date</th><th style="padding:6px 10px;">Responsible</th></tr></thead><tbody>';
-      devActions.forEach(a=>{html+=`<tr style="border-top:1px solid var(--gray-border);"><td style="padding:8px 10px;">${a.action||'‚Äî'}</td><td style="padding:8px 10px;white-space:nowrap;">${a.date||'‚Äî'}</td><td style="padding:8px 10px;">${a.responsible||'‚Äî'}</td></tr>`;});
+      devActions.forEach(a=>{html+=`<tr style="border-top:1px solid var(--gray-border);"><td style="padding:8px 10px;">${a.action||'\u{2014}'}</td><td style="padding:8px 10px;white-space:nowrap;">${a.date||'\u{2014}'}</td><td style="padding:8px 10px;">${a.responsible||'\u{2014}'}</td></tr>`;});
       html+='</tbody></table>';
       devView.innerHTML=html;
     }else{devView.innerHTML='<span style="color:var(--gray-text);font-size:13px;">(Not filled by employee)</span>';}
@@ -2272,7 +2272,7 @@ async function openMgrReview(empCode){
     const nyObjs=(sd.ny_objectives||[]).filter(o=>o.desc);
     if(nyObjs.length){
       let html='<table style="width:100%;border-collapse:collapse;font-size:13px;"><thead><tr style="background:var(--gray-bg);"><th style="padding:6px 10px;text-align:left;">Objective Description</th><th style="padding:6px 10px;text-align:center;width:20%">Weight (%)</th></tr></thead><tbody>';
-      nyObjs.forEach(o=>{html+=`<tr style="border-top:1px solid var(--gray-border);"><td style="padding:8px 10px;">${o.desc}</td><td style="padding:8px 10px;text-align:center;">${o.weight||'‚Äî'}</td></tr>`;});
+      nyObjs.forEach(o=>{html+=`<tr style="border-top:1px solid var(--gray-border);"><td style="padding:8px 10px;">${o.desc}</td><td style="padding:8px 10px;text-align:center;">${o.weight||'\u{2014}'}</td></tr>`;});
       html+='</tbody></table>';
       nyView.innerHTML=html;
     }else{nyView.innerHTML='<span style="color:var(--gray-text);font-size:13px;">(Not filled by employee)</span>';}
@@ -2336,8 +2336,8 @@ function approvePA(){showModal('modal-approve');}
 function returnPA(){showModal('modal-return');}
 async function confirmApprove(){
   closeModal('modal-approve');const item=state.currentEmp;if(!item||!item.submission)return;
-  if(isCycleLocked()){toast('Cycle is locked by HR ‚Äî no actions allowed during payroll processing.');return;}
-  setLoading('Approving PA‚Ä¶');
+  if(isCycleLocked()){toast('Cycle is locked by HR \u{2014} no actions allowed during payroll processing.');return;}
+  setLoading('Approving PA\u{2026}');
   const {error}=await db.from('pa_submissions').update({status:'Approved',reviewed_at:new Date().toISOString(),...collectMgrReview()}).eq('id',item.submission.id);
   clearLoading();if(error){toast('Error: '+error.message);return;}
   item.status='Approved';item.submission.status='Approved';
@@ -2347,8 +2347,8 @@ async function confirmApprove(){
 }
 async function confirmReturn(){
   closeModal('modal-return');const item=state.currentEmp;if(!item||!item.submission)return;
-  if(isCycleLocked()){toast('Cycle is locked by HR ‚Äî no actions allowed during payroll processing.');return;}
-  setLoading('Returning PA‚Ä¶');
+  if(isCycleLocked()){toast('Cycle is locked by HR \u{2014} no actions allowed during payroll processing.');return;}
+  setLoading('Returning PA\u{2026}');
   const {error}=await db.from('pa_submissions').update({status:'Returned',reviewed_at:new Date().toISOString(),...collectMgrReview()}).eq('id',item.submission.id);
   clearLoading();if(error){toast('Error: '+error.message);return;}
   item.status='Returned';item.submission.status='Returned';
@@ -2360,7 +2360,7 @@ async function confirmReturn(){
 // C2: Save manager review as draft without changing status
 async function saveMgrReview(){
   const item=state.currentEmp;if(!item||!item.submission){toast('No active review to save.');return;}
-  setLoading('Saving review draft‚Ä¶');
+  setLoading('Saving review draft\u{2026}');
   const reviewData=collectMgrReview();
   const {error}=await db.from('pa_submissions').update(reviewData).eq('id',item.submission.id);
   clearLoading();if(error){toast('Save failed: '+error.message);return;}
@@ -2368,15 +2368,15 @@ async function saveMgrReview(){
   toast('Review draft saved. Scores preserved.');
 }
 
-// ‚îÄ‚îÄ HR ADMIN ‚îÄ‚îÄ
+// == HR ADMIN ==
 async function loadHRData(){
-  if(!state.activeCycle){const s=document.getElementById('hr-dash-sub');if(s)s.textContent='No active PA cycle ‚Äî go to PA Cycles to create one.';return;}
-  setLoading('Loading HR data‚Ä¶');
+  if(!state.activeCycle){const s=document.getElementById('hr-dash-sub');if(s)s.textContent='No active PA cycle \u{2014} go to PA Cycles to create one.';return;}
+  setLoading('Loading HR data\u{2026}');
   const {data:allP}=await db.from('profiles').select('*').eq('is_active',true);
   const {data:allS}=await db.from('pa_submissions').select('*').eq('cycle_id',state.activeCycle.id);
   state.allProfiles=allP||[];
   state.allData=(allP||[]).map(p=>({profile:p,submission:(allS||[]).find(s=>s.employee_code===p.employee_code)||null,status:(allS||[]).find(s=>s.employee_code===p.employee_code)?.status||'Not Started'}));
-  const sub=document.getElementById('hr-dash-sub');if(sub)sub.textContent='PA Tracker ‚Äî '+state.activeCycle.name;
+  const sub=document.getElementById('hr-dash-sub');if(sub)sub.textContent='PA Tracker \u{2014} '+state.activeCycle.name;
   const depts=[...new Set(state.allProfiles.map(p=>p.department).filter(Boolean))].sort();
   const deptSel=document.getElementById('hr-filter-dept');
   if(deptSel)deptSel.innerHTML='<option value="">All Departments</option>'+depts.map(d=>`<option value="${d}">${d}</option>`).join('');
@@ -2393,7 +2393,7 @@ function renderHRRecent(){
   const tbl=document.getElementById('hr-recent-table');if(!tbl)return;
   tbl.innerHTML=state.allData.slice(0,5).map(item=>{
     const p=item.profile,sub=item.submission,mgr=state.allProfiles.find(x=>x.employee_code===p.manager_code);
-    return `<tr class="clickable" onclick="openHRDetail('${p.employee_code}')"><td><strong>${p.full_name}</strong></td><td>${mgr?mgr.full_name:(p.manager_code||'‚Äî')}</td><td>${p.department||'‚Äî'}</td><td><span class="badge ${getBadge(item.status)}">${item.status}</span></td><td>${sub?fmtDate(sub.updated_at):'‚Äî'}</td></tr>`;
+    return `<tr class="clickable" onclick="openHRDetail('${p.employee_code}')"><td><strong>${p.full_name}</strong></td><td>${mgr?mgr.full_name:(p.manager_code||'\u{2014}')}</td><td>${p.department||'\u{2014}'}</td><td><span class="badge ${getBadge(item.status)}">${item.status}</span></td><td>${sub?fmtDate(sub.updated_at):'\u{2014}'}</td></tr>`;
   }).join('')||'<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--gray-text);">No data yet.</td></tr>';
 }
 function renderHRAll(filterStatus='',filterDept='',filterMgr=''){
@@ -2405,13 +2405,13 @@ function renderHRAll(filterStatus='',filterDept='',filterMgr=''){
   tbl.innerHTML=data.map(item=>{
     const p=item.profile,sub=item.submission,mgr=state.allProfiles.find(x=>x.employee_code===p.manager_code);
     const finalScore=item.submission?.manager_section_comments?.final_score ?? item.submission?.manager_overall_rating ?? null;
-    return `<tr class="clickable" onclick="openHRDetail('${p.employee_code}')"><td><strong>${p.full_name}</strong><br><span style="font-size:12px;color:var(--gray-text)">${p.email||''}</span></td><td>${p.department||'‚Äî'}</td><td>${mgr?mgr.full_name:(p.manager_code||'‚Äî')}</td><td><span class="badge ${getBadge(item.status)}">${item.status}</span></td><td>${sub?fmtDate(sub.submitted_at):'‚Äî'}</td><td><button class="btn btn-outline btn-sm" onclick="event.stopPropagation();openHRDetail('${p.employee_code}')">View</button></td><td>${riskBadge(item.status==='Approved'?finalScore:null)}</td></tr>`;
+    return `<tr class="clickable" onclick="openHRDetail('${p.employee_code}')"><td><strong>${p.full_name}</strong><br><span style="font-size:12px;color:var(--gray-text)">${p.email||''}</span></td><td>${p.department||'\u{2014}'}</td><td>${mgr?mgr.full_name:(p.manager_code||'\u{2014}')}</td><td><span class="badge ${getBadge(item.status)}">${item.status}</span></td><td>${sub?fmtDate(sub.submitted_at):'\u{2014}'}</td><td><button class="btn btn-outline btn-sm" onclick="event.stopPropagation();openHRDetail('${p.employee_code}')">View</button></td><td>${riskBadge(item.status==='Approved'?finalScore:null)}</td></tr>`;
   }).join('')||'<tr><td colspan="7" style="text-align:center;padding:20px;color:var(--gray-text);">No records found.</td></tr>';
 }
 function riskBadge(fs){
-  if(fs===null||fs===undefined)return'<span style="color:var(--gray-text);font-size:11px;">‚Äî</span>';
+  if(fs===null||fs===undefined)return'<span style="color:var(--gray-text);font-size:11px;">\u{2014}</span>';
   const s=parseFloat(fs);
-  if(isNaN(s))return'<span style="color:var(--gray-text);font-size:11px;">‚Äî</span>';
+  if(isNaN(s))return'<span style="color:var(--gray-text);font-size:11px;">\u{2014}</span>';
   if(s<2.5)return'<span class="badge badge-returned" title="Final score below 2.5">\u{1F534} Flight Risk</span>';
   if(s>=4.5)return'<span class="badge badge-approved" title="Final score 4.5+">\u{1F7E2} Promo Ready</span>';
   return'<span style="color:var(--gray-text);font-size:12px;">\u{26AA} Stable</span>';
@@ -2438,7 +2438,7 @@ function openHRDetail(empCode){
   const msc=sub?(sub.manager_section_comments||{}):{};
   const av=p.full_name.split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase();
   const mgr=state.allProfiles.find(x=>x.employee_code===p.manager_code);
-  document.getElementById('hr-detail-profile').innerHTML=`<div class="emp-profile-card"><div class="emp-avatar">${av}</div><div><div class="emp-name">${p.full_name}</div><div class="emp-meta">${p.department||'‚Äî'} ¬∑ Manager: ${mgr?mgr.full_name:(p.manager_code||'‚Äî')}</div><div class="emp-meta">${p.email||''}</div></div><div class="emp-status-wrap"><span class="badge ${getBadge(item.status)}">${item.status}</span><div style="font-size:12px;color:var(--gray-text);margin-top:6px;">Submitted: ${sub?fmtDate(sub.submitted_at):'‚Äî'}</div></div></div>`;
+  document.getElementById('hr-detail-profile').innerHTML=`<div class="emp-profile-card"><div class="emp-avatar">${av}</div><div><div class="emp-name">${p.full_name}</div><div class="emp-meta">${p.department||'\u{2014}'} \u{B7} Manager: ${mgr?mgr.full_name:(p.manager_code||'\u{2014}')}</div><div class="emp-meta">${p.email||''}</div></div><div class="emp-status-wrap"><span class="badge ${getBadge(item.status)}">${item.status}</span><div style="font-size:12px;color:var(--gray-text);margin-top:6px;">Submitted: ${sub?fmtDate(sub.submitted_at):'\u{2014}'}</div></div></div>`;
 
   // S2 Objectives
   const objs=sd.objectives||[];
@@ -2447,7 +2447,7 @@ function openHRDetail(empCode){
     let objHtml='<table style="width:100%;border-collapse:collapse;font-size:13px;">';
     objHtml+='<thead><tr style="background:var(--gray-bg);"><th style="padding:6px 10px;text-align:left;">Obj</th><th style="padding:6px 10px;text-align:left;">Description</th><th style="padding:6px 10px;text-align:center;">Wt</th><th style="padding:6px 10px;text-align:center;">Self</th><th style="padding:6px 10px;text-align:center;">Mgr</th><th style="padding:6px 10px;text-align:center;">Agreed</th></tr></thead><tbody>';
     objs.forEach(o=>{
-      const self=o.self_score||'‚Äî', mgSc=objScores['obj'+o.id+'_mgr']||'‚Äî', agr=objScores['obj'+o.id+'_agr']||'‚Äî';
+      const self=o.self_score||'\u{2014}', mgSc=objScores['obj'+o.id+'_mgr']||'\u{2014}', agr=objScores['obj'+o.id+'_agr']||'\u{2014}';
       objHtml+=`<tr style="border-top:1px solid var(--gray-border);"><td style="padding:8px 10px;font-weight:600;">#${o.id}</td><td style="padding:8px 10px;">${o.agree||'(not set)'}<br><span style="font-size:11px;color:var(--gray-text);">${o.review||''}</span></td><td style="padding:8px 10px;text-align:center;">${o.weight||20}%</td><td style="padding:8px 10px;text-align:center;font-weight:600;">${self}</td><td style="padding:8px 10px;text-align:center;font-weight:600;">${mgSc}</td><td style="padding:8px 10px;text-align:center;font-weight:600;">${agr}</td></tr>`;
     });
     objHtml+='</tbody></table>';
@@ -2462,7 +2462,7 @@ function openHRDetail(empCode){
     let compHtml='<table style="width:100%;border-collapse:collapse;font-size:13px;">';
     compHtml+='<thead><tr style="background:var(--gray-bg);"><th style="padding:6px 10px;text-align:left;">Competency</th><th style="padding:6px 10px;text-align:center;">Self</th><th style="padding:6px 10px;text-align:center;">Mgr</th><th style="padding:6px 10px;text-align:center;">Agreed</th></tr></thead><tbody>';
     COMPS.forEach(c=>{
-      const self=cSelf[c.id]||'‚Äî', mgSc=compScores['mgr_'+c.id+'_mgr']||'‚Äî', agr=compScores['mgr_'+c.id+'_agr']||'‚Äî';
+      const self=cSelf[c.id]||'\u{2014}', mgSc=compScores['mgr_'+c.id+'_mgr']||'\u{2014}', agr=compScores['mgr_'+c.id+'_agr']||'\u{2014}';
       compHtml+=`<tr style="border-top:1px solid var(--gray-border);"><td style="padding:8px 10px;">${c.n}</td><td style="padding:8px 10px;text-align:center;font-weight:600;">${self}</td><td style="padding:8px 10px;text-align:center;font-weight:600;">${mgSc}</td><td style="padding:8px 10px;text-align:center;font-weight:600;">${agr}</td></tr>`;
     });
     compHtml+='</tbody></table>';
@@ -2494,7 +2494,7 @@ function openHRDetail(empCode){
 // U5: per-employee PA history across all cycles (HR view)
 async function loadHREmployeeHistory(empCode){
   const tbl=document.getElementById('hr-emp-history-tbody');if(!tbl)return;
-  tbl.innerHTML='<tr><td colspan="5" style="text-align:center;padding:16px;color:var(--gray-text);">Loading‚Ä¶</td></tr>';
+  tbl.innerHTML='<tr><td colspan="5" style="text-align:center;padding:16px;color:var(--gray-text);">Loading\u{2026}</td></tr>';
   const {data:subs,error}=await db.from('pa_submissions')
     .select('*, cycles(name)')
     .eq('employee_code',empCode)
@@ -2503,24 +2503,24 @@ async function loadHREmployeeHistory(empCode){
   if(!subs||!subs.length){tbl.innerHTML='<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--gray-text);">No history found across cycles.</td></tr>';return;}
   // Build ordered for table (newest first for display)
   tbl.innerHTML=subs.map(s=>{
-    const cycleName=s.cycles?.name||s.cycle_name||'‚Äî';
+    const cycleName=s.cycles?.name||s.cycle_name||'\u{2014}';
     const finalScore=s.manager_section_comments?.final_score??s.manager_overall_rating??null;
     const selfObjs=(s.section_data?.objectives||[]).map(o=>o.self_score).filter(Boolean);
-    const selfAvg=selfObjs.length?(selfObjs.reduce((a,b)=>a+b,0)/selfObjs.length).toFixed(1):'‚Äî';
+    const selfAvg=selfObjs.length?(selfObjs.reduce((a,b)=>a+b,0)/selfObjs.length).toFixed(1):'\u{2014}';
     return`<tr>
       <td><strong>${cycleName}</strong></td>
       <td>${fmtDate(s.submitted_at)}</td>
       <td><span class="badge ${getBadge(s.status)}">${s.status}</span></td>
       <td>${selfAvg}</td>
-      <td>${finalScore!==null?Number(finalScore).toFixed(1):'‚Äî'}</td>
+      <td>${finalScore!==null?Number(finalScore).toFixed(1):'\u{2014}'}</td>
     </tr>`;
   }).join('');
-  // I3: Trend chart ‚Äî reverse to chronological order for chart
+  // I3: Trend chart \u{2014} reverse to chronological order for chart
   const chartCard=document.getElementById('hr-trend-card');
   if(chartCard&&typeof Chart!=='undefined'){
     chartCard.style.display='';
     const sorted=[...subs].reverse();
-    const labels=sorted.map(s=>s.cycles?.name||s.cycle_name||'‚Äî');
+    const labels=sorted.map(s=>s.cycles?.name||s.cycle_name||'\u{2014}');
     const selfData=sorted.map(s=>{
       const objs=(s.section_data?.objectives||[]).map(o=>parseFloat(o.self_score)).filter(v=>!isNaN(v));
       return objs.length?+(objs.reduce((a,b)=>a+b,0)/objs.length).toFixed(2):null;
@@ -2576,10 +2576,10 @@ function generateNarrative(){
   }
   let commentSentence='';
   if(mgrComment&&mgrComment.trim().length>0){
-    commentSentence='Manager noted: "'+mgrComment.trim().slice(0,120)+(mgrComment.length>120?'‚Ä¶"':'"');
+    commentSentence='Manager noted: "'+mgrComment.trim().slice(0,120)+(mgrComment.length>120?'\u{2026}"':'"');
   }
   const cycle=state.activeCycle?.name||'current';
-  const para=`${p.full_name} (${p.department||'‚Äî'}) ${band} in the ${cycle} cycle, receiving a final score of ${finalScore.toFixed(1)} out of 5. ${deltaSentence} ${commentSentence}`.replace(/\s+/g,' ').trim();
+  const para=`${p.full_name} (${p.department||'\u{2014}'}) ${band} in the ${cycle} cycle, receiving a final score of ${finalScore.toFixed(1)} out of 5. ${deltaSentence} ${commentSentence}`.replace(/\s+/g,' ').trim();
   out.textContent=para;
 }
 // S4: Per-employee PDF export (jsPDF text-only)
@@ -2602,10 +2602,10 @@ function exportEmployeePDF(){
   doc.text('ePayslip | ePA Portal',left,y);y+=4;
   line();
   doc.setFont('helvetica','normal');doc.setFontSize(12);
-  doc.text('Performance Appraisal ‚Äî '+cycleName,left,y);y+=10;
+  doc.text('Performance Appraisal \u{2014} '+cycleName,left,y);y+=10;
   doc.setFontSize(11);
-  doc.text('Name: '+(p.full_name||'‚Äî')+'    Code: '+(p.employee_code||'‚Äî'),left,y);y+=6;
-  doc.text('Dept: '+(p.department||'‚Äî')+'    Position: '+(p.position||'‚Äî'),left,y);y+=4;
+  doc.text('Name: '+(p.full_name||'\u{2014}')+'    Code: '+(p.employee_code||'\u{2014}'),left,y);y+=6;
+  doc.text('Dept: '+(p.department||'\u{2014}')+'    Position: '+(p.position||'\u{2014}'),left,y);y+=4;
   line();
   doc.setFont('helvetica','bold');doc.setFontSize(11);
   doc.text('Section Scores',left,y);y+=7;
@@ -2613,8 +2613,8 @@ function exportEmployeePDF(){
   const objs=sd.objectives||[];const objScores=msc.obj_scores||{};
   if(objs.length){
     objs.forEach(o=>{
-      const self=o.self_score!=null&&o.self_score!==''?o.self_score:'‚Äî';
-      const mgr=objScores['obj'+o.id+'_mgr']!=null&&objScores['obj'+o.id+'_mgr']!==''?objScores['obj'+o.id+'_mgr']:'‚Äî';
+      const self=o.self_score!=null&&o.self_score!==''?o.self_score:'\u{2014}';
+      const mgr=objScores['obj'+o.id+'_mgr']!=null&&objScores['obj'+o.id+'_mgr']!==''?objScores['obj'+o.id+'_mgr']:'\u{2014}';
       doc.text('Objective #'+o.id+':  Self '+self+'  |  Manager '+mgr,left,y);y+=6;
     });
   } else {
@@ -2622,7 +2622,7 @@ function exportEmployeePDF(){
   }
   y+=1;line();
   doc.setFont('helvetica','bold');doc.setFontSize(12);
-  doc.text('Final Score: '+(finalScore!==null?finalScore.toFixed(2):'‚Äî')+'  |  Band: '+inc.band+'  |  Increment: '+inc.pct+'%',left,y);y+=10;
+  doc.text('Final Score: '+(finalScore!==null?finalScore.toFixed(2):'\u{2014}')+'  |  Band: '+inc.band+'  |  Increment: '+inc.pct+'%',left,y);y+=10;
   doc.setFont('helvetica','normal');doc.setFontSize(11);
   doc.text('Manager Comments:',left,y);y+=6;
   doc.setFontSize(10);
@@ -2631,20 +2631,20 @@ function exportEmployeePDF(){
   doc.text(wrapped,left,y);y+=wrapped.length*5+4;
   line();
   doc.setFontSize(9);doc.setTextColor(120,120,120);
-  doc.text('Generated: '+new Date().toLocaleDateString('en-GB')+'  |  Confidential ‚Äî ePayslip Internal',left,y);
+  doc.text('Generated: '+new Date().toLocaleDateString('en-GB')+'  |  Confidential \u{2014} ePayslip Internal',left,y);
   doc.setTextColor(0,0,0);
   doc.save(empCode+'_PA_'+cycleName.replace(/[^a-z0-9]/gi,'_')+'.pdf');
   toast('PDF exported!');
 }
 function renderReports(){
   if(!state.activeCycle)return;
-  const s=document.getElementById('rpt-cycle-sub');if(s)s.textContent=state.activeCycle.name+' ‚Äî Summary Analytics';
+  const s=document.getElementById('rpt-cycle-sub');if(s)s.textContent=state.activeCycle.name+' \u{2014} Summary Analytics';
   const days=Math.max(0,Math.ceil((new Date(state.activeCycle.end_date)-new Date())/86400000));
   const el=id=>document.getElementById(id);if(el('rpt-days'))el('rpt-days').textContent=days;
   const allR=state.allData.flatMap(i=>Object.values((i.submission?.section_data?.selfRatings)||{}).filter(v=>v>0));
-  if(el('rpt-avg-self'))el('rpt-avg-self').textContent=allR.length?(allR.reduce((a,b)=>a+b,0)/allR.length).toFixed(1):'‚Äî';
+  if(el('rpt-avg-self'))el('rpt-avg-self').textContent=allR.length?(allR.reduce((a,b)=>a+b,0)/allR.length).toFixed(1):'\u{2014}';
   const mgrR=state.allData.flatMap(i=>Object.values((i.submission?.manager_section_ratings)||{}).filter(v=>v>0));
-  if(el('rpt-avg-mgr'))el('rpt-avg-mgr').textContent=mgrR.length?(mgrR.reduce((a,b)=>a+b,0)/mgrR.length).toFixed(1):'‚Äî';
+  if(el('rpt-avg-mgr'))el('rpt-avg-mgr').textContent=mgrR.length?(mgrR.reduce((a,b)=>a+b,0)/mgrR.length).toFixed(1):'\u{2014}';
   // I7: flight risk + promo ready counts (Approved PAs only)
   const approvedScores=state.allData.filter(i=>i.status==='Approved').map(i=>{
     const fs=i.submission?.manager_section_comments?.final_score ?? i.submission?.manager_overall_rating ?? null;
@@ -2677,7 +2677,7 @@ function renderBellChart(){
     return;
   }
   canvas.style.display='';if(empty)empty.style.display='none';
-  const labels=['0‚Äì1','1‚Äì2','2‚Äì3','3‚Äì4','4‚Äì5'];
+  const labels=['0\u{2013}1','1\u{2013}2','2\u{2013}3','3\u{2013}4','4\u{2013}5'];
   const colors=['#ef5350','#ff7043','#ffd54f','#66bb6a','#26a69a'];
   const bins=[0,0,0,0,0];
   scores.forEach(s=>{
@@ -2707,10 +2707,10 @@ function renderCalibration(){
   }
   const companyAvg=approved.reduce((a,b)=>a+b.score,0)/approved.length;
   const groups={};
-  approved.forEach(x=>{const k=x.managerCode||'‚Äî';(groups[k]=groups[k]||[]).push(x.score);});
+  approved.forEach(x=>{const k=x.managerCode||'\u{2014}';(groups[k]=groups[k]||[]).push(x.score);});
   const rows=Object.keys(groups).sort().map(code=>{
     const arr=groups[code],theirAvg=arr.reduce((a,b)=>a+b,0)/arr.length,delta=theirAvg-companyAvg;
-    const name=state.allProfiles.find(p=>p.employee_code===code)?.full_name||(code==='‚Äî'?'(Unassigned)':code);
+    const name=state.allProfiles.find(p=>p.employee_code===code)?.full_name||(code==='\u{2014}'?'(Unassigned)':code);
     let flag;
     if(delta>0.5)flag='\u{1F53A} Inflated';
     else if(delta<-0.5)flag='\u{1F53B} Deflated';
@@ -2737,7 +2737,7 @@ function incBand(score){
 }
 function renderHRIncrement(){
   if(!state.activeCycle){const el=document.getElementById('increment-table');if(el)el.innerHTML='<tr><td colspan="6" style="text-align:center;padding:20px;color:var(--gray-text);">No active cycle.</td></tr>';return;}
-  const sub=document.getElementById('inc-cycle-sub');if(sub)sub.textContent=state.activeCycle.name+' ‚Äî Approved PAs only';
+  const sub=document.getElementById('inc-cycle-sub');if(sub)sub.textContent=state.activeCycle.name+' \u{2014} Approved PAs only';
   const tbl=document.getElementById('increment-table');if(!tbl)return;
   const approved=state.allData.filter(i=>i.status==='Approved');
   if(!approved.length){tbl.innerHTML='<tr><td colspan="6" style="text-align:center;padding:20px;color:var(--gray-text);">No approved PAs yet in this cycle.</td></tr>';return;}
@@ -2746,12 +2746,12 @@ function renderHRIncrement(){
     const fs=sub?.manager_section_comments?.final_score??sub?.manager_overall_rating??null;
     const {band,pct,label}=incBand(fs?parseFloat(fs):null);
     const mgr=state.allProfiles.find(x=>x.employee_code===p.manager_code);
-    const scoreDisp=fs!==null?Number(fs).toFixed(2):'‚Äî';
+    const scoreDisp=fs!==null?Number(fs).toFixed(2):'\u{2014}';
     const pctClass=pct===0?'badge-returned':pct<=3?'badge-draft':pct<=5?'badge-submitted':pct<=7?'badge-review':'badge-approved';
     return`<tr>
       <td><strong>${p.full_name}</strong><br><span style="font-size:12px;color:var(--gray-text)">${p.employee_code}</span></td>
-      <td>${p.department||'‚Äî'}</td>
-      <td>${mgr?mgr.full_name:(p.manager_code||'‚Äî')}</td>
+      <td>${p.department||'\u{2014}'}</td>
+      <td>${mgr?mgr.full_name:(p.manager_code||'\u{2014}')}</td>
       <td style="font-family:monospace;font-weight:700;">${scoreDisp}</td>
       <td>${band}</td>
       <td><span class="badge ${pctClass}">${label}</span></td>
@@ -2773,9 +2773,9 @@ function exportIncrementCSV(){
   a.download='Increment_'+state.activeCycle.name.replace(/[^a-z0-9]/gi,'_')+'.csv';a.click();toast('Increment CSV exported!');
 }
 
-// ‚îÄ‚îÄ HR USER MANAGEMENT ‚îÄ‚îÄ
+// == HR USER MANAGEMENT ==
 async function loadAllProfiles(){
-  setLoading('Loading users‚Ä¶');
+  setLoading('Loading users\u{2026}');
   const {data}=await db.from('profiles').select('*').order('full_name');
   state.allProfiles=data||[];clearLoading();renderProfilesTable();
 }
@@ -2790,7 +2790,7 @@ function renderProfilesTable(){
   ):state.allProfiles;
   tbl.innerHTML=filtered.map(p=>{
     const mgr=state.allProfiles.find(x=>x.employee_code===p.manager_code);
-    return`<tr><td><strong>${p.employee_code}</strong></td><td>${p.full_name}<br><span style="font-size:11px;color:var(--gray-text)">${p.email||''}</span></td><td><span class="badge ${p.role==='hr'?'badge-approved':p.role==='manager'?'badge-review':'badge-draft'}">${p.role}</span></td><td>${p.department||'‚Äî'}</td><td>${mgr?mgr.full_name:(p.manager_code||'‚Äî')}</td><td><span class="badge ${p.is_active?'badge-active':'badge-inactive'}">${p.is_active?'Active':'Inactive'}</span></td><td style="white-space:nowrap;"><button class="btn btn-outline btn-sm" onclick="openEditUser('${p.id}')">Edit</button><button class="btn btn-outline btn-sm" style="margin-left:6px;" onclick="resetUserPassword('${p.email||''}')">Reset Pwd</button>${p.is_active?'<button class="btn-danger-sm" style="margin-left:6px;" onclick="confirmDeactivateUser(\''+p.id+'\')">Deactivate</button>':'<button class="btn btn-outline btn-sm" style="margin-left:6px;" onclick="toggleUserActive(\''+p.id+'\',true)">Reactivate</button>'}</td></tr>`;
+    return`<tr><td><strong>${p.employee_code}</strong></td><td>${p.full_name}<br><span style="font-size:11px;color:var(--gray-text)">${p.email||''}</span></td><td><span class="badge ${p.role==='hr'?'badge-approved':p.role==='manager'?'badge-review':'badge-draft'}">${p.role}</span></td><td>${p.department||'\u{2014}'}</td><td>${mgr?mgr.full_name:(p.manager_code||'\u{2014}')}</td><td><span class="badge ${p.is_active?'badge-active':'badge-inactive'}">${p.is_active?'Active':'Inactive'}</span></td><td style="white-space:nowrap;"><button class="btn btn-outline btn-sm" onclick="openEditUser('${p.id}')">Edit</button><button class="btn btn-outline btn-sm" style="margin-left:6px;" onclick="resetUserPassword('${p.email||''}')">Reset Pwd</button>${p.is_active?'<button class="btn-danger-sm" style="margin-left:6px;" onclick="confirmDeactivateUser(\''+p.id+'\')">Deactivate</button>':'<button class="btn btn-outline btn-sm" style="margin-left:6px;" onclick="toggleUserActive(\''+p.id+'\',true)">Reactivate</button>'}</td></tr>`;
   }).join('')||'<tr><td colspan="7" style="text-align:center;padding:20px;color:var(--gray-text);">No users found.</td></tr>';
 }
 function openAddUser(){
@@ -2815,7 +2815,7 @@ function openEditUser(profileId){
 function populateManagerDropdown(selectedCode){
   const sel=document.getElementById('u-manager');if(!sel)return;
   const managers=state.allProfiles.filter(p=>(p.role==='manager'||p.role==='hr')&&p.is_active!==false);
-  sel.innerHTML='<option value="">‚Äî No Manager ‚Äî</option>'+
+  sel.innerHTML='<option value="">\u{2014} No Manager \u{2014}</option>'+
     managers.map(m=>`<option value="${m.employee_code}"${m.employee_code===selectedCode?' selected':''}>${m.full_name} (${m.employee_code})</option>`).join('');
 }
 async function saveUser(){
@@ -2832,7 +2832,7 @@ async function saveUser(){
     const {data:mgrCheck}=await db.from('profiles').select('id').eq('employee_code',manager).maybeSingle();
     if(!mgrCheck){errEl.textContent='Manager Code "'+manager+'" does not exist. Check the code and try again.';errEl.style.display='';return;}
   }
-  setLoading(editId?'Saving changes‚Ä¶':'Creating user‚Ä¶');
+  setLoading(editId?'Saving changes\u{2026}':'Creating user\u{2026}');
   if(editId){
     const {error}=await db.from('profiles').update({employee_code:code,full_name:name,email,role,manager_code:manager,department:dept,position}).eq('id',editId);
     clearLoading();if(error){errEl.textContent=error.message;errEl.style.display='';return;}
@@ -2843,15 +2843,15 @@ async function saveUser(){
     const {error:profErr}=await db.from('profiles').insert({id:authData.user.id,employee_code:code,full_name:name,email,role,manager_code:manager,department:dept,position});
     clearLoading();if(profErr){errEl.textContent=profErr.message;errEl.style.display='';return;}
   }
-  closeModal('modal-user');toast(editId?'User updated.':'Employee created ‚Äî they can now sign in.');loadAllProfiles();
+  closeModal('modal-user');toast(editId?'User updated.':'Employee created \u{2014} they can now sign in.');loadAllProfiles();
 }
 async function toggleUserActive(profileId,active){
-  setLoading(active?'Reactivating‚Ä¶':'Deactivating‚Ä¶');
+  setLoading(active?'Reactivating\u{2026}':'Deactivating\u{2026}');
   await db.from('profiles').update({is_active:active}).eq('id',profileId);
   clearLoading();toast(active?'User reactivated.':'User deactivated.');loadAllProfiles();
 }
 
-// ‚îÄ‚îÄ BULK UPLOAD ‚îÄ‚îÄ
+// == BULK UPLOAD ==
 let bulkRows=[];
 function openBulkUpload(){
   bulkRows=[];
@@ -2890,8 +2890,8 @@ function parseBulkCSV(input){
       <td style="padding:5px 8px;">${r.full_name}</td>
       <td style="padding:5px 8px;">${r.email}</td>
       <td style="padding:5px 8px;">${r.role}</td>
-      <td style="padding:5px 8px;">${r.department||'‚Äî'}</td>
-      <td style="padding:5px 8px;">${r.manager_code||'‚Äî'}</td>
+      <td style="padding:5px 8px;">${r.department||'\u{2014}'}</td>
+      <td style="padding:5px 8px;">${r.manager_code||'\u{2014}'}</td>
       <td style="padding:5px 8px;" id="bulk-status-${i}"><span style="color:var(--gray-text);font-size:11px;">Pending</span></td>
     </tr>`).join('');
     document.getElementById('bulk-preview-count').textContent=bulkRows.length+' row(s) ready to upload';
@@ -2902,18 +2902,18 @@ function parseBulkCSV(input){
 }
 async function uploadAllEmployees(){
   if(!bulkRows.length)return;
-  const btn=document.getElementById('bulk-upload-btn');btn.disabled=true;btn.textContent='Uploading‚Ä¶';
+  const btn=document.getElementById('bulk-upload-btn');btn.disabled=true;btn.textContent='Uploading\u{2026}';
   let ok=0,fail=0;
   for(let i=0;i<bulkRows.length;i++){
     const r=bulkRows[i];
     const statusEl=document.getElementById('bulk-status-'+i);
     const rowEl=document.getElementById('bulk-row-'+i);
-    if(statusEl)statusEl.innerHTML='<span style="color:var(--gray-text);font-size:11px;">‚è≥ Working‚Ä¶</span>';
+    if(statusEl)statusEl.innerHTML='<span style="color:var(--gray-text);font-size:11px;">\u{23F3} Working\u{2026}</span>';
     try{
       const tempClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON,{auth:{storageKey:'epa-bulk-'+i,persistSession:false}});
       const {data:authData,error:authErr}=await tempClient.auth.signUp({email:r.email,password:r.temp_password});
       if(authErr){
-        // B5: duplicate email ‚Äî show warning and skip, don't abort whole upload
+        // B5: duplicate email \u{2014} show warning and skip, don't abort whole upload
         const isdup=authErr.message&&(authErr.message.toLowerCase().includes('already registered')||authErr.message.toLowerCase().includes('user already'));
         if(isdup){if(statusEl)statusEl.innerHTML='<span style="color:var(--orange);font-size:11px;">\u{26A0}\u{FE0F} Already registered</span>';if(rowEl)rowEl.classList.add('bulk-row-err');fail++;continue;}
         throw new Error(authErr.message);
@@ -2933,7 +2933,7 @@ async function uploadAllEmployees(){
     }
   }
   btn.disabled=false;btn.textContent='\u{2B06}\u{FE0F} Upload All';
-  toast(ok+' uploaded'+(fail?' ¬∑ '+fail+' failed':'')+'.');
+  toast(ok+' uploaded'+(fail?' \u{B7} '+fail+' failed':'')+'.');
   if(ok>0)loadAllProfiles();
 }
 
@@ -2979,7 +2979,7 @@ function parseHistCSV(input){
     const tbody=document.getElementById('hist-preview-body');
     tbody.innerHTML=histRows.map((r,i)=>{
       const warn=!r.final_score||!r.cycle_name||!r.employee_code?'<span style="color:var(--red);font-size:11px;">\u{26A0}\u{FE0F} Missing required field</span>':'<span style="color:var(--gray-text);font-size:11px;">Pending</span>';
-      return`<tr id="hist-row-${i}"><td style="padding:5px 8px;">${r.employee_code}</td><td style="padding:5px 8px;">${r.cycle_name}</td><td style="padding:5px 8px;text-align:center;">${r.final_score??'‚Äî'}</td><td style="padding:5px 8px;">${r.status}</td><td style="padding:5px 8px;" id="hist-status-${i}">${warn}</td></tr>`;
+      return`<tr id="hist-row-${i}"><td style="padding:5px 8px;">${r.employee_code}</td><td style="padding:5px 8px;">${r.cycle_name}</td><td style="padding:5px 8px;text-align:center;">${r.final_score??'\u{2014}'}</td><td style="padding:5px 8px;">${r.status}</td><td style="padding:5px 8px;" id="hist-status-${i}">${warn}</td></tr>`;
     }).join('');
     document.getElementById('hist-preview-count').textContent=histRows.length+' row(s) ready to import';
     document.getElementById('hist-preview-wrap').style.display='';
@@ -2989,7 +2989,7 @@ function parseHistCSV(input){
 }
 async function uploadHistData(){
   if(!histRows.length)return;
-  const btn=document.getElementById('hist-upload-btn');btn.disabled=true;btn.textContent='Importing‚Ä¶';
+  const btn=document.getElementById('hist-upload-btn');btn.disabled=true;btn.textContent='Importing\u{2026}';
   // Pre-fetch cycles for name matching
   const {data:allCycs}=await db.from('cycles').select('*');
   const cyclesMap={};(allCycs||[]).forEach(c=>{cyclesMap[c.name.toLowerCase()]=c;});
@@ -2997,10 +2997,10 @@ async function uploadHistData(){
   for(let i=0;i<histRows.length;i++){
     const r=histRows[i];const statusEl=document.getElementById('hist-status-'+i);
     if(!r.final_score||!r.cycle_name||!r.employee_code){
-      if(statusEl)statusEl.innerHTML='<span style="color:var(--red);font-size:11px;">\u{274C} Skipped ‚Äî missing field</span>';
+      if(statusEl)statusEl.innerHTML='<span style="color:var(--red);font-size:11px;">\u{274C} Skipped \u{2014} missing field</span>';
       fail++;continue;
     }
-    if(statusEl)statusEl.innerHTML='<span style="color:var(--gray-text);font-size:11px;">‚è≥ Working‚Ä¶</span>';
+    if(statusEl)statusEl.innerHTML='<span style="color:var(--gray-text);font-size:11px;">\u{23F3} Working\u{2026}</span>';
     try{
       // Find or create cycle
       let cycleId=null;
@@ -3029,14 +3029,14 @@ async function uploadHistData(){
   }
   btn.disabled=false;btn.textContent='\u{2B06}\u{FE0F} Import All';
   logAudit('HIST_IMPORT', null, {count:histRows.length});
-  toast(ok+' imported'+(fail?' ¬∑ '+fail+' failed':'')+'.');
+  toast(ok+' imported'+(fail?' \u{B7} '+fail+' failed':'')+'.');
 }
 
 // C1: Password reset for HR
 async function resetUserPassword(email){
   if(!email){toast('No email on file for this user.');return;}
   if(!confirm('Send password reset email to '+email+'?'))return;
-  setLoading('Sending reset email‚Ä¶');
+  setLoading('Sending reset email\u{2026}');
   const {error}=await db.auth.resetPasswordForEmail(email);
   clearLoading();
   if(error){toast('Error: '+error.message);return;}
@@ -3056,9 +3056,9 @@ async function confirmDeactivate(){
   _pendingDeactivateId=null;
 }
 
-// ‚îÄ‚îÄ HR CYCLE MANAGEMENT ‚îÄ‚îÄ
+// == HR CYCLE MANAGEMENT ==
 async function loadCycles(){
-  setLoading('Loading cycles‚Ä¶');
+  setLoading('Loading cycles\u{2026}');
   const {data}=await db.from('cycles').select('*').order('start_date',{ascending:false});
   state.allCycles=data||[];clearLoading();renderCyclesTable();
 }
@@ -3070,7 +3070,7 @@ function renderCyclesTable(){
       ?`<button class="btn btn-outline btn-sm" onclick="unlockCycle('${c.id}')">\u{1F513} Unlock</button>`
       :`<button class="btn btn-ghost btn-sm" onclick="lockCycle('${c.id}')">\u{1F512} Lock</button>`;
     const actionBtn=!c.is_active?`<button class="btn btn-primary btn-sm" onclick="setActiveCycle('${c.id}')">Set Active</button>`:'<span style="font-size:12px;color:var(--gray-text);">Current</span>';
-    return`<tr><td><strong>${c.name}</strong></td><td>${c.start_date||'‚Äî'}</td><td>${c.end_date||'‚Äî'}</td><td><span class="badge ${c.is_active?'badge-approved':'badge-draft'}">${c.is_active?'‚óè Active':'Inactive'}</span></td><td>${lockBadge}&nbsp;${lockBtn}</td><td>${actionBtn}</td></tr>`;
+    return`<tr><td><strong>${c.name}</strong></td><td>${c.start_date||'\u{2014}'}</td><td>${c.end_date||'\u{2014}'}</td><td><span class="badge ${c.is_active?'badge-approved':'badge-draft'}">${c.is_active?'\u{25CF} Active':'Inactive'}</span></td><td>${lockBadge}&nbsp;${lockBtn}</td><td>${actionBtn}</td></tr>`;
   }).join('')||'<tr><td colspan="6" style="text-align:center;padding:20px;color:var(--gray-text);">No cycles yet.</td></tr>';
 }
 function openAddCycle(){
@@ -3082,7 +3082,7 @@ async function saveCycle(){
   const errEl=document.getElementById('modal-cycle-error');
   if(!name||!start||!end){errEl.textContent='All fields are required.';errEl.style.display='';return;}
   if(start>=end){errEl.textContent='End date must be after start date.';errEl.style.display='';return;}
-  setLoading('Creating cycle‚Ä¶');
+  setLoading('Creating cycle\u{2026}');
   if(active)await db.from('cycles').update({is_active:false}).neq('id','00000000-0000-0000-0000-000000000000');
   const {error}=await db.from('cycles').insert({name,start_date:start,end_date:end,is_active:active});
   clearLoading();if(error){errEl.textContent=error.message;errEl.style.display='';return;}
@@ -3091,7 +3091,7 @@ async function saveCycle(){
   loadCycles();
 }
 async function setActiveCycle(cycleId){
-  setLoading('Updating active cycle‚Ä¶');
+  setLoading('Updating active cycle\u{2026}');
   await db.from('cycles').update({is_active:false}).neq('id','00000000-0000-0000-0000-000000000000');
   await db.from('cycles').update({is_active:true}).eq('id',cycleId);
   const {data:cycle}=await db.from('cycles').select('*').eq('id',cycleId).single();
@@ -3100,7 +3100,7 @@ async function setActiveCycle(cycleId){
 // S3: lock/unlock cycle
 async function lockCycle(cycleId){
   if(!confirm('Lock this cycle? Employees and managers cannot submit or approve while locked.'))return;
-  setLoading('Locking cycle‚Ä¶');
+  setLoading('Locking cycle\u{2026}');
   const {error}=await db.from('cycles').update({is_locked:true}).eq('id',cycleId);
   clearLoading();if(error){toast('Error: '+error.message);return;}
   if(state.activeCycle&&state.activeCycle.id===cycleId)state.activeCycle.is_locked=true;
@@ -3109,7 +3109,7 @@ async function lockCycle(cycleId){
   renderCyclesTable();toast('Cycle locked. All submissions and manager actions are frozen.');
 }
 async function unlockCycle(cycleId){
-  setLoading('Unlocking cycle‚Ä¶');
+  setLoading('Unlocking cycle\u{2026}');
   const {error}=await db.from('cycles').update({is_locked:false}).eq('id',cycleId);
   clearLoading();if(error){toast('Error: '+error.message);return;}
   if(state.activeCycle&&state.activeCycle.id===cycleId)state.activeCycle.is_locked=false;
@@ -3118,14 +3118,14 @@ async function unlockCycle(cycleId){
   renderCyclesTable();toast('Cycle unlocked. Submissions are open again.');
 }
 
-// ‚îÄ‚îÄ INIT ‚îÄ‚îÄ
+// == INIT ==
 document.addEventListener('DOMContentLoaded',async()=>{
   // Wrap all static tables inside .card with a horizontal scroll container.
   // This keeps table rendering intact (display:table unchanged) while allowing overflow-x scroll.
   document.querySelectorAll('.card table').forEach(function(t){var w=document.createElement('div');w.className='tbl-scroll';t.parentNode.insertBefore(w,t);w.appendChild(t);});
 
   ['login-email','login-password'].forEach(id=>{const el=document.getElementById(id);if(el)el.addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});});
-  setLoading('Loading‚Ä¶');
+  setLoading('Loading\u{2026}');
   const {data:{session}}=await db.auth.getSession();
   if(session){await loadUserProfile(session.user.id,session.user.email);clearLoading();if(state.currentUser)applyLogin();else{clearLoading();showScreen('scrLogin');}}
   else{
