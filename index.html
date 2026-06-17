@@ -1461,17 +1461,10 @@ function logAudit(action,targetCode,details={}){
     .insert({actor_code:state.currentUser.employee_code,action,target_code:targetCode||null,details})
     .then(({error})=>{if(error)console.warn('Audit log error:',error);});
 }
-// S1: Email notifications \u{2014} stub only. Wire calls once Edge Function deployed at Supabase Dashboard \u{2192} Edge Functions.
-const NOTIFY_EDGE_FN_URL=''; // TODO: fill URL after deploying
+// S1: Email notifications via Supabase Edge Function (pa-notify) + Brevo
 async function callNotifyEdgeFunction(event,payload){
-  if(!NOTIFY_EDGE_FN_URL)return;
-  try{
-    await fetch(NOTIFY_EDGE_FN_URL,{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({event,...payload})
-    });
-  }catch(e){console.warn('Notify edge fn error:',e);}
+  try{await db.functions.invoke('pa-notify',{body:{event,...payload}});}
+  catch(e){console.warn('Notify edge fn error:',e);}
 }
 // S2: Audit log viewer (HR)
 async function loadAuditLog(){
@@ -2138,7 +2131,8 @@ async function confirmSubmit(){
   clearLoading(); if(error){toast('Submit failed: '+error.message);return;}
   state.mySubmission=updated; loadEmployeeForm(); empNav('empDashboard');
   logAudit('SUBMIT', state.currentUser.employee_code, {cycle:state.activeCycle?.name});
-  // callNotifyEdgeFunction('SUBMIT', {empCode: state.currentUser.employee_code, cycle: state.activeCycle?.name});
+  const _mgrP=state.allProfiles.find(p=>p.employee_code===state.currentUser.manager_code);
+  if(_mgrP?.email) callNotifyEdgeFunction('SUBMIT',{toEmail:_mgrP.email,toName:_mgrP.full_name,fromName:state.currentUser.full_name,cycle:state.activeCycle?.name});
   toast('PA submitted! Your manager has been notified.');
 }
 function updateTimeline(){
@@ -2342,7 +2336,8 @@ async function confirmApprove(){
   clearLoading();if(error){toast('Error: '+error.message);return;}
   item.status='Approved';item.submission.status='Approved';
   logAudit('APPROVE', item.profile.employee_code, {cycle:state.activeCycle?.name});
-  // callNotifyEdgeFunction('APPROVE', {empCode: item.profile.employee_code, cycle: state.activeCycle?.name});
+  const _empPA=state.allProfiles.find(p=>p.employee_code===item.profile.employee_code);
+  if(_empPA?.email) callNotifyEdgeFunction('APPROVE',{toEmail:_empPA.email,toName:_empPA.full_name,fromName:state.currentUser.full_name,cycle:state.activeCycle?.name});
   renderMgrTeam();mgrNav('mgrTeam');toast('PA Approved!');
 }
 async function confirmReturn(){
@@ -2353,7 +2348,8 @@ async function confirmReturn(){
   clearLoading();if(error){toast('Error: '+error.message);return;}
   item.status='Returned';item.submission.status='Returned';
   logAudit('RETURN', item.profile.employee_code, {cycle:state.activeCycle?.name});
-  // callNotifyEdgeFunction('RETURN', {empCode: item.profile.employee_code, cycle: state.activeCycle?.name});
+  const _empPR=state.allProfiles.find(p=>p.employee_code===item.profile.employee_code);
+  if(_empPR?.email) callNotifyEdgeFunction('RETURN',{toEmail:_empPR.email,toName:_empPR.full_name,fromName:state.currentUser.full_name,cycle:state.activeCycle?.name});
   renderMgrTeam();mgrNav('mgrTeam');toast('PA returned to employee for revision.');
 }
 
