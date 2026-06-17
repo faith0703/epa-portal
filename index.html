@@ -583,6 +583,9 @@
         <div id="emp-returned-notice" style="display:none;">
           <div class="warning-box">⚠️ Your PA has been <strong>returned</strong> by your manager with comments. Please review and resubmit.</div>
         </div>
+        <div id="emp-approved-notice" style="display:none;">
+          <div class="success-box">🎉 Your PA has been <strong>Approved</strong>! Manager and agreed scores are now shown in Sections 2 &amp; 3, and your final rating appears in Section 9.</div>
+        </div>
 
         <!-- WIZARD TABS -->
         <div class="wtabs" id="ee-tabs">
@@ -858,13 +861,20 @@
           </div>
         </div>
 
+        <!-- SAVE DRAFT SHORTCUT (always visible when reviewing) -->
+        <div style="text-align:right;margin-bottom:8px;">
+          <button class="btn btn-ghost btn-sm" id="mgr-save-draft-top" style="display:none;" onclick="saveMgrReview()">💾 Save Review Draft</button>
+        </div>
+
         <!-- WIZARD TABS -->
         <div class="wtabs" id="mgr-tabs">
           <div class="wtab active" onclick="goTab('mgr',0)">S2 Objectives</div>
           <div class="wtab" onclick="goTab('mgr',1)">S3 Competencies</div>
-          <div class="wtab" onclick="goTab('mgr',2)">S7 Expectations</div>
-          <div class="wtab" onclick="goTab('mgr',3)">S8 Remarks</div>
-          <div class="wtab" onclick="goTab('mgr',4)">S9–10 Outcome</div>
+          <div class="wtab" onclick="goTab('mgr',2)">S4 Dev Actions</div>
+          <div class="wtab" onclick="goTab('mgr',3)">S5 Next Year</div>
+          <div class="wtab" onclick="goTab('mgr',4)">S7 Expectations</div>
+          <div class="wtab" onclick="goTab('mgr',5)">S8 Remarks</div>
+          <div class="wtab" onclick="goTab('mgr',6)">S9–10 Outcome</div>
         </div>
 
         <!-- MGR S2: OBJECTIVES -->
@@ -897,11 +907,34 @@
               </table>
             </div>
           </div>
-          <div class="sub-bar"><button class="btn btn-ghost" onclick="goTab('mgr',0)">← Back</button><button class="btn btn-primary" onclick="goTab('mgr',2)">Next: Expectations →</button></div>
+          <div class="sub-bar"><button class="btn btn-ghost" onclick="goTab('mgr',0)">← Back</button><button class="btn btn-primary" onclick="goTab('mgr',2)">Next: Dev Actions →</button></div>
+        </div>
+
+        <!-- MGR S4: DEV ACTIONS (read-only) -->
+        <div class="sp" id="mgr-p2">
+          <div class="card" style="padding:0;">
+            <div class="card-header"><span class="card-title">4 — Planned Development Actions</span><span style="font-size:12px;color:var(--gray-text)">Employee's development plan · read-only</span></div>
+            <div style="padding:20px;">
+              <div id="mgr-dev-view"><span style="color:var(--gray-text);font-size:13px;">(Not filled by employee)</span></div>
+              <div id="mgr-dev-remarks-wrap" style="display:none;margin-top:14px;"><label>Remarks</label><textarea readonly id="mgr-dev-remarks" rows="3" style="margin-top:6px;"></textarea></div>
+            </div>
+          </div>
+          <div class="sub-bar"><button class="btn btn-ghost" onclick="goTab('mgr',1)">← Back</button><button class="btn btn-primary" onclick="goTab('mgr',3)">Next: Next Year Objectives →</button></div>
+        </div>
+
+        <!-- MGR S5: NEXT YEAR OBJECTIVES (read-only) -->
+        <div class="sp" id="mgr-p3">
+          <div class="card" style="padding:0;">
+            <div class="card-header"><span class="card-title">5 — Objectives Setting for the New Year</span><span style="font-size:12px;color:var(--gray-text)">Employee's next-year plan · read-only</span></div>
+            <div style="padding:20px;">
+              <div id="mgr-ny-view"><span style="color:var(--gray-text);font-size:13px;">(Not filled by employee)</span></div>
+            </div>
+          </div>
+          <div class="sub-bar"><button class="btn btn-ghost" onclick="goTab('mgr',2)">← Back</button><button class="btn btn-primary" onclick="goTab('mgr',4)">Next: Expectations →</button></div>
         </div>
 
         <!-- MGR S7: EXPECTATIONS -->
-        <div class="sp" id="mgr-p2">
+        <div class="sp" id="mgr-p4">
           <div class="card" style="padding:0;">
             <div class="card-header"><span class="card-title">7 — Employee Expectations</span></div>
             <div style="padding:20px;">
@@ -909,11 +942,11 @@
               <div><label>Comment of the Supervisor <span style="color:var(--red);">*</span></label><textarea id="mgr_sup_expectations" rows="3" placeholder="Your comments on the employee's expectations…"></textarea></div>
             </div>
           </div>
-          <div class="sub-bar"><button class="btn btn-ghost" onclick="goTab('mgr',1)">← Back</button><button class="btn btn-primary" onclick="goTab('mgr',3)">Next: Remarks →</button></div>
+          <div class="sub-bar"><button class="btn btn-ghost" onclick="goTab('mgr',3)">← Back</button><button class="btn btn-primary" onclick="goTab('mgr',5)">Next: Remarks →</button></div>
         </div>
 
         <!-- MGR S8: REMARKS -->
-        <div class="sp" id="mgr-p3">
+        <div class="sp" id="mgr-p5">
           <div class="card" style="padding:0;">
             <div class="card-header"><span class="card-title">8 — Additional Remarks</span></div>
             <div style="padding:20px;">
@@ -921,11 +954,11 @@
               <div><label>Additional Remarks from Supervisor <span style="color:var(--red);">*</span></label><textarea id="mgr_sup_remarks" rows="4" placeholder="Your overall additional remarks…"></textarea></div>
             </div>
           </div>
-          <div class="sub-bar"><button class="btn btn-ghost" onclick="goTab('mgr',2)">← Back</button><button class="btn btn-primary" onclick="goTab('mgr',4)">Next: Outcome →</button></div>
+          <div class="sub-bar"><button class="btn btn-ghost" onclick="goTab('mgr',4)">← Back</button><button class="btn btn-primary" onclick="goTab('mgr',6)">Next: Outcome →</button></div>
         </div>
 
         <!-- MGR S9+10 -->
-        <div class="sp" id="mgr-p4">
+        <div class="sp" id="mgr-p6">
           <div class="card" style="padding:0;">
             <div class="card-header"><span class="card-title">9 — Appraisal Outcome</span><span style="font-size:12px;color:var(--gray-text)">Calculated from agreed scores (falls back to manager scores if agreed is blank)</span></div>
             <div>
@@ -964,8 +997,9 @@
             </div>
           </div>
           <div class="sub-bar">
-            <button class="btn btn-ghost" onclick="goTab('mgr',3)">← Back</button>
+            <button class="btn btn-ghost" onclick="goTab('mgr',5)">← Back</button>
             <div id="mgr-action-btns" style="display:flex;gap:12px;flex-wrap:wrap;">
+              <button class="btn btn-ghost" onclick="saveMgrReview()">💾 Save Draft</button>
               <button class="btn btn-success" onclick="approvePA()">✅ Approve PA</button>
               <button class="btn btn-danger" onclick="returnPA()">↩️ Return to Employee</button>
             </div>
@@ -1023,15 +1057,20 @@
         <div class="card" style="padding:16px 20px;margin-bottom:20px;">
           <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center;">
             <div><label style="font-size:11px;">Filter by Status</label>
-              <select id="hr-filter-status" onchange="applyHRFilter()" style="width:160px;margin-top:4px;">
+              <select id="hr-filter-status" onchange="applyHRFilter()" style="width:140px;margin-top:4px;">
                 <option value="">All Status</option><option value="Draft">Draft</option>
                 <option value="Submitted">Submitted</option><option value="Under Review">Under Review</option>
                 <option value="Approved">Approved</option><option value="Returned">Returned</option>
               </select>
             </div>
             <div><label style="font-size:11px;">Filter by Department</label>
-              <select id="hr-filter-dept" onchange="applyHRFilter()" style="width:160px;margin-top:4px;">
+              <select id="hr-filter-dept" onchange="applyHRFilter()" style="width:140px;margin-top:4px;">
                 <option value="">All Departments</option>
+              </select>
+            </div>
+            <div><label style="font-size:11px;">Filter by Manager</label>
+              <select id="hr-filter-mgr" onchange="applyHRFilter()" style="width:160px;margin-top:4px;">
+                <option value="">All Managers</option>
               </select>
             </div>
             <div style="margin-left:auto;margin-top:18px;">
@@ -1076,6 +1115,12 @@
           <label>Employee</label><textarea readonly id="hr-s8-ee" style="margin-top:6px;min-height:60px;"></textarea>
           <label style="margin-top:10px;display:block;">Supervisor</label><textarea readonly id="hr-s8-sup" style="margin-top:6px;min-height:60px;"></textarea>
         </div>
+        <!-- U5: History across all cycles -->
+        <div class="card" style="padding:0;margin-top:8px;">
+          <div class="card-header"><span class="card-title">📅 History Across All Cycles</span></div>
+          <table><thead><tr><th>Cycle</th><th>Submitted</th><th>Status</th><th>Avg Self Score</th><th>Final Rating</th></tr></thead>
+          <tbody id="hr-emp-history-tbody"><tr><td colspan="5" style="text-align:center;padding:20px;color:var(--gray-text);">Loading…</td></tr></tbody></table>
+        </div>
       </div>
 
       <div id="hrReports" style="display:none;">
@@ -1094,9 +1139,10 @@
 
       <div id="hrUsers" style="display:none;">
         <div class="page-header"><h1>User Management</h1><p>Add, edit, or deactivate employee accounts</p></div>
-        <div style="margin-bottom:20px;display:flex;gap:10px;flex-wrap:wrap;">
+        <div style="margin-bottom:20px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
           <button class="btn btn-primary" onclick="openAddUser()">+ Add Employee</button>
           <button class="btn btn-outline" onclick="openBulkUpload()">📤 Bulk Upload</button>
+          <input type="text" id="user-search" placeholder="🔍 Search by name, code, email, dept…" oninput="renderProfilesTable()" style="flex:1;min-width:200px;padding:9px 12px;border:1.5px solid var(--gray-border);border-radius:6px;font-size:13px;">
         </div>
         <div class="card">
           <table><thead><tr><th>Code</th><th>Name</th><th>Role</th><th>Department</th><th>Manager</th><th>Status</th><th>Action</th></tr></thead>
@@ -1161,8 +1207,8 @@
         <select id="u-role" style="width:100%;padding:9px 12px;border:1.5px solid #d1d9e0;border-radius:6px;font-size:13px;">
           <option value="employee">Employee</option><option value="manager">Manager</option><option value="hr">HR Admin</option>
         </select></div>
-      <div><label style="font-size:11px;font-weight:700;color:#6b7a8d;text-transform:uppercase;display:block;margin-bottom:4px;">Manager Code</label>
-        <input type="text" id="u-manager" placeholder="MGR001" style="width:100%;padding:9px 12px;border:1.5px solid #d1d9e0;border-radius:6px;font-size:13px;"></div>
+      <div><label style="font-size:11px;font-weight:700;color:#6b7a8d;text-transform:uppercase;display:block;margin-bottom:4px;">Manager</label>
+        <select id="u-manager" style="width:100%;padding:9px 12px;border:1.5px solid #d1d9e0;border-radius:6px;font-size:13px;"><option value="">— No Manager —</option></select></div>
       <div><label style="font-size:11px;font-weight:700;color:#6b7a8d;text-transform:uppercase;display:block;margin-bottom:4px;">Department</label>
         <input type="text" id="u-dept" placeholder="Payroll" style="width:100%;padding:9px 12px;border:1.5px solid #d1d9e0;border-radius:6px;font-size:13px;"></div>
       <div><label style="font-size:11px;font-weight:700;color:#6b7a8d;text-transform:uppercase;display:block;margin-bottom:4px;">Position</label>
@@ -1327,7 +1373,7 @@ function scoreDD(fid, val, ro, lblType) {
   const cls = scClass(val);
   if (ro) {
     const txt = val ? (val + ' — ' + (lbl[val]||'')) : '—';
-    return `<span class="ps ${cls}">${txt}</span>`;
+    return `<span id="${fid}" class="ps ${cls}">${txt}</span>`;
   }
   let opts = '<option value="">— Select —</option>';
   HALFPOINTS.forEach(v => {
@@ -1559,7 +1605,37 @@ function calcMgrLive() {
   const eeFinalEl = document.getElementById('oc-final'); if (eeFinalEl && final) eeFinalEl.textContent = final.toFixed(2)+' — '+outcomeLabel(final);
 }
 
-const TAB_COUNTS = {ee:9, mgr:5};
+// C4: overlay manager/agreed scores into employee form after PA is reviewed
+function overlayManagerScores(sub){
+  if(!sub) return;
+  const msc=sub.manager_section_comments||{};
+  // Objective scores: keys = 'obj1_mgr', 'obj1_agr', etc.
+  const objScores=msc.obj_scores||{};
+  Object.keys(objScores).forEach(fid=>{
+    const val=objScores[fid]; SC[fid]=val;
+    const el=document.getElementById(fid);
+    if(el&&el.tagName==='SPAN'){el.className='ps '+scClass(val);el.textContent=val+' — '+(OBJ_LBL[val]||val);}
+  });
+  // Competency scores: keys = 'mgr_c1_mgr', 'mgr_c1_agr', etc.
+  // Employee form elements use IDs without 'mgr_' prefix: 'c1_mgr', 'c1_agr'
+  const compScores=msc.comp_scores||{};
+  Object.keys(compScores).forEach(fid=>{
+    const val=compScores[fid]; SC[fid]=val;
+    const eeId=fid.replace(/^mgr_/,'');
+    const el=document.getElementById(eeId);
+    if(el&&el.tagName==='SPAN'){el.className='ps '+scClass(val);el.textContent=val+' — '+(COMP_LBL[val]||val);}
+  });
+  // S7 supervisor comment (manager saves to msc.s7_comment, not section_data)
+  const s7El=document.getElementById('sup_expectations_comment');
+  if(s7El&&msc.s7_comment) s7El.value=msc.s7_comment;
+  // S8 supervisor remarks
+  const s8El=document.getElementById('sup_add_remarks');
+  if(s8El&&msc.s8_remarks) s8El.value=msc.s8_remarks;
+  // Recalculate outcome with manager scores loaded into SC
+  calcMgrLive();
+}
+
+const TAB_COUNTS = {ee:9, mgr:7};
 
 function goTab(prefix, i) {
   const total = TAB_COUNTS[prefix] || 9;
@@ -1771,9 +1847,12 @@ function loadEmployeeForm(){
 
   const status=sub.status||'Draft';
   const ss=document.getElementById('emp-status-stat'); if(ss) ss.textContent=status;
-  const submitted=document.getElementById('emp-submitted-notice'); if(submitted) submitted.style.display=['Submitted','Under Review','Approved'].includes(status)?'':'none';
+  const submitted=document.getElementById('emp-submitted-notice'); if(submitted) submitted.style.display=['Submitted','Under Review'].includes(status)?'':'none';
   const returned=document.getElementById('emp-returned-notice'); if(returned) returned.style.display=(status==='Returned')?'':'none';
+  const approved=document.getElementById('emp-approved-notice'); if(approved) approved.style.display=(status==='Approved')?'':'none';
   const btn=document.getElementById('emp-submit-btn'); if(btn) btn.textContent=['Submitted','Under Review','Approved'].includes(status)?'🔄 Resubmit PA':'🚀 Submit PA';
+  // C4: overlay manager scores when PA has been reviewed
+  if(['Under Review','Approved','Returned'].includes(status)){overlayManagerScores(sub);}
   updateTimeline(); updateFormProgress();
 }
 
@@ -1969,6 +2048,34 @@ async function openMgrReview(empCode){
   const compExpl=msc.comp_expl||{};
   Object.keys(compExpl).forEach(id=>{const el=document.getElementById('mgr_'+id+'_expl');if(el)el.value=compExpl[id];});
 
+  // C5: S4 dev actions (read-only for manager)
+  const devView=document.getElementById('mgr-dev-view');
+  if(devView){
+    const devActions=(sd.dev_actions||[]).filter(a=>a.action);
+    if(devActions.length){
+      let html='<table style="width:100%;border-collapse:collapse;font-size:13px;"><thead><tr style="background:var(--gray-bg);"><th style="padding:6px 10px;text-align:left;width:55%">Action</th><th style="padding:6px 10px;white-space:nowrap;">Fixed Date</th><th style="padding:6px 10px;">Responsible</th></tr></thead><tbody>';
+      devActions.forEach(a=>{html+=`<tr style="border-top:1px solid var(--gray-border);"><td style="padding:8px 10px;">${a.action||'—'}</td><td style="padding:8px 10px;white-space:nowrap;">${a.date||'—'}</td><td style="padding:8px 10px;">${a.responsible||'—'}</td></tr>`;});
+      html+='</tbody></table>';
+      devView.innerHTML=html;
+    }else{devView.innerHTML='<span style="color:var(--gray-text);font-size:13px;">(Not filled by employee)</span>';}
+  }
+  const devRemarksWrap=document.getElementById('mgr-dev-remarks-wrap');
+  const devRemarksEl=document.getElementById('mgr-dev-remarks');
+  if(devRemarksWrap) devRemarksWrap.style.display=sd.dev_remarks?'':'none';
+  if(devRemarksEl) devRemarksEl.value=sd.dev_remarks||'';
+
+  // C5: S5 next year objectives (read-only for manager)
+  const nyView=document.getElementById('mgr-ny-view');
+  if(nyView){
+    const nyObjs=(sd.ny_objectives||[]).filter(o=>o.desc);
+    if(nyObjs.length){
+      let html='<table style="width:100%;border-collapse:collapse;font-size:13px;"><thead><tr style="background:var(--gray-bg);"><th style="padding:6px 10px;text-align:left;">Objective Description</th><th style="padding:6px 10px;text-align:center;width:20%">Weight (%)</th></tr></thead><tbody>';
+      nyObjs.forEach(o=>{html+=`<tr style="border-top:1px solid var(--gray-border);"><td style="padding:8px 10px;">${o.desc}</td><td style="padding:8px 10px;text-align:center;">${o.weight||'—'}</td></tr>`;});
+      html+='</tbody></table>';
+      nyView.innerHTML=html;
+    }else{nyView.innerHTML='<span style="color:var(--gray-text);font-size:13px;">(Not filled by employee)</span>';}
+  }
+
   // S7 expectations
   const eeEx=document.getElementById('mgr-ee-expectations'); if(eeEx) eeEx.value=sd.ee_expectations||'(Not filled by employee)';
   const supEx=document.getElementById('mgr_sup_expectations'); if(supEx) supEx.value=msc.s7_comment||'';
@@ -1992,6 +2099,8 @@ async function openMgrReview(empCode){
   document.getElementById('mgr-approved-notice').style.display=status==='Approved'?'':'none';
   document.getElementById('mgr-returned-notice').style.display=status==='Returned'?'':'none';
   document.getElementById('mgr-review-info').style.display=(status==='Submitted'||status==='Under Review')?'':'none';
+  const saveDraftTop=document.getElementById('mgr-save-draft-top');
+  if(saveDraftTop) saveDraftTop.style.display=(status==='Submitted'||status==='Under Review'||status==='Returned')?'':'none';
 
   if(status==='Submitted'&&sub){await db.from('pa_submissions').update({status:'Under Review'}).eq('id',sub.id);item.status='Under Review';if(item.submission)item.submission.status='Under Review';renderMgrTeam();}
 
@@ -2038,6 +2147,17 @@ async function confirmReturn(){
   item.status='Returned';item.submission.status='Returned';renderMgrTeam();mgrNav('mgrTeam');toast('PA returned to employee for revision.');
 }
 
+// C2: Save manager review as draft without changing status
+async function saveMgrReview(){
+  const item=state.currentEmp;if(!item||!item.submission){toast('No active review to save.');return;}
+  setLoading('Saving review draft…');
+  const reviewData=collectMgrReview();
+  const {error}=await db.from('pa_submissions').update(reviewData).eq('id',item.submission.id);
+  clearLoading();if(error){toast('Save failed: '+error.message);return;}
+  Object.assign(item.submission,reviewData);
+  toast('Review draft saved. Scores preserved.');
+}
+
 // ── HR ADMIN ──
 async function loadHRData(){
   if(!state.activeCycle){const s=document.getElementById('hr-dash-sub');if(s)s.textContent='No active PA cycle — go to PA Cycles to create one.';return;}
@@ -2050,6 +2170,12 @@ async function loadHRData(){
   const depts=[...new Set(state.allProfiles.map(p=>p.department).filter(Boolean))].sort();
   const deptSel=document.getElementById('hr-filter-dept');
   if(deptSel)deptSel.innerHTML='<option value="">All Departments</option>'+depts.map(d=>`<option value="${d}">${d}</option>`).join('');
+  // U3: populate manager filter dropdown
+  const mgrSel=document.getElementById('hr-filter-mgr');
+  if(mgrSel){
+    const managers=state.allProfiles.filter(p=>p.role==='manager'||p.role==='hr').sort((a,b)=>a.full_name.localeCompare(b.full_name));
+    mgrSel.innerHTML='<option value="">All Managers</option>'+managers.map(m=>`<option value="${m.employee_code}">${m.full_name}</option>`).join('');
+  }
   clearLoading();renderHRTables();
 }
 function renderHRTables(){renderHRRecent();renderHRAll();updateHRStats();}
@@ -2060,17 +2186,18 @@ function renderHRRecent(){
     return `<tr class="clickable" onclick="openHRDetail('${p.employee_code}')"><td><strong>${p.full_name}</strong></td><td>${mgr?mgr.full_name:(p.manager_code||'—')}</td><td>${p.department||'—'}</td><td><span class="badge ${getBadge(item.status)}">${item.status}</span></td><td>${sub?fmtDate(sub.updated_at):'—'}</td></tr>`;
   }).join('')||'<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--gray-text);">No data yet.</td></tr>';
 }
-function renderHRAll(filterStatus='',filterDept=''){
+function renderHRAll(filterStatus='',filterDept='',filterMgr=''){
   const tbl=document.getElementById('hr-all-table');if(!tbl)return;
   let data=state.allData;
   if(filterStatus)data=data.filter(i=>i.status===filterStatus);
   if(filterDept)data=data.filter(i=>i.profile.department===filterDept);
+  if(filterMgr)data=data.filter(i=>i.profile.manager_code===filterMgr);
   tbl.innerHTML=data.map(item=>{
     const p=item.profile,sub=item.submission,mgr=state.allProfiles.find(x=>x.employee_code===p.manager_code);
     return `<tr class="clickable" onclick="openHRDetail('${p.employee_code}')"><td><strong>${p.full_name}</strong><br><span style="font-size:12px;color:var(--gray-text)">${p.email||''}</span></td><td>${p.department||'—'}</td><td>${mgr?mgr.full_name:(p.manager_code||'—')}</td><td><span class="badge ${getBadge(item.status)}">${item.status}</span></td><td>${sub?fmtDate(sub.submitted_at):'—'}</td><td><button class="btn btn-outline btn-sm" onclick="event.stopPropagation();openHRDetail('${p.employee_code}')">View</button></td></tr>`;
   }).join('')||'<tr><td colspan="6" style="text-align:center;padding:20px;color:var(--gray-text);">No records found.</td></tr>';
 }
-function applyHRFilter(){renderHRAll(document.getElementById('hr-filter-status').value,document.getElementById('hr-filter-dept').value);}
+function applyHRFilter(){renderHRAll(document.getElementById('hr-filter-status').value,document.getElementById('hr-filter-dept').value,document.getElementById('hr-filter-mgr')?.value||'');}
 function updateHRStats(){
   const el=id=>document.getElementById(id);
   const total=state.allData.length,approved=state.allData.filter(i=>i.status==='Approved').length,
@@ -2139,6 +2266,32 @@ function openHRDetail(empCode){
   const s8SupEl=document.getElementById('hr-s8-sup'); if(s8SupEl) s8SupEl.value=msc.s8_remarks||'(Not yet completed by manager)';
 
   hrNav('hrDetail');
+  // U5: load full history across cycles for this employee
+  loadHREmployeeHistory(empCode);
+}
+// U5: per-employee PA history across all cycles (HR view)
+async function loadHREmployeeHistory(empCode){
+  const tbl=document.getElementById('hr-emp-history-tbody');if(!tbl)return;
+  tbl.innerHTML='<tr><td colspan="5" style="text-align:center;padding:16px;color:var(--gray-text);">Loading…</td></tr>';
+  const {data:subs,error}=await db.from('pa_submissions')
+    .select('*, cycles(name)')
+    .eq('employee_code',empCode)
+    .order('submitted_at',{ascending:false});
+  if(error){tbl.innerHTML='<tr><td colspan="5" style="text-align:center;color:var(--red);">Error loading history.</td></tr>';return;}
+  if(!subs||!subs.length){tbl.innerHTML='<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--gray-text);">No history found across cycles.</td></tr>';return;}
+  tbl.innerHTML=subs.map(s=>{
+    const cycleName=s.cycles?.name||s.cycle_name||'—';
+    const finalScore=s.manager_section_comments?.final_score??s.manager_overall_rating??null;
+    const selfObjs=(s.section_data?.objectives||[]).map(o=>o.self_score).filter(Boolean);
+    const selfAvg=selfObjs.length?(selfObjs.reduce((a,b)=>a+b,0)/selfObjs.length).toFixed(1):'—';
+    return`<tr>
+      <td><strong>${cycleName}</strong></td>
+      <td>${fmtDate(s.submitted_at)}</td>
+      <td><span class="badge ${getBadge(s.status)}">${s.status}</span></td>
+      <td>${selfAvg}</td>
+      <td>${finalScore!==null?Number(finalScore).toFixed(1):'—'}</td>
+    </tr>`;
+  }).join('');
 }
 function renderReports(){
   if(!state.activeCycle)return;
@@ -2174,16 +2327,25 @@ async function loadAllProfiles(){
 }
 function renderProfilesTable(){
   const tbl=document.getElementById('users-table');if(!tbl)return;
-  tbl.innerHTML=state.allProfiles.map(p=>{
+  const q=(document.getElementById('user-search')?.value||'').toLowerCase().trim();
+  const filtered=q?state.allProfiles.filter(p=>
+    (p.full_name||'').toLowerCase().includes(q)||
+    (p.employee_code||'').toLowerCase().includes(q)||
+    (p.email||'').toLowerCase().includes(q)||
+    (p.department||'').toLowerCase().includes(q)
+  ):state.allProfiles;
+  tbl.innerHTML=filtered.map(p=>{
     const mgr=state.allProfiles.find(x=>x.employee_code===p.manager_code);
     return`<tr><td><strong>${p.employee_code}</strong></td><td>${p.full_name}<br><span style="font-size:11px;color:var(--gray-text)">${p.email||''}</span></td><td><span class="badge ${p.role==='hr'?'badge-approved':p.role==='manager'?'badge-review':'badge-draft'}">${p.role}</span></td><td>${p.department||'—'}</td><td>${mgr?mgr.full_name:(p.manager_code||'—')}</td><td><span class="badge ${p.is_active?'badge-active':'badge-inactive'}">${p.is_active?'Active':'Inactive'}</span></td><td style="white-space:nowrap;"><button class="btn btn-outline btn-sm" onclick="openEditUser('${p.id}')">Edit</button><button class="btn btn-outline btn-sm" style="margin-left:6px;" onclick="resetUserPassword('${p.email||''}')">Reset Pwd</button>${p.is_active?'<button class="btn-danger-sm" style="margin-left:6px;" onclick="confirmDeactivateUser(\''+p.id+'\')">Deactivate</button>':'<button class="btn btn-outline btn-sm" style="margin-left:6px;" onclick="toggleUserActive(\''+p.id+'\',true)">Reactivate</button>'}</td></tr>`;
-  }).join('')||'<tr><td colspan="7" style="text-align:center;padding:20px;color:var(--gray-text);">No users yet.</td></tr>';
+  }).join('')||'<tr><td colspan="7" style="text-align:center;padding:20px;color:var(--gray-text);">No users found.</td></tr>';
 }
 function openAddUser(){
   document.getElementById('modal-user-title').textContent='Add Employee';document.getElementById('user-edit-id').value='';
   document.getElementById('u-password-wrap').style.display='';
-  ['u-code','u-name','u-email','u-password','u-manager','u-dept','u-position'].forEach(id=>document.getElementById(id).value='');
-  document.getElementById('u-role').value='employee';document.getElementById('modal-user-error').style.display='none';showModal('modal-user');
+  ['u-code','u-name','u-email','u-password','u-dept','u-position'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('u-role').value='employee';document.getElementById('modal-user-error').style.display='none';
+  populateManagerDropdown('');
+  showModal('modal-user');
 }
 function openEditUser(profileId){
   const p=state.allProfiles.find(x=>x.id===profileId);if(!p)return;
@@ -2191,8 +2353,16 @@ function openEditUser(profileId){
   document.getElementById('u-password-wrap').style.display='none';
   document.getElementById('u-code').value=p.employee_code||'';document.getElementById('u-name').value=p.full_name||'';
   document.getElementById('u-email').value=p.email||'';document.getElementById('u-role').value=p.role||'employee';
-  document.getElementById('u-manager').value=p.manager_code||'';document.getElementById('u-dept').value=p.department||'';
-  document.getElementById('u-position').value=p.position||'';document.getElementById('modal-user-error').style.display='none';showModal('modal-user');
+  document.getElementById('u-dept').value=p.department||'';
+  document.getElementById('u-position').value=p.position||'';document.getElementById('modal-user-error').style.display='none';
+  populateManagerDropdown(p.manager_code||'');
+  showModal('modal-user');
+}
+function populateManagerDropdown(selectedCode){
+  const sel=document.getElementById('u-manager');if(!sel)return;
+  const managers=state.allProfiles.filter(p=>(p.role==='manager'||p.role==='hr')&&p.is_active!==false);
+  sel.innerHTML='<option value="">— No Manager —</option>'+
+    managers.map(m=>`<option value="${m.employee_code}"${m.employee_code===selectedCode?' selected':''}>${m.full_name} (${m.employee_code})</option>`).join('');
 }
 async function saveUser(){
   const editId=document.getElementById('user-edit-id').value,code=document.getElementById('u-code').value.trim().toUpperCase(),
