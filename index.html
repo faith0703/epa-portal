@@ -295,13 +295,59 @@
   ::-webkit-scrollbar-track { background: transparent; }
   ::-webkit-scrollbar-thumb { background: var(--gray-border); border-radius: 3px; }
 
+  /* ── PREVENT HORIZONTAL OVERFLOW (desktop + mobile) ── */
+  /* flex content must be able to shrink below natural content width */
+  .content { min-width: 0; }
+  /* tables always scroll inside their card rather than pushing the page wide */
+  .card table { display: block; overflow-x: auto; -webkit-overflow-scrolling: touch; width: 100%; }
+
   /* ── RESPONSIVE ── */
   @media (max-width: 700px) {
+    /* layout */
     .sidebar { display: none; }
-    .content { padding: 20px 16px; }
-    .stats-row { gap: 10px; }
-    .role-card-wrap { flex-direction: column; align-items: center; }
+    .content { padding: 16px 12px; }
+    .main-layout { overflow-x: hidden; }
+
+    /* topbar */
+    .topbar { padding: 0 12px; gap: 6px; }
+    .topbar-logo { font-size: 16px; }
+    .topbar-user { display: none; }
+    .btn-switch { padding: 4px 9px; font-size: 11px; }
+
+    /* stat cards */
+    .stats-row { gap: 8px; flex-wrap: wrap; }
+    .stat-card { min-width: 0; flex: 1 1 calc(50% - 8px); padding: 14px 12px; }
+    .stat-num { font-size: 24px; }
+    .stat-label { font-size: 11px; }
+
+    /* table cells — smaller on mobile */
+    td { padding: 10px 10px; font-size: 12.5px; }
+    th { padding: 8px 10px; font-size: 10px; }
+
+    /* page headers */
+    .page-header h1 { font-size: 18px; }
+    .page-header p  { font-size: 12px; }
+
+    /* buttons */
+    .btn { padding: 7px 14px; font-size: 12.5px; }
+
+    /* modals */
+    .modal { padding: 24px 16px; max-width: calc(100vw - 24px) !important; width: calc(100vw - 24px) !important; }
+    .modal-actions { flex-direction: column; }
+    .modal-actions .btn { width: 100%; justify-content: center; }
+
+    /* login card */
+    .login-card { padding: 28px 20px; }
     .login-demo-grid { grid-template-columns: repeat(2, 1fr); }
+
+    /* misc */
+    .role-card-wrap { flex-direction: column; align-items: center; }
+    .card-header { flex-wrap: wrap; gap: 8px; }
+    .emp-profile-card { flex-wrap: wrap; }
+    .score-panel { flex-direction: column; }
+    .obj-score-row { grid-template-columns: 1fr; }
+    .sign-row { flex-direction: column; }
+    .wtabs { overflow-x: auto; }
   }
 
   /* ── LOADING OVERLAY ── */
@@ -412,7 +458,7 @@
 </div>
 
 <div class="topbar">
-  <div class="topbar-logo">i-<span>Admin</span> &nbsp;|&nbsp; ePA Portal</div>
+  <div class="topbar-logo">e<span>Payslip</span> &nbsp;|&nbsp; ePA Portal</div>
   <div class="topbar-right">
     <span class="topbar-user" id="topbar-user-name"></span>
     <span class="topbar-role-badge" id="topbar-role-label" style="display:none;"></span>
