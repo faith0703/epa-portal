@@ -382,7 +382,7 @@
   .wtab:hover{background:var(--gray-bg);color:var(--text);}
   .wtab.active{background:var(--blue);color:#fff;font-weight:600;}
   .wtab.done{color:var(--accent);background:#f0fff8;}
-  .wtab.done::before{content:'‚úì ';}
+  .wtab.done::before{content:'&#10003; ';}
   /* ‚îÄ‚îÄ SECTION PANELS ‚îÄ‚îÄ */
   .sp{display:none;} .sp.active{display:block;}
   /* ‚îÄ‚îÄ SUB-BAR ‚îÄ‚îÄ */
@@ -469,7 +469,7 @@
 </div>
 
 <div class="topbar">
-  <button class="menu-toggle-btn" id="menu-toggle" onclick="toggleSidebar()">‚ò∞</button>
+  <button class="menu-toggle-btn" id="menu-toggle" onclick="toggleSidebar()">&#9776;</button>
   <div class="topbar-logo">e<span>Payslip</span> &nbsp;|&nbsp; ePA Portal</div>
   <div class="topbar-right">
     <span class="topbar-user" id="topbar-user-name"></span>
@@ -482,7 +482,7 @@
 <div id="scrLogin" class="screen">
   <div class="login-card">
     <div class="login-logo">
-      <span class="login-logo-icon">üìã</span>
+      <span class="login-logo-icon">&#128203;</span>
       <div class="login-logo-title">ePA Portal</div>
       <div class="login-logo-sub">Electronic Performance Appraisal System</div>
       <span class="login-cycle-badge" id="login-cycle-badge">Loading‚Ä¶</span>
@@ -497,12 +497,12 @@
       <input type="password" id="login-password" placeholder="Enter your password" autocomplete="current-password">
     </div>
     <button class="login-btn" id="login-btn" onclick="doLogin()">Sign In ‚Üí</button>
-    <div class="login-note" style="margin-top:16px;">üîê Contact your HR Administrator for login credentials</div>
+    <div class="login-note" style="margin-top:16px;">&#128272; Contact your HR Administrator for login credentials</div>
   </div>
 </div>
 
 <div id="scrRolePicker" class="screen">
-  <div class="picker-title" id="picker-welcome">Welcome! üëã</div>
+  <div class="picker-title" id="picker-welcome">Welcome! &#128075;</div>
   <div class="picker-sub">Select how you'd like to proceed today.</div>
   <div class="role-card-wrap" id="role-card-wrap"></div>
   <div class="picker-demo-note" id="picker-demo-note"></div>
@@ -514,9 +514,9 @@
   <div class="main-layout">
     <div class="sidebar">
       <div class="sidebar-section">Employee</div>
-      <div class="sidebar-item active" onclick="empNav('empDashboard')"><span class="si-icon">üè†</span> Dashboard</div>
-      <div class="sidebar-item" onclick="empNav('empForm')"><span class="si-icon">üìù</span> My PA Form</div>
-      <div class="sidebar-item" onclick="empNav('empHistory')"><span class="si-icon">üìã</span> History</div>
+      <div class="sidebar-item active" onclick="empNav('empDashboard')"><span class="si-icon">&#127968;</span> Dashboard</div>
+      <div class="sidebar-item" onclick="empNav('empForm')"><span class="si-icon">&#128221;</span> My PA Form</div>
+      <div class="sidebar-item" onclick="empNav('empHistory')"><span class="si-icon">&#128203;</span> History</div>
     </div>
     <div class="content">
 
@@ -528,10 +528,10 @@
         </div>
 
         <div class="card" style="padding:24px;">
-          <div class="card-title" style="margin-bottom:18px;">üìç Your PA Progress</div>
+          <div class="card-title" style="margin-bottom:18px;">&#128205; Your PA Progress</div>
           <div class="status-timeline">
             <div class="tl-step">
-              <div class="tl-dot done">‚úì</div>
+              <div class="tl-dot done">&#10003;</div>
               <div class="tl-label done">Draft</div>
             </div>
             <div class="tl-line done"></div>
@@ -570,13 +570,13 @@
         <div class="card">
           <div class="card-header"><span class="card-title">Quick Actions</span></div>
           <div style="padding:20px;display:flex;gap:12px;flex-wrap:wrap;">
-            <button class="btn btn-primary" onclick="empNav('empForm')">üìù Open My PA Form</button>
-            <button class="btn btn-ghost" onclick="empNav('empHistory')">üìã View History</button>
+            <button class="btn btn-primary" onclick="empNav('empForm')">&#128221; Open My PA Form</button>
+            <button class="btn btn-ghost" onclick="empNav('empHistory')">&#128203; View History</button>
           </div>
         </div>
 
         <div class="info-box">
-          üí° <strong>Reminder:</strong> Your manager will review your submission after you submit. Ensure all sections are completed before the deadline.
+          &#128161; <strong>Reminder:</strong> Your manager will review your submission after you submit. Ensure all sections are completed before the deadline.
         </div>
       </div>
 
@@ -589,19 +589,19 @@
         </div>
 
         <div id="emp-submitted-notice" style="display:none;">
-          <div class="success-box">‚úÖ Your PA has been submitted. You may still update and resubmit before your manager begins review.</div>
+          <div class="success-box">&#9989; Your PA has been submitted. You may still update and resubmit before your manager begins review.</div>
         </div>
         <div id="emp-returned-notice" style="display:none;">
-          <div class="warning-box">‚ö†Ô∏è Your PA has been <strong>returned</strong> by your manager with comments. Please review and resubmit.</div>
+          <div class="warning-box">&#9888;&#65039; Your PA has been <strong>returned</strong> by your manager with comments. Please review and resubmit.</div>
         </div>
         <div id="emp-approved-notice" style="display:none;">
-          <div class="success-box">üéâ Your PA has been <strong>Approved</strong>! Manager and agreed scores are now shown in Sections 2 &amp; 3, and your final rating appears in Section 9.</div>
+          <div class="success-box">&#127881; Your PA has been <strong>Approved</strong>! Manager and agreed scores are now shown in Sections 2 &amp; 3, and your final rating appears in Section 9.</div>
         </div>
         <div id="emp-deadline-warning" style="display:none;">
-          <div class="warning-box">üîí <strong>Submission deadline has passed</strong> (<span id="emp-deadline-warning-date">‚Äî</span>). No new submissions are accepted. Contact HR if you need an extension.</div>
+          <div class="warning-box">&#128274; <strong>Submission deadline has passed</strong> (<span id="emp-deadline-warning-date">‚Äî</span>). No new submissions are accepted. Contact HR if you need an extension.</div>
         </div>
         <div id="emp-locked-warning" style="display:none;">
-          <div class="warning-box">üîí <strong>This cycle is locked by HR</strong> for payroll processing. Submissions are temporarily paused.</div>
+          <div class="warning-box">&#128274; <strong>This cycle is locked by HR</strong> for payroll processing. Submissions are temporarily paused.</div>
         </div>
 
         <!-- WIZARD TABS -->
@@ -643,7 +643,7 @@
             <div class="card-header"><span class="card-title">2 ‚Äî Rating of Objectives</span><span style="font-size:12px;color:var(--gray-text)">5 objectives ¬∑ Agreement on Setting + Final Review ¬∑ Weight % ¬∑ Self Score</span></div>
             <div style="padding:20px;">
               <div class="info-box"><strong>Score guide:</strong> 1 = Insignificant / Far behind &nbsp;|&nbsp; 2 = Partially achieved &nbsp;|&nbsp; 3 = On Schedule &nbsp;|&nbsp; 4 = Beyond expectation &nbsp;|&nbsp; 5 = Highly exceeds expectation<br><span style="font-size:11px;opacity:.8">Half-point scores allowed: 1 ¬∑ 1.5 ¬∑ 2 ¬∑ 2.5 ¬∑ 3 ¬∑ 3.5 ¬∑ 4 ¬∑ 4.5 ¬∑ 5</span></div>
-              <div class="warning-box" id="wt-notice" style="display:none;">‚ö†Ô∏è <span id="wt-msg"></span></div>
+              <div class="warning-box" id="wt-notice" style="display:none;">&#9888;&#65039; <span id="wt-msg"></span></div>
               <div id="ee-obj-wrap"></div>
               <div style="display:flex;justify-content:flex-end;align-items:center;gap:10px;margin-top:8px;font-size:13px">
                 <span style="color:var(--gray-text)">Total Weight:</span>
@@ -683,7 +683,7 @@
               </label>
             </div>
             <div style="padding:20px;display:none;" id="mgmt-body">
-              <div class="warning-box">‚ö†Ô∏è Management competency scores are included in the overall rating when ticked.</div>
+              <div class="warning-box">&#9888;&#65039; Management competency scores are included in the overall rating when ticked.</div>
               <table class="ctbl">
                 <thead><tr>
                   <th style="width:32%">Management Competency</th>
@@ -736,13 +736,13 @@
           <div class="card" style="padding:0;">
             <div class="card-header"><span class="card-title">6 ‚Äî Employee Satisfaction</span><span style="font-size:12px;color:var(--gray-text)">Prepared by the employee ¬∑ discussed at appraisal outcome</span></div>
             <div style="padding:20px;">
-              <div class="success-box">‚úÖ These declarations <strong>DO NOT HAVE ANY IMPACT</strong> on the performance appraisal.</div>
+              <div class="success-box">&#9989; These declarations <strong>DO NOT HAVE ANY IMPACT</strong> on the performance appraisal.</div>
               <div style="margin-bottom:16px;">
                 <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--blue);margin-bottom:8px;">Satisfaction in the current activities / Overall Job Satisfaction</div>
                 <div class="smiley-row">
-                  <button class="smb" id="sm-happy" onclick="setSmiley('happy')" title="Satisfied">üòä</button>
-                  <button class="smb" id="sm-neutral" onclick="setSmiley('neutral')" title="Neutral">üòê</button>
-                  <button class="smb" id="sm-sad" onclick="setSmiley('sad')" title="Unsatisfied">üòû</button>
+                  <button class="smb" id="sm-happy" onclick="setSmiley('happy')" title="Satisfied">&#128522;</button>
+                  <button class="smb" id="sm-neutral" onclick="setSmiley('neutral')" title="Neutral">&#128528;</button>
+                  <button class="smb" id="sm-sad" onclick="setSmiley('sad')" title="Unsatisfied">&#128542;</button>
                 </div>
                 <div style="font-size:11px;color:var(--gray-text);margin-top:6px;" id="smiley-lbl">Select your overall job satisfaction level</div>
               </div>
@@ -802,8 +802,8 @@
           <div class="sub-bar">
             <button class="btn btn-ghost" onclick="goTab('ee',7)">‚Üê Back</button>
             <div style="display:flex;gap:10px;">
-              <button class="btn btn-ghost" onclick="saveForm()">üíæ Save Draft</button>
-              <button class="btn btn-primary" id="emp-submit-btn" onclick="submitForm()">üöÄ Submit PA ‚Üí</button>
+              <button class="btn btn-ghost" onclick="saveForm()">&#128190; Save Draft</button>
+              <button class="btn btn-primary" id="emp-submit-btn" onclick="submitForm()">&#128640; Submit PA ‚Üí</button>
             </div>
           </div>
         </div>
@@ -829,8 +829,8 @@
   <div class="main-layout">
     <div class="sidebar">
       <div class="sidebar-section">Manager</div>
-      <div class="sidebar-item active" onclick="mgrNav('mgrDashboard')"><span class="si-icon">üè†</span> Dashboard</div>
-      <div class="sidebar-item" onclick="mgrNav('mgrTeam')"><span class="si-icon">üë•</span> My Team</div>
+      <div class="sidebar-item active" onclick="mgrNav('mgrDashboard')"><span class="si-icon">&#127968;</span> Dashboard</div>
+      <div class="sidebar-item" onclick="mgrNav('mgrTeam')"><span class="si-icon">&#128101;</span> My Team</div>
     </div>
     <div class="content">
       <div id="mgrDashboard">
@@ -841,7 +841,7 @@
           <div class="stat-card orange"><div class="stat-num" id="mgr-pending-count">0</div><div class="stat-label">Pending Review</div></div>
           <div class="stat-card red"><div class="stat-num" id="mgr-draft-count">0</div><div class="stat-label">Not Yet Submitted</div></div>
         </div>
-        <div class="info-box" id="mgr-action-info">üìå Loading team status...</div>
+        <div class="info-box" id="mgr-action-info">&#128204; Loading team status...</div>
         <div class="card">
           <div class="card-header"><span class="card-title">Team PA Status</span><button class="btn btn-outline btn-sm" onclick="mgrNav('mgrTeam')">View All ‚Üí</button></div>
           <table><thead><tr><th>Employee</th><th>Department</th><th>Status</th><th>Submitted</th><th>Action</th></tr></thead>
@@ -860,9 +860,9 @@
       <div id="mgrReview" style="display:none;">
         <span class="back-link" onclick="mgrNav('mgrTeam')">‚Üê Back to Team</span>
         <div id="mgr-emp-profile-card"></div>
-        <div id="mgr-approved-notice" style="display:none;"><div class="success-box">‚úÖ This PA has been <strong>Approved</strong>. No further action required.</div></div>
-        <div id="mgr-returned-notice" style="display:none;"><div class="warning-box">‚ö†Ô∏è This PA was <strong>Returned</strong> to the employee for revision.</div></div>
-        <div class="info-box" id="mgr-review-info">üìã Review the employee's self-assessment and enter Manager Score + Agreed Score for each section.</div>
+        <div id="mgr-approved-notice" style="display:none;"><div class="success-box">&#9989; This PA has been <strong>Approved</strong>. No further action required.</div></div>
+        <div id="mgr-returned-notice" style="display:none;"><div class="warning-box">&#9888;&#65039; This PA was <strong>Returned</strong> to the employee for revision.</div></div>
+        <div class="info-box" id="mgr-review-info">&#128203; Review the employee's self-assessment and enter Manager Score + Agreed Score for each section.</div>
 
         <!-- LIVE SCORE PANEL -->
         <div class="score-panel">
@@ -880,7 +880,7 @@
 
         <!-- SAVE DRAFT SHORTCUT (always visible when reviewing) -->
         <div style="text-align:right;margin-bottom:8px;">
-          <button class="btn btn-ghost btn-sm" id="mgr-save-draft-top" style="display:none;" onclick="saveMgrReview()">üíæ Save Review Draft</button>
+          <button class="btn btn-ghost btn-sm" id="mgr-save-draft-top" style="display:none;" onclick="saveMgrReview()">&#128190; Save Review Draft</button>
         </div>
 
         <!-- WIZARD TABS -->
@@ -1016,9 +1016,9 @@
           <div class="sub-bar">
             <button class="btn btn-ghost" onclick="goTab('mgr',5)">‚Üê Back</button>
             <div id="mgr-action-btns" style="display:flex;gap:12px;flex-wrap:wrap;">
-              <button class="btn btn-ghost" onclick="saveMgrReview()">üíæ Save Draft</button>
-              <button class="btn btn-success" onclick="approvePA()">‚úÖ Approve PA</button>
-              <button class="btn btn-danger" onclick="returnPA()">‚Ü©Ô∏è Return to Employee</button>
+              <button class="btn btn-ghost" onclick="saveMgrReview()">&#128190; Save Draft</button>
+              <button class="btn btn-success" onclick="approvePA()">&#9989; Approve PA</button>
+              <button class="btn btn-danger" onclick="returnPA()">‚Ü©&#65039; Return to Employee</button>
             </div>
           </div>
         </div>
@@ -1033,13 +1033,13 @@
   <div class="main-layout">
     <div class="sidebar">
       <div class="sidebar-section">HR Admin</div>
-      <div class="sidebar-item active" onclick="hrNav('hrDashboard')"><span class="si-icon">üè†</span> Dashboard</div>
-      <div class="sidebar-item" onclick="hrNav('hrAll')"><span class="si-icon">üìã</span> All Submissions</div>
-      <div class="sidebar-item" onclick="hrNav('hrReports')"><span class="si-icon">üìä</span> Reports</div>
-      <div class="sidebar-item" onclick="hrNav('hrUsers')"><span class="si-icon">üë§</span> User Management</div>
-      <div class="sidebar-item" onclick="hrNav('hrCycles')"><span class="si-icon">üîÑ</span> PA Cycles</div>
-      <div class="sidebar-item" onclick="hrNav('hrIncrement')"><span class="si-icon">üìà</span> Increment Engine</div>
-      <div class="sidebar-item" onclick="hrNav('hrAuditLog')"><span class="si-icon">üïµÔ∏è</span> Audit Log</div>
+      <div class="sidebar-item active" onclick="hrNav('hrDashboard')"><span class="si-icon">&#127968;</span> Dashboard</div>
+      <div class="sidebar-item" onclick="hrNav('hrAll')"><span class="si-icon">&#128203;</span> All Submissions</div>
+      <div class="sidebar-item" onclick="hrNav('hrReports')"><span class="si-icon">&#128202;</span> Reports</div>
+      <div class="sidebar-item" onclick="hrNav('hrUsers')"><span class="si-icon">&#128100;</span> User Management</div>
+      <div class="sidebar-item" onclick="hrNav('hrCycles')"><span class="si-icon">&#128260;</span> PA Cycles</div>
+      <div class="sidebar-item" onclick="hrNav('hrIncrement')"><span class="si-icon">&#128200;</span> Increment Engine</div>
+      <div class="sidebar-item" onclick="hrNav('hrAuditLog')"><span class="si-icon">&#128373;&#65039;</span> Audit Log</div>
     </div>
     <div class="content">
 
@@ -1053,7 +1053,7 @@
           <div class="stat-card red"><div class="stat-num" id="hr-draft">‚Äî</div><div class="stat-label">Draft / Not Started</div></div>
         </div>
         <div class="card" style="padding:24px;margin-bottom:24px;">
-          <div class="card-title" style="margin-bottom:16px;">üìà Overall Cycle Completion</div>
+          <div class="card-title" style="margin-bottom:16px;">&#128200; Overall Cycle Completion</div>
           <div class="progress-bar-wrap">
             <div class="progress-bar-bg"><div class="progress-bar-fill" id="hr-completion-bar" style="width:0%"></div></div>
             <div class="progress-label"><span id="hr-completion-text">Loading‚Ä¶</span><span id="hr-completion-pct">0%</span></div>
@@ -1065,9 +1065,9 @@
           <tbody id="hr-recent-table"></tbody></table>
         </div>
         <div class="card" id="hr-my-pa-card" style="padding:24px;margin-top:4px;">
-          <div class="card-title" style="margin-bottom:10px;">üë§ My Performance Appraisal</div>
+          <div class="card-title" style="margin-bottom:10px;">&#128100; My Performance Appraisal</div>
           <p style="font-size:13px;color:var(--gray-text);margin-bottom:14px;">You also have an employee role. Access your own PA form here.</p>
-          <button class="btn btn-primary" onclick="selectRole('employee')">üìù Open My PA Form ‚Üí</button>
+          <button class="btn btn-primary" onclick="selectRole('employee')">&#128221; Open My PA Form ‚Üí</button>
         </div>
       </div>
 
@@ -1093,7 +1093,7 @@
               </select>
             </div>
             <div style="margin-left:auto;margin-top:18px;">
-              <button class="btn btn-ghost btn-sm" onclick="exportCSV()">‚¨áÔ∏è Export CSV</button>
+              <button class="btn btn-ghost btn-sm" onclick="exportCSV()">&#11015;&#65039; Export CSV</button>
             </div>
           </div>
         </div>
@@ -1106,52 +1106,52 @@
       <div id="hrDetail" style="display:none;">
         <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;">
           <span class="back-link" onclick="hrNav('hrAll')">‚Üê Back to All Submissions</span>
-          <button class="btn btn-outline btn-sm" onclick="exportEmployeePDF()">üìÑ Export PDF</button>
+          <button class="btn btn-outline btn-sm" onclick="exportEmployeePDF()">&#128196; Export PDF</button>
         </div>
         <div id="hr-detail-profile"></div>
-        <div class="info-box">üëÅÔ∏è HR view ‚Äî read only. Changes must be made by the employee or their manager.</div>
+        <div class="info-box">&#128065;&#65039; HR view ‚Äî read only. Changes must be made by the employee or their manager.</div>
         <!-- S2 Objectives summary -->
         <div class="card" style="padding:24px;">
-          <div class="form-section-title">üéØ S2 ‚Äî Rating of Objectives</div>
+          <div class="form-section-title">&#127919; S2 ‚Äî Rating of Objectives</div>
           <div id="hr-detail-objectives">‚Äî</div>
         </div>
         <!-- S3 Competencies summary -->
         <div class="card" style="padding:24px;">
-          <div class="form-section-title">üìä S3 ‚Äî Rating of Competencies</div>
+          <div class="form-section-title">&#128202; S3 ‚Äî Rating of Competencies</div>
           <div id="hr-detail-comps">‚Äî</div>
         </div>
         <!-- S6 Satisfaction -->
         <div class="card" style="padding:24px;">
-          <div class="form-section-title">üòä S6 ‚Äî Employee Satisfaction</div>
+          <div class="form-section-title">&#128522; S6 ‚Äî Employee Satisfaction</div>
           <div id="hr-detail-satisfaction">‚Äî</div>
         </div>
         <!-- S7 Expectations -->
         <div class="card" style="padding:24px;">
-          <div class="form-section-title">üí¨ S7 ‚Äî Employee Expectations</div>
+          <div class="form-section-title">&#128172; S7 ‚Äî Employee Expectations</div>
           <label>Employee</label><textarea readonly id="hr-s7-text" style="margin-top:6px;min-height:72px;"></textarea>
           <label style="margin-top:10px;display:block;">Supervisor Comment</label><textarea readonly id="hr-s7-sup" style="margin-top:6px;min-height:60px;"></textarea>
         </div>
         <!-- S8 Remarks -->
         <div class="card" style="padding:24px;">
-          <div class="form-section-title">üìù S8 ‚Äî Additional Remarks</div>
+          <div class="form-section-title">&#128221; S8 ‚Äî Additional Remarks</div>
           <label>Employee</label><textarea readonly id="hr-s8-ee" style="margin-top:6px;min-height:60px;"></textarea>
           <label style="margin-top:10px;display:block;">Supervisor</label><textarea readonly id="hr-s8-sup" style="margin-top:6px;min-height:60px;"></textarea>
         </div>
         <!-- U5: History across all cycles -->
         <div class="card" style="padding:0;margin-top:8px;">
-          <div class="card-header"><span class="card-title">üìÖ History Across All Cycles</span></div>
+          <div class="card-header"><span class="card-title">&#128197; History Across All Cycles</span></div>
           <table><thead><tr><th>Cycle</th><th>Submitted</th><th>Status</th><th>Avg Self Score</th><th>Final Rating</th></tr></thead>
           <tbody id="hr-emp-history-tbody"><tr><td colspan="5" style="text-align:center;padding:20px;color:var(--gray-text);">Loading‚Ä¶</td></tr></tbody></table>
         </div>
         <!-- I3: Trend chart -->
         <div class="card" style="padding:24px;margin-top:8px;" id="hr-trend-card" style="display:none;">
-          <div class="form-section-title" style="margin-bottom:14px;">üìà Score Trend Across Cycles</div>
+          <div class="form-section-title" style="margin-bottom:14px;">&#128200; Score Trend Across Cycles</div>
           <canvas id="hr-trend-chart" height="100"></canvas>
         </div>
         <!-- I5: AI Narrative -->
         <div class="card" id="hr-narrative-card" style="display:none;">
           <div class="card-header">
-            <span class="card-title">üìù AI Narrative</span>
+            <span class="card-title">&#128221; AI Narrative</span>
             <button class="btn btn-outline btn-sm" onclick="generateNarrative()">Generate</button>
           </div>
           <div id="hr-narrative-output" style="line-height:1.8;font-size:14px;color:var(--text);
@@ -1167,15 +1167,15 @@
           <div class="stat-card orange"><div class="stat-num" id="rpt-days">‚Äî</div><div class="stat-label">Days to Deadline</div></div>
           <div class="stat-card red" style="cursor:pointer" onclick="hrNav('hrAll')">
             <div class="stat-num" id="rpt-flight-risk">‚Äî</div>
-            <div class="stat-label">üî¥ Flight Risk</div>
+            <div class="stat-label">&#128308; Flight Risk</div>
           </div>
           <div class="stat-card green" style="cursor:pointer" onclick="hrNav('hrAll')">
             <div class="stat-num" id="rpt-promo-ready">‚Äî</div>
-            <div class="stat-label">üü¢ Promo Ready</div>
+            <div class="stat-label">&#128994; Promo Ready</div>
           </div>
         </div>
         <div class="card" style="padding:24px;">
-          <div class="card-title" style="margin-bottom:16px;">üìä Status by Department</div>
+          <div class="card-title" style="margin-bottom:16px;">&#128202; Status by Department</div>
           <table><thead><tr><th>Department</th><th>Total</th><th>Submitted+</th><th>Approved</th><th>Completion</th></tr></thead>
           <tbody id="rpt-dept-table"></tbody></table>
         </div>
@@ -1201,27 +1201,27 @@
         <div class="page-header"><h1>User Management</h1><p>Add, edit, or deactivate employee accounts</p></div>
         <div style="margin-bottom:20px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
           <button class="btn btn-primary" onclick="openAddUser()">+ Add Employee</button>
-          <button class="btn btn-outline" onclick="openBulkUpload()">üì§ Bulk Upload</button>
-          <input type="text" id="user-search" placeholder="üîç Search by name, code, email, dept‚Ä¶" oninput="renderProfilesTable()" style="flex:1;min-width:200px;padding:9px 12px;border:1.5px solid var(--gray-border);border-radius:6px;font-size:13px;">
+          <button class="btn btn-outline" onclick="openBulkUpload()">&#128228; Bulk Upload</button>
+          <input type="text" id="user-search" placeholder="&#128269; Search by name, code, email, dept‚Ä¶" oninput="renderProfilesTable()" style="flex:1;min-width:200px;padding:9px 12px;border:1.5px solid var(--gray-border);border-radius:6px;font-size:13px;">
         </div>
         <div class="card">
           <table><thead><tr><th>Code</th><th>Name</th><th>Role</th><th>Department</th><th>Manager</th><th>Status</th><th>Action</th></tr></thead>
           <tbody id="users-table"></tbody></table>
         </div>
-        <div class="info-box" style="margin-top:16px;">üí° Click <strong>Add Employee</strong> to create a login account and profile in one step. Share the email + temporary password with the employee.</div>
+        <div class="info-box" style="margin-top:16px;">&#128161; Click <strong>Add Employee</strong> to create a login account and profile in one step. Share the email + temporary password with the employee.</div>
       </div>
 
       <div id="hrCycles" style="display:none;">
         <div class="page-header"><h1>PA Cycles</h1><p>Manage appraisal cycles ‚Äî only one can be active at a time</p></div>
         <div style="margin-bottom:20px;display:flex;gap:10px;flex-wrap:wrap;">
           <button class="btn btn-primary" onclick="openAddCycle()">+ New Cycle</button>
-          <button class="btn btn-outline" onclick="openHistImport()">üì• Import History</button>
+          <button class="btn btn-outline" onclick="openHistImport()">&#128229; Import History</button>
         </div>
         <div class="card">
           <table><thead><tr><th>Cycle Name</th><th>Start Date</th><th>End Date</th><th>Status</th><th>Lock</th><th>Action</th></tr></thead>
           <tbody id="cycles-table"></tbody></table>
         </div>
-        <div class="info-box" style="margin-top:16px;">üîí <strong>Lock</strong> a cycle to freeze all submissions and manager actions during payroll processing. Unlock when done.</div>
+        <div class="info-box" style="margin-top:16px;">&#128274; <strong>Lock</strong> a cycle to freeze all submissions and manager actions during payroll processing. Unlock when done.</div>
       </div>
 
       <div id="hrIncrement" style="display:none;">
@@ -1236,7 +1236,7 @@
             <span style="background:#f3e5f5;color:#6a1b9a;border:1px solid #ce93d8;padding:3px 10px;border-radius:4px;">4.6‚Äì5.0 ‚Üí 10%</span>
           </div>
           <div style="margin-top:12px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
-            <button class="btn btn-ghost btn-sm" onclick="exportIncrementCSV()">‚¨áÔ∏è Export Payroll CSV</button>
+            <button class="btn btn-ghost btn-sm" onclick="exportIncrementCSV()">&#11015;&#65039; Export Payroll CSV</button>
             <span style="font-size:11px;color:var(--gray-text);">Only employees with Approved PA are included.</span>
           </div>
         </div>
@@ -1261,25 +1261,25 @@
 </div>
 
 <div class="modal-overlay" id="modal-submit">
-  <div class="modal"><div class="modal-icon">üöÄ</div><div class="modal-title">Submit Your PA?</div>
+  <div class="modal"><div class="modal-icon">&#128640;</div><div class="modal-title">Submit Your PA?</div>
     <div class="modal-msg">Once submitted, your manager will be notified to begin their review. You can still update and resubmit before they start.</div>
     <div class="modal-actions"><button class="btn btn-ghost" onclick="closeModal('modal-submit')">Cancel</button><button class="btn btn-primary" onclick="confirmSubmit()">Yes, Submit</button></div>
   </div></div>
 
 <div class="modal-overlay" id="modal-approve">
-  <div class="modal"><div class="modal-icon">‚úÖ</div><div class="modal-title">Approve this PA?</div>
+  <div class="modal"><div class="modal-icon">&#9989;</div><div class="modal-title">Approve this PA?</div>
     <div class="modal-msg">The employee will be notified that their PA has been approved. This action will be recorded.</div>
     <div class="modal-actions"><button class="btn btn-ghost" onclick="closeModal('modal-approve')">Cancel</button><button class="btn btn-success" onclick="confirmApprove()">Yes, Approve</button></div>
   </div></div>
 
 <div class="modal-overlay" id="modal-return">
-  <div class="modal"><div class="modal-icon">‚Ü©Ô∏è</div><div class="modal-title">Return PA to Employee?</div>
+  <div class="modal"><div class="modal-icon">‚Ü©&#65039;</div><div class="modal-title">Return PA to Employee?</div>
     <div class="modal-msg">The employee will be notified to revise and resubmit. Please ensure you have added comments explaining what needs updating.</div>
     <div class="modal-actions"><button class="btn btn-ghost" onclick="closeModal('modal-return')">Cancel</button><button class="btn btn-danger" onclick="confirmReturn()">Yes, Return</button></div>
   </div></div>
 
 <div class="modal-overlay" id="modal-saved">
-  <div class="modal"><div class="modal-icon">üíæ</div><div class="modal-title">Draft Saved!</div>
+  <div class="modal"><div class="modal-icon">&#128190;</div><div class="modal-title">Draft Saved!</div>
     <div class="modal-msg">Your progress has been saved to the server. You can continue editing at any time before the deadline.</div>
     <div class="modal-actions"><button class="btn btn-primary" onclick="closeModal('modal-saved')">OK</button></div>
   </div></div>
@@ -1334,10 +1334,10 @@
 
 <div class="modal-overlay" id="modal-bulk-upload">
   <div class="modal" style="max-width:700px;width:95%;text-align:left;">
-    <div class="modal-title" style="text-align:center;margin-bottom:4px;">üì§ Bulk Upload Employees</div>
+    <div class="modal-title" style="text-align:center;margin-bottom:4px;">&#128228; Bulk Upload Employees</div>
     <p style="font-size:12px;color:var(--gray-text);text-align:center;margin-bottom:14px;">Upload multiple employees at once. Each row creates an auth account and a profile.</p>
     <div style="display:flex;gap:10px;align-items:center;margin-bottom:12px;flex-wrap:wrap;">
-      <button class="btn btn-outline btn-sm" onclick="downloadCSVTemplate()">‚¨áÔ∏è Download CSV Template</button>
+      <button class="btn btn-outline btn-sm" onclick="downloadCSVTemplate()">&#11015;&#65039; Download CSV Template</button>
       <span style="font-size:11px;color:var(--gray-text);">Columns: employee_code ¬∑ full_name ¬∑ email ¬∑ temp_password ¬∑ role ¬∑ department ¬∑ position ¬∑ manager_code</span>
     </div>
     <div style="margin-bottom:12px;">
@@ -1364,23 +1364,23 @@
     <div id="bulk-error" style="display:none;background:#fff0f0;border:1px solid #f5c6cb;border-radius:6px;padding:8px 12px;font-size:12px;color:#c0392b;margin-top:10px;"></div>
     <div style="display:flex;gap:10px;justify-content:center;margin-top:16px;flex-wrap:wrap;">
       <button class="btn btn-ghost" onclick="closeBulkUpload()">Cancel</button>
-      <button class="btn btn-primary" id="bulk-upload-btn" style="display:none;" onclick="uploadAllEmployees()">‚¨ÜÔ∏è Upload All</button>
+      <button class="btn btn-primary" id="bulk-upload-btn" style="display:none;" onclick="uploadAllEmployees()">&#11014;&#65039; Upload All</button>
     </div>
   </div>
 </div>
 
 <div class="modal-overlay" id="modal-deactivate">
-  <div class="modal"><div class="modal-icon">‚ö†Ô∏è</div><div class="modal-title">Deactivate User?</div>
+  <div class="modal"><div class="modal-icon">&#9888;&#65039;</div><div class="modal-title">Deactivate User?</div>
     <div class="modal-msg">This will prevent the user from signing in. You can reactivate them at any time from User Management.</div>
     <div class="modal-actions"><button class="btn btn-ghost" onclick="closeModal('modal-deactivate')">Cancel</button><button class="btn btn-danger" onclick="confirmDeactivate()">Yes, Deactivate</button></div>
   </div></div>
 
 <div class="modal-overlay" id="modal-hist-import">
   <div class="modal" style="max-width:680px;width:95%;text-align:left;">
-    <div class="modal-title" style="text-align:center;margin-bottom:4px;">üì• Import Historical PA Data</div>
+    <div class="modal-title" style="text-align:center;margin-bottom:4px;">&#128229; Import Historical PA Data</div>
     <p style="font-size:12px;color:var(--gray-text);text-align:center;margin-bottom:14px;">Import past-cycle PA scores to enable trend charts and increment history.</p>
     <div style="display:flex;gap:10px;align-items:center;margin-bottom:12px;flex-wrap:wrap;">
-      <button class="btn btn-outline btn-sm" onclick="downloadHistTemplate()">‚¨áÔ∏è Download CSV Template</button>
+      <button class="btn btn-outline btn-sm" onclick="downloadHistTemplate()">&#11015;&#65039; Download CSV Template</button>
       <span style="font-size:11px;color:var(--gray-text);">Columns: employee_code ¬∑ cycle_name ¬∑ final_score ¬∑ status ¬∑ submitted_date</span>
     </div>
     <div style="margin-bottom:12px;">
@@ -1405,7 +1405,7 @@
     <div id="hist-error" style="display:none;background:#fff0f0;border:1px solid #f5c6cb;border-radius:6px;padding:8px 12px;font-size:12px;color:#c0392b;margin-top:10px;"></div>
     <div style="display:flex;gap:10px;justify-content:center;margin-top:16px;flex-wrap:wrap;">
       <button class="btn btn-ghost" onclick="closeModal('modal-hist-import')">Cancel</button>
-      <button class="btn btn-primary" id="hist-upload-btn" style="display:none;" onclick="uploadHistData()">‚¨ÜÔ∏è Import All</button>
+      <button class="btn btn-primary" id="hist-upload-btn" style="display:none;" onclick="uploadHistData()">&#11014;&#65039; Import All</button>
     </div>
   </div>
 </div>
@@ -1663,7 +1663,7 @@ function addDevRow(act, dt, resp) {
   const tb = document.getElementById('dev-tbody');
   if (!tb) return;
   const tr = document.createElement('tr');
-  tr.innerHTML = `<td><input placeholder="Development action‚Ä¶" value="${act||''}"></td><td><input type="date" value="${dt||''}"></td><td><input placeholder="Responsible‚Ä¶" value="${resp||''}"></td><td><button class="btn btn-ghost" style="padding:3px 8px;" onclick="this.closest('tr').remove()">‚úï</button></td>`;
+  tr.innerHTML = `<td><input placeholder="Development action‚Ä¶" value="${act||''}"></td><td><input type="date" value="${dt||''}"></td><td><input placeholder="Responsible‚Ä¶" value="${resp||''}"></td><td><button class="btn btn-ghost" style="padding:3px 8px;" onclick="this.closest('tr').remove()">\u{2715}</button></td>`;
   tb.appendChild(tr);
 }
 
@@ -1679,7 +1679,7 @@ function addNYRow(desc, w) {
   const tb = document.getElementById('ny-tbody');
   if (!tb) return;
   const tr = document.createElement('tr');
-  tr.innerHTML = `<td><input placeholder="New year objective‚Ä¶" value="${desc||''}"></td><td><input type="number" min="0" max="100" placeholder="Weight %" value="${w||''}"></td><td><button class="btn btn-ghost" style="padding:3px 8px;" onclick="this.closest('tr').remove()">‚úï</button></td>`;
+  tr.innerHTML = `<td><input placeholder="New year objective‚Ä¶" value="${desc||''}"></td><td><input type="number" min="0" max="100" placeholder="Weight %" value="${w||''}"></td><td><button class="btn btn-ghost" style="padding:3px 8px;" onclick="this.closest('tr').remove()">\u{2715}</button></td>`;
   tb.appendChild(tr);
 }
 
@@ -1716,7 +1716,7 @@ function setSmiley(v) {
     const el = document.getElementById('sm-'+s);
     if (el) el.className = 'smb' + (v === s ? ' ' + classes[s] : '');
   });
-  const labels = {happy:'Satisfied üòä', neutral:'Neutral üòê', sad:'Unsatisfied üòû'};
+  const labels = {happy:'Satisfied \u{1F60A}', neutral:'Neutral \u{1F610}', sad:'Unsatisfied \u{1F61E}'};
   const lbl = document.getElementById('smiley-lbl');
   if (lbl) lbl.textContent = labels[v] || 'Select your overall job satisfaction level';
 }
@@ -1867,7 +1867,7 @@ function applyLogin(){
   document.getElementById('topbar-role-label').style.display='';
   document.getElementById('btn-logout').style.display='';
   const firstName=user.full_name.split(' ')[0];
-  const pw=document.getElementById('picker-welcome'); if(pw) pw.textContent='Welcome, '+firstName+' üëã';
+  const pw=document.getElementById('picker-welcome'); if(pw) pw.textContent='Welcome, '+firstName+' \u{1F44B}';
   const roles=getUserRoles();
   // Only show Switch Role if the user has more than one role
   document.getElementById('btn-switch-role').style.display=roles.length>1?'':'none';
@@ -1886,9 +1886,9 @@ function getUserRoles(){
 function buildRolePicker(){
   const roles=getUserRoles();
   const CFG={
-    employee:{icon:'üë§',title:'Employee',desc:'View & submit your Performance Appraisal'},
-    manager: {icon:'üë•',title:'Manager', desc:"Review your team's PA submissions"},
-    hr:      {icon:'üõ°Ô∏è',title:'HR Admin',desc:'Oversee all PA records & approvals'},
+    employee:{icon:'\u{1F464}',title:'Employee',desc:'View & submit your Performance Appraisal'},
+    manager: {icon:'\u{1F465}',title:'Manager', desc:"Review your team's PA submissions"},
+    hr:      {icon:'\u{1F6E1}\u{FE0F}',title:'HR Admin',desc:'Oversee all PA records & approvals'},
   };
   const html=roles.map(r=>{const c=CFG[r];return`<div class="role-card" onclick="selectRole('${r}')"><div class="role-icon">${c.icon}</div><div class="role-title">${c.title}</div><div class="role-desc">${c.desc}</div></div>`;}).join('');
   const wrap=document.getElementById('role-card-wrap'); if(wrap) wrap.innerHTML=html;
@@ -2041,7 +2041,7 @@ function loadEmployeeForm(){
   const submitted=document.getElementById('emp-submitted-notice'); if(submitted) submitted.style.display=['Submitted','Under Review'].includes(status)?'':'none';
   const returned=document.getElementById('emp-returned-notice'); if(returned) returned.style.display=(status==='Returned')?'':'none';
   const approved=document.getElementById('emp-approved-notice'); if(approved) approved.style.display=(status==='Approved')?'':'none';
-  const btn=document.getElementById('emp-submit-btn'); if(btn) btn.textContent=['Submitted','Under Review','Approved'].includes(status)?'üîÑ Resubmit PA':'üöÄ Submit PA';
+  const btn=document.getElementById('emp-submit-btn'); if(btn) btn.textContent=['Submitted','Under Review','Approved'].includes(status)?'\u{1F504} Resubmit PA':'\u{1F680} Submit PA';
   // C3: deadline enforcement + S3: lock enforcement
   const deadlinePassed=isCycleDeadlinePassed(), cycleLocked=isCycleLocked();
   const dWarn=document.getElementById('emp-deadline-warning'); if(dWarn) dWarn.style.display=deadlinePassed?'':'none';
@@ -2146,7 +2146,7 @@ function updateTimeline(){
   const steps=['Submitted','Under Review','Approved'],dots=['tl-submitted','tl-review','tl-approved'],lines=['tl-line-review','tl-line-approved'];
   const idx=steps.indexOf(status);
   dots.forEach((id,i)=>{const dot=document.getElementById(id);if(!dot)return;
-    if(i<idx){dot.className='tl-dot done';dot.textContent='‚úì';}
+    if(i<idx){dot.className='tl-dot done';dot.textContent='\u{2713}';}
     else if(i===idx){dot.className='tl-dot active-step';dot.textContent=i+2;}
     else{dot.className='tl-dot pending-step';dot.textContent=i+2;}});
   lines.forEach((id,i)=>{const el=document.getElementById(id);if(el)el.className='tl-line'+(i<idx?' done':'');});
@@ -2202,7 +2202,7 @@ function renderMgrTeam(){
     return `<tr class="clickable" onclick="openMgrReview('${p.employee_code}')">
       <td><strong>${p.full_name}</strong><br><span style="font-size:12px;color:var(--gray-text)">${p.email||''}</span></td>
       <td>${p.department||'‚Äî'}</td><td><span class="badge ${getBadge(status)}">${status}</span></td><td>${submittedAt}</td>
-      <td>${canReview?'<button class="btn btn-primary btn-sm" onclick="event.stopPropagation();openMgrReview(\''+p.employee_code+'\')">Review ‚Üí</button>':'<span style="color:var(--gray-text);font-size:12px;">'+(status==='Approved'?'‚úÖ Done':'‚Äî')+'</span>'}</td></tr>`;};
+      <td>${canReview?'<button class="btn btn-primary btn-sm" onclick="event.stopPropagation();openMgrReview(\''+p.employee_code+'\')">Review ‚Üí</button>':'<span style="color:var(--gray-text);font-size:12px;">'+(status==='Approved'?'\u{2705} Done':'‚Äî')+'</span>'}</td></tr>`;};
   const html=state.teamData.map(row).join('');
   ['mgr-team-preview','mgr-team-full'].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML=html||'<tr><td colspan="5" style="text-align:center;padding:24px;color:var(--gray-text);">No direct reports found.</td></tr>';});
   const el=id=>document.getElementById(id);
@@ -2211,7 +2211,7 @@ function renderMgrTeam(){
   if(el('mgr-pending-count'))  el('mgr-pending-count').textContent=state.teamData.filter(i=>i.status==='Submitted'||i.status==='Under Review').length;
   if(el('mgr-draft-count'))    el('mgr-draft-count').textContent=state.teamData.filter(i=>i.status==='Draft'||i.status==='Not Started').length;
   const pending=state.teamData.filter(i=>i.status==='Submitted'||i.status==='Under Review').length;
-  const info=el('mgr-action-info'); if(info) info.textContent=pending>0?'üìå Action needed: '+pending+' team member(s) awaiting your review.':'‚úÖ All team PA reviews are up to date.';
+  const info=el('mgr-action-info'); if(info) info.textContent=pending>0?'\u{1F4CC} Action needed: '+pending+' team member(s) awaiting your review.':'\u{2705} All team PA reviews are up to date.';
 }
 async function openMgrReview(empCode){
   const item=state.teamData.find(i=>i.profile.employee_code===empCode); if(!item) return;
@@ -2412,9 +2412,9 @@ function riskBadge(fs){
   if(fs===null||fs===undefined)return'<span style="color:var(--gray-text);font-size:11px;">‚Äî</span>';
   const s=parseFloat(fs);
   if(isNaN(s))return'<span style="color:var(--gray-text);font-size:11px;">‚Äî</span>';
-  if(s<2.5)return'<span class="badge badge-returned" title="Final score below 2.5">üî¥ Flight Risk</span>';
-  if(s>=4.5)return'<span class="badge badge-approved" title="Final score 4.5+">üü¢ Promo Ready</span>';
-  return'<span style="color:var(--gray-text);font-size:12px;">‚ö™ Stable</span>';
+  if(s<2.5)return'<span class="badge badge-returned" title="Final score below 2.5">\u{1F534} Flight Risk</span>';
+  if(s>=4.5)return'<span class="badge badge-approved" title="Final score 4.5+">\u{1F7E2} Promo Ready</span>';
+  return'<span style="color:var(--gray-text);font-size:12px;">\u{26AA} Stable</span>';
 }
 function applyHRFilter(){renderHRAll(document.getElementById('hr-filter-status').value,document.getElementById('hr-filter-dept').value,document.getElementById('hr-filter-mgr')?.value||'');}
 function updateHRStats(){
@@ -2472,7 +2472,7 @@ function openHRDetail(empCode){
   }
 
   // S6 Satisfaction
-  const smileyLabels={happy:'Satisfied üòä',neutral:'Neutral üòê',sad:'Unsatisfied üòû'};
+  const smileyLabels={happy:'Satisfied \u{1F60A}',neutral:'Neutral \u{1F610}',sad:'Unsatisfied \u{1F61E}'};
   const satParts=[];
   if(sd.smiley) satParts.push('<strong>Overall:</strong> '+( smileyLabels[sd.smiley]||sd.smiley));
   if(sd.sat_training) satParts.push('<strong>Training/Conditions:</strong> '+sd.sat_training);
@@ -2712,9 +2712,9 @@ function renderCalibration(){
     const arr=groups[code],theirAvg=arr.reduce((a,b)=>a+b,0)/arr.length,delta=theirAvg-companyAvg;
     const name=state.allProfiles.find(p=>p.employee_code===code)?.full_name||(code==='‚Äî'?'(Unassigned)':code);
     let flag;
-    if(delta>0.5)flag='üî∫ Inflated';
-    else if(delta<-0.5)flag='üîª Deflated';
-    else flag='‚úÖ Calibrated';
+    if(delta>0.5)flag='\u{1F53A} Inflated';
+    else if(delta<-0.5)flag='\u{1F53B} Deflated';
+    else flag='\u{2705} Calibrated';
     return`<tr><td>${name}</td><td>${code}</td><td>${arr.length}</td><td>${theirAvg.toFixed(2)}</td><td>${companyAvg.toFixed(2)}</td><td>${delta>=0?'+':''}${delta.toFixed(2)}</td><td>${flag}</td></tr>`;
   });
   tbl.innerHTML=rows.join('');
@@ -2915,24 +2915,24 @@ async function uploadAllEmployees(){
       if(authErr){
         // B5: duplicate email ‚Äî show warning and skip, don't abort whole upload
         const isdup=authErr.message&&(authErr.message.toLowerCase().includes('already registered')||authErr.message.toLowerCase().includes('user already'));
-        if(isdup){if(statusEl)statusEl.innerHTML='<span style="color:var(--orange);font-size:11px;">‚ö†Ô∏è Already registered</span>';if(rowEl)rowEl.classList.add('bulk-row-err');fail++;continue;}
+        if(isdup){if(statusEl)statusEl.innerHTML='<span style="color:var(--orange);font-size:11px;">\u{26A0}\u{FE0F} Already registered</span>';if(rowEl)rowEl.classList.add('bulk-row-err');fail++;continue;}
         throw new Error(authErr.message);
       }
       const uid=authData.user?.id;
       if(!uid)throw new Error('Auth created but no user ID returned.');
       const {error:profErr}=await db.from('profiles').upsert({id:uid,employee_code:r.employee_code,full_name:r.full_name,email:r.email,role:r.role,department:r.department||null,position:r.position||null,manager_code:r.manager_code||null,is_active:true},{onConflict:'employee_code'});
       if(profErr)throw new Error(profErr.message);
-      if(statusEl)statusEl.innerHTML='<span class="bulk-status-ok">‚úÖ Created</span>';
+      if(statusEl)statusEl.innerHTML='<span class="bulk-status-ok">\u{2705} Created</span>';
       if(rowEl)rowEl.classList.add('bulk-row-ok');
       ok++;
     }catch(ex){
       const msg=String(ex.message||ex).substring(0,50);
-      if(statusEl)statusEl.innerHTML=`<span class="bulk-status-err" title="${ex.message}">‚ùå ${msg}</span>`;
+      if(statusEl)statusEl.innerHTML=`<span class="bulk-status-err" title="${ex.message}">\u{274C} ${msg}</span>`;
       if(rowEl)rowEl.classList.add('bulk-row-err');
       fail++;
     }
   }
-  btn.disabled=false;btn.textContent='‚¨ÜÔ∏è Upload All';
+  btn.disabled=false;btn.textContent='\u{2B06}\u{FE0F} Upload All';
   toast(ok+' uploaded'+(fail?' ¬∑ '+fail+' failed':'')+'.');
   if(ok>0)loadAllProfiles();
 }
@@ -2978,7 +2978,7 @@ function parseHistCSV(input){
     }
     const tbody=document.getElementById('hist-preview-body');
     tbody.innerHTML=histRows.map((r,i)=>{
-      const warn=!r.final_score||!r.cycle_name||!r.employee_code?'<span style="color:var(--red);font-size:11px;">‚ö†Ô∏è Missing required field</span>':'<span style="color:var(--gray-text);font-size:11px;">Pending</span>';
+      const warn=!r.final_score||!r.cycle_name||!r.employee_code?'<span style="color:var(--red);font-size:11px;">\u{26A0}\u{FE0F} Missing required field</span>':'<span style="color:var(--gray-text);font-size:11px;">Pending</span>';
       return`<tr id="hist-row-${i}"><td style="padding:5px 8px;">${r.employee_code}</td><td style="padding:5px 8px;">${r.cycle_name}</td><td style="padding:5px 8px;text-align:center;">${r.final_score??'‚Äî'}</td><td style="padding:5px 8px;">${r.status}</td><td style="padding:5px 8px;" id="hist-status-${i}">${warn}</td></tr>`;
     }).join('');
     document.getElementById('hist-preview-count').textContent=histRows.length+' row(s) ready to import';
@@ -2997,7 +2997,7 @@ async function uploadHistData(){
   for(let i=0;i<histRows.length;i++){
     const r=histRows[i];const statusEl=document.getElementById('hist-status-'+i);
     if(!r.final_score||!r.cycle_name||!r.employee_code){
-      if(statusEl)statusEl.innerHTML='<span style="color:var(--red);font-size:11px;">‚ùå Skipped ‚Äî missing field</span>';
+      if(statusEl)statusEl.innerHTML='<span style="color:var(--red);font-size:11px;">\u{274C} Skipped ‚Äî missing field</span>';
       fail++;continue;
     }
     if(statusEl)statusEl.innerHTML='<span style="color:var(--gray-text);font-size:11px;">‚è≥ Working‚Ä¶</span>';
@@ -3021,13 +3021,13 @@ async function uploadHistData(){
       };
       const {error:subErr}=await db.from('pa_submissions').insert(payload);
       if(subErr)throw new Error(subErr.message);
-      if(statusEl)statusEl.innerHTML='<span style="color:var(--accent-dark);font-size:11px;">‚úÖ Imported</span>';ok++;
+      if(statusEl)statusEl.innerHTML='<span style="color:var(--accent-dark);font-size:11px;">\u{2705} Imported</span>';ok++;
     }catch(ex){
       const msg=String(ex.message||ex).substring(0,60);
-      if(statusEl)statusEl.innerHTML=`<span style="color:var(--red);font-size:11px;" title="${ex.message}">‚ùå ${msg}</span>`;fail++;
+      if(statusEl)statusEl.innerHTML=`<span style="color:var(--red);font-size:11px;" title="${ex.message}">\u{274C} ${msg}</span>`;fail++;
     }
   }
-  btn.disabled=false;btn.textContent='‚¨ÜÔ∏è Import All';
+  btn.disabled=false;btn.textContent='\u{2B06}\u{FE0F} Import All';
   logAudit('HIST_IMPORT', null, {count:histRows.length});
   toast(ok+' imported'+(fail?' ¬∑ '+fail+' failed':'')+'.');
 }
@@ -3065,10 +3065,10 @@ async function loadCycles(){
 function renderCyclesTable(){
   const tbl=document.getElementById('cycles-table');if(!tbl)return;
   tbl.innerHTML=state.allCycles.map(c=>{
-    const lockBadge=c.is_locked?'<span class="badge badge-locked">üîí Locked</span>':'<span class="badge badge-active">üîì Open</span>';
+    const lockBadge=c.is_locked?'<span class="badge badge-locked">\u{1F512} Locked</span>':'<span class="badge badge-active">\u{1F513} Open</span>';
     const lockBtn=c.is_locked
-      ?`<button class="btn btn-outline btn-sm" onclick="unlockCycle('${c.id}')">üîì Unlock</button>`
-      :`<button class="btn btn-ghost btn-sm" onclick="lockCycle('${c.id}')">üîí Lock</button>`;
+      ?`<button class="btn btn-outline btn-sm" onclick="unlockCycle('${c.id}')">\u{1F513} Unlock</button>`
+      :`<button class="btn btn-ghost btn-sm" onclick="lockCycle('${c.id}')">\u{1F512} Lock</button>`;
     const actionBtn=!c.is_active?`<button class="btn btn-primary btn-sm" onclick="setActiveCycle('${c.id}')">Set Active</button>`:'<span style="font-size:12px;color:var(--gray-text);">Current</span>';
     return`<tr><td><strong>${c.name}</strong></td><td>${c.start_date||'‚Äî'}</td><td>${c.end_date||'‚Äî'}</td><td><span class="badge ${c.is_active?'badge-approved':'badge-draft'}">${c.is_active?'‚óè Active':'Inactive'}</span></td><td>${lockBadge}&nbsp;${lockBtn}</td><td>${actionBtn}</td></tr>`;
   }).join('')||'<tr><td colspan="6" style="text-align:center;padding:20px;color:var(--gray-text);">No cycles yet.</td></tr>';
