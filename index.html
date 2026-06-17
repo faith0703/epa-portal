@@ -7,6 +7,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
   :root {
     --blue: #0055A5;
@@ -1236,7 +1237,7 @@
             <span style="background:#f3e5f5;color:#6a1b9a;border:1px solid #ce93d8;padding:3px 10px;border-radius:4px;">4.6&#8211;5.0 &#8594; 10%</span>
           </div>
           <div style="margin-top:12px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
-            <button class="btn btn-ghost btn-sm" onclick="exportIncrementCSV()">&#11015;&#65039; Export Payroll CSV</button>
+            <button class="btn btn-ghost btn-sm" onclick="exportIncrementXLSX()">&#11015;&#65039; Export Payroll CSV</button>
             <span style="font-size:11px;color:var(--gray-text);">Only employees with Approved PA are included.</span>
           </div>
         </div>
@@ -2132,7 +2133,7 @@ async function confirmSubmit(){
   state.mySubmission=updated; loadEmployeeForm(); empNav('empDashboard');
   logAudit('SUBMIT', state.currentUser.employee_code, {cycle:state.activeCycle?.name});
   const _mgrP=state.allProfiles.find(p=>p.employee_code===state.currentUser.manager_code);
-  if(_mgrP?.email) callNotifyEdgeFunction('SUBMIT',{toEmail:_mgrP.email,toName:_mgrP.full_name,fromName:state.currentUser.full_name,cycle:state.activeCycle?.name});
+  if(_mgrP?.email) callNotifyEdgeFunction('SUBMIT',{toEmail:_mgrP.email,toName:_mgrP.full_name,fromName:state.currentUser.full_name,fromCode:state.currentUser.employee_code,cycle:state.activeCycle?.name});
   toast('PA submitted! Your manager has been notified.');
 }
 function updateTimeline(){
@@ -2337,7 +2338,7 @@ async function confirmApprove(){
   item.status='Approved';item.submission.status='Approved';
   logAudit('APPROVE', item.profile.employee_code, {cycle:state.activeCycle?.name});
   const _empPA=state.allProfiles.find(p=>p.employee_code===item.profile.employee_code);
-  if(_empPA?.email) callNotifyEdgeFunction('APPROVE',{toEmail:_empPA.email,toName:_empPA.full_name,fromName:state.currentUser.full_name,cycle:state.activeCycle?.name});
+  if(_empPA?.email) callNotifyEdgeFunction('APPROVE',{toEmail:_empPA.email,toName:_empPA.full_name,toCode:_empPA.employee_code,fromName:state.currentUser.full_name,cycle:state.activeCycle?.name});
   renderMgrTeam();mgrNav('mgrTeam');toast('PA Approved!');
 }
 async function confirmReturn(){
@@ -2349,7 +2350,7 @@ async function confirmReturn(){
   item.status='Returned';item.submission.status='Returned';
   logAudit('RETURN', item.profile.employee_code, {cycle:state.activeCycle?.name});
   const _empPR=state.allProfiles.find(p=>p.employee_code===item.profile.employee_code);
-  if(_empPR?.email) callNotifyEdgeFunction('RETURN',{toEmail:_empPR.email,toName:_empPR.full_name,fromName:state.currentUser.full_name,cycle:state.activeCycle?.name});
+  if(_empPR?.email) callNotifyEdgeFunction('RETURN',{toEmail:_empPR.email,toName:_empPR.full_name,toCode:_empPR.employee_code,fromName:state.currentUser.full_name,cycle:state.activeCycle?.name});
   renderMgrTeam();mgrNav('mgrTeam');toast('PA returned to employee for revision.');
 }
 
@@ -2754,19 +2755,24 @@ function renderHRIncrement(){
     </tr>`;
   }).join('');
 }
-function exportIncrementCSV(){
+function exportIncrementXLSX(){
   if(!state.activeCycle)return;
+  if(typeof XLSX==='undefined'){toast('Excel library not loaded. Please refresh and try again.');return;}
   const approved=state.allData.filter(i=>i.status==='Approved');
-  const rows=[['Employee Code','Full Name','Department','Manager Code','Final Score','Band','Increment %']];
+  const rows=[['Employee Code','Employee Name','Department','Manager Code','Final Score','Band','Increment %']];
   approved.forEach(item=>{
     const p=item.profile,sub=item.submission;
     const fs=sub?.manager_section_comments?.final_score??sub?.manager_overall_rating??null;
     const {band,pct}=incBand(fs?parseFloat(fs):null);
-    rows.push([p.employee_code,p.full_name,p.department||'',p.manager_code||'',fs!==null?Number(fs).toFixed(2):'',band,pct+'%']);
+    rows.push([p.employee_code,p.full_name,p.department||'',p.manager_code||'',fs!==null?parseFloat(Number(fs).toFixed(2)):null,band,pct+'%']);
   });
-  const csv=rows.map(r=>r.map(v=>'"'+String(v||'').replace(/"/g,'""')+'"').join(',')).join('\n');
-  const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);
-  a.download='Increment_'+state.activeCycle.name.replace(/[^a-z0-9]/gi,'_')+'.csv';a.click();toast('Increment CSV exported!');
+  const ws=XLSX.utils.aoa_to_sheet(rows);
+  // Column widths
+  ws['!cols']=[{wch:14},{wch:24},{wch:18},{wch:14},{wch:12},{wch:22},{wch:12}];
+  const wb=XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb,'Increment',ws);
+  XLSX.writeFile(wb,'Increment_'+state.activeCycle.name.replace(/[^a-z0-9]/gi,'_')+'.xlsx');
+  toast('Increment Excel exported!');
 }
 
 // == HR USER MANAGEMENT ==
