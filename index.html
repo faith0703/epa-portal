@@ -169,7 +169,8 @@
     background: var(--white);
     border-radius: var(--radius);
     box-shadow: var(--shadow);
-    overflow: hidden;
+    overflow: hidden; /* fallback */
+    overflow: clip;   /* modern: visual clip only, no BFC — lets child scroll divs work */
     margin-bottom: 24px;
   }
   .card-header {
@@ -298,8 +299,8 @@
   /* ── PREVENT HORIZONTAL OVERFLOW (desktop + mobile) ── */
   /* flex content must be able to shrink below natural content width */
   .content { min-width: 0; }
-  /* tables always scroll inside their card rather than pushing the page wide */
-  .card table { display: block; overflow-x: auto; -webkit-overflow-scrolling: touch; width: 100%; }
+  /* scroll wrapper injected by JS around every .card table */
+  .tbl-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
 
   /* ── RESPONSIVE ── */
   @media (max-width: 700px) {
@@ -2101,7 +2102,7 @@ function openHRDetail(empCode){
       objHtml+=`<tr style="border-top:1px solid var(--gray-border);"><td style="padding:8px 10px;font-weight:600;">#${o.id}</td><td style="padding:8px 10px;">${o.agree||'(not set)'}<br><span style="font-size:11px;color:var(--gray-text);">${o.review||''}</span></td><td style="padding:8px 10px;text-align:center;">${o.weight||20}%</td><td style="padding:8px 10px;text-align:center;font-weight:600;">${self}</td><td style="padding:8px 10px;text-align:center;font-weight:600;">${mgSc}</td><td style="padding:8px 10px;text-align:center;font-weight:600;">${agr}</td></tr>`;
     });
     objHtml+='</tbody></table>';
-    document.getElementById('hr-detail-objectives').innerHTML=objHtml;
+    document.getElementById('hr-detail-objectives').innerHTML='<div class="tbl-scroll">'+objHtml+'</div>';
   } else {
     document.getElementById('hr-detail-objectives').textContent='(Not yet filled by employee)';
   }
@@ -2116,7 +2117,7 @@ function openHRDetail(empCode){
       compHtml+=`<tr style="border-top:1px solid var(--gray-border);"><td style="padding:8px 10px;">${c.n}</td><td style="padding:8px 10px;text-align:center;font-weight:600;">${self}</td><td style="padding:8px 10px;text-align:center;font-weight:600;">${mgSc}</td><td style="padding:8px 10px;text-align:center;font-weight:600;">${agr}</td></tr>`;
     });
     compHtml+='</tbody></table>';
-    document.getElementById('hr-detail-comps').innerHTML=compHtml;
+    document.getElementById('hr-detail-comps').innerHTML='<div class="tbl-scroll">'+compHtml+'</div>';
   } else {
     document.getElementById('hr-detail-comps').textContent='(Not yet filled by employee)';
   }
@@ -2372,6 +2373,10 @@ async function setActiveCycle(cycleId){
 
 // ── INIT ──
 document.addEventListener('DOMContentLoaded',async()=>{
+  // Wrap all static tables inside .card with a horizontal scroll container.
+  // This keeps table rendering intact (display:table unchanged) while allowing overflow-x scroll.
+  document.querySelectorAll('.card table').forEach(function(t){var w=document.createElement('div');w.className='tbl-scroll';t.parentNode.insertBefore(w,t);w.appendChild(t);});
+
   ['login-email','login-password'].forEach(id=>{const el=document.getElementById(id);if(el)el.addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});});
   setLoading('Loading…');
   const {data:{session}}=await db.auth.getSession();
