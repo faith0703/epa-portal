@@ -1468,14 +1468,20 @@ async function callNotifyEdgeFunction(event,payload){
   catch(e){console.warn('Notify edge fn error:',e);}
 }
 // S2: Audit log viewer (HR)
-async function loadAuditLog(){
+let _auditPage=0;
+const AUDIT_PAGE_SIZE=50;
+async function loadAuditLog(page){
+  if(typeof page==='number') _auditPage=Math.max(0,page);
   const tbl=document.getElementById('audit-log-tbody');if(!tbl)return;
   tbl.innerHTML='<tr><td colspan="5" style="text-align:center;padding:16px;">Loading\u{2026}</td></tr>';
-  const {data,error}=await db.from('audit_log')
-    .select('*').order('created_at',{ascending:false}).limit(100);
-  if(error||!data?.length){
-    tbl.innerHTML=`<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--gray-text);">${error?'Error loading log.':'No audit entries yet.'}</td></tr>`;
-    return;
+  const from=_auditPage*AUDIT_PAGE_SIZE, to=from+AUDIT_PAGE_SIZE-1;
+  const actionFilter=document.getElementById('audit-filter-action')?document.getElementById('audit-filter-action').value:'';
+  let q=db.from('audit_log').select('*').order('created_at',{ascending:false});
+  if(actionFilter) q=q.eq('action',actionFilter);
+  const {data,error}=await q.range(from,to);
+  if(error||!data||!data.length){
+    tbl.innerHTML=`<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--gray-text);">${error?'Error loading log.':(_auditPage>0?'No more entries.':'No audit entries yet.')}</td></tr>`;
+    renderAuditPager(0);return;
   }
   tbl.innerHTML=data.map(e=>`<tr>
     <td style="font-size:12px;white-space:nowrap;">${new Date(e.created_at).toLocaleString('en-GB',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'})}</td>
@@ -1484,12 +1490,40 @@ async function loadAuditLog(){
     <td>${e.target_code||'\u{2014}'}</td>
     <td style="font-size:12px;color:var(--gray-text);">${e.details?JSON.stringify(e.details):''}</td>
   </tr>`).join('');
+  renderAuditPager(data.length);
+}
+function renderAuditPager(rowCount){
+  let pager=document.getElementById('audit-pager');
+  if(!pager){
+    const sec=document.getElementById('hrAuditLog');if(!sec)return;
+    pager=document.createElement('div');pager.id='audit-pager';
+    pager.style.cssText='margin-top:12px;display:flex;gap:8px;align-items:center;';
+    sec.appendChild(pager);
+  }
+  const atEnd=rowCount<AUDIT_PAGE_SIZE;
+  pager.innerHTML=`<button class="btn btn-outline btn-sm" ${_auditPage===0?'disabled':''} onclick="loadAuditLog(${_auditPage-1})">Prev</button>
+    <span style="font-size:13px;color:var(--gray-text);">Page ${_auditPage+1}</span>
+    <button class="btn btn-outline btn-sm" ${atEnd?'disabled':''} onclick="loadAuditLog(${_auditPage+1})">Next</button>`;
 }
 
 // == UTILITIES ==
 function setLoading(msg) {
   document.getElementById('loading-msg').textContent = msg||'';
   document.getElementById('loading-overlay').classList.add('show');
+}
+// Fetch all rows in pages of 1000 so the default cap never truncates results.
+async function selectAllRows(table, columns, applyFilters){
+  const PAGE=1000; let from=0, all=[];
+  while(true){
+    let q=db.from(table).select(columns);
+    if(applyFilters) q=applyFilters(q);
+    const {data,error}=await q.range(from, from+PAGE-1);
+    if(error){console.warn('selectAllRows '+table, error); break;}
+    all=all.concat(data||[]);
+    if(!data || data.length<PAGE) break;
+    from+=PAGE;
+  }
+  return all;
 }
 function clearLoading() { document.getElementById('loading-overlay').classList.remove('show'); }
 function toast(msg) {
@@ -1826,6 +1860,7 @@ async function doLogin() {
   await loadUserProfile(data.user.id,data.user.email);
   clearLoading();
   applyLogin();
+  logAudit('LOGIN', state.currentUser?state.currentUser.employee_code:null, {});
 }
 function showLoginErr(msg){const el=document.getElementById('login-error');el.textContent=msg;el.style.display='';}
 
@@ -2369,10 +2404,15 @@ async function saveMgrReview(){
 async function loadHRData(){
   if(!state.activeCycle){const s=document.getElementById('hr-dash-sub');if(s)s.textContent='No active PA cycle \u{2014} go to PA Cycles to create one.';return;}
   setLoading('Loading HR data\u{2026}');
-  const {data:allP}=await db.from('profiles').select('*').eq('is_active',true);
-  const {data:allS}=await db.from('pa_submissions').select('*').eq('cycle_id',state.activeCycle.id);
+  // Page past the 1000 cap. List view skips the heavy section_data blob;
+  // the full record is fetched on demand when HR opens one employee.
+  const allP=await selectAllRows('profiles','*',q=>q.eq('is_active',true));
+  const allS=await selectAllRows('pa_submissions',
+    'id,employee_code,cycle_id,status,submitted_at,reviewed_at,updated_at,manager_section_comments,manager_overall_rating',
+    q=>q.eq('cycle_id',state.activeCycle.id));
+  const subByCode=new Map((allS||[]).map(s=>[s.employee_code,s]));
   state.allProfiles=allP||[];
-  state.allData=(allP||[]).map(p=>({profile:p,submission:(allS||[]).find(s=>s.employee_code===p.employee_code)||null,status:(allS||[]).find(s=>s.employee_code===p.employee_code)?.status||'Not Started'}));
+  state.allData=(allP||[]).map(p=>{const s=subByCode.get(p.employee_code)||null;return {profile:p,submission:s,status:s?s.status:'Not Started'};});
   const sub=document.getElementById('hr-dash-sub');if(sub)sub.textContent='PA Tracker \u{2014} '+state.activeCycle.name;
   const depts=[...new Set(state.allProfiles.map(p=>p.department).filter(Boolean))].sort();
   const deptSel=document.getElementById('hr-filter-dept');
@@ -2426,9 +2466,16 @@ function updateHRStats(){
   if(el('hr-completion-text'))el('hr-completion-text').textContent=done+' of '+total+' employees in progress or done';
   if(el('hr-completion-pct'))el('hr-completion-pct').textContent=pct+'%';
 }
-function openHRDetail(empCode){
+async function openHRDetail(empCode){
   const item=state.allData.find(i=>i.profile.employee_code===empCode);if(!item)return;
   state.selectedEmpCode=empCode;
+  // section_data is not in the list (kept light), so load the full record now.
+  if(item.submission && !item.submission.section_data){
+    setLoading('Loading record\u{2026}');
+    const {data:full}=await db.from('pa_submissions').select('*').eq('id',item.submission.id).single();
+    clearLoading();
+    if(full) item.submission=full;
+  }
   const narrCard=document.getElementById('hr-narrative-card');if(narrCard)narrCard.style.display='';
   const narrOut=document.getElementById('hr-narrative-output');if(narrOut)narrOut.textContent='';
   const p=item.profile,sub=item.submission,sd=sub?(sub.section_data||{}):{};
