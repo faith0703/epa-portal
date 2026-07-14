@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ePA Portal v2.2 &#8212; Performance Appraisal</title>
+<title>ePA Portal v2.3 &#8212; Performance Appraisal</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -1270,6 +1270,7 @@
 <div class="modal-overlay" id="modal-approve">
   <div class="modal"><div class="modal-icon">&#9989;</div><div class="modal-title">Approve this PA?</div>
     <div class="modal-msg">The employee will be notified that their PA has been approved. This action will be recorded.</div>
+    <div id="approve-score-warn" style="display:none;margin:0 0 14px;padding:10px 12px;border-radius:6px;background:#fff4e5;border:1px solid #f0b37e;color:#7a4a00;font-size:12px;text-align:left;line-height:1.5;"></div>
     <div class="modal-actions"><button class="btn btn-ghost" onclick="closeModal('modal-approve')">Cancel</button><button class="btn btn-success" onclick="confirmApprove()">Yes, Approve</button></div>
   </div></div>
 
@@ -1485,10 +1486,10 @@ async function loadAuditLog(page){
   }
   tbl.innerHTML=data.map(e=>`<tr>
     <td style="font-size:12px;white-space:nowrap;">${new Date(e.created_at).toLocaleString('en-GB',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'})}</td>
-    <td>${e.actor_code||'\u{2014}'}</td>
-    <td><code style="font-size:12px;background:var(--blue-light);padding:2px 6px;border-radius:4px;">${e.action||'\u{2014}'}</code></td>
-    <td>${e.target_code||'\u{2014}'}</td>
-    <td style="font-size:12px;color:var(--gray-text);">${e.details?JSON.stringify(e.details):''}</td>
+    <td>${esc(e.actor_code)||'\u{2014}'}</td>
+    <td><code style="font-size:12px;background:var(--blue-light);padding:2px 6px;border-radius:4px;">${esc(e.action)||'\u{2014}'}</code></td>
+    <td>${esc(e.target_code)||'\u{2014}'}</td>
+    <td style="font-size:12px;color:var(--gray-text);">${e.details?esc(JSON.stringify(e.details)):''}</td>
   </tr>`).join('');
   renderAuditPager(data.length);
 }
@@ -1524,6 +1525,18 @@ async function selectAllRows(table, columns, applyFilters){
     from+=PAGE;
   }
   return all;
+}
+// v2.3 security: HTML-entity escape. Wrap EVERY user-supplied or DB-sourced value
+// interpolated into an innerHTML template string (text nodes AND attribute values).
+// Without this, a name/comment/CSV cell containing markup executes as script.
+function esc(v) {
+  if (v === null || v === undefined) return '';
+  return String(v)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
 }
 function clearLoading() { document.getElementById('loading-overlay').classList.remove('show'); }
 function toast(msg) {
@@ -1591,9 +1604,9 @@ function buildObjSection(wrapId, isEE) {
   if (!wrap) return;
   let html = '';
   OBJS.forEach(o => {
-    const agree = isEE ? `<input id="obj${o.id}_agree" placeholder="Describe the objective\u{2026}" value="${o.agree||''}">` : `<input readonly value="${o.agree||'(not set)'}">`;
-    const review = isEE ? `<input id="obj${o.id}_review" placeholder="Final review / outcome\u{2026}" value="${o.review||''}">` : `<input readonly value="${o.review||'(not set)'}">`;
-    const wInput = isEE ? `<input id="obj${o.id}_w" type="number" min="0" max="100" value="${o.w||20}" style="width:70px;" onchange="updateWeightTotal()">%` : `<span class="wt-pill">${o.w||20}%</span>`;
+    const agree = isEE ? `<input id="obj${o.id}_agree" placeholder="Describe the objective\u{2026}" value="${esc(o.agree||'')}">` : `<input readonly value="${esc(o.agree||'(not set)')}">`;
+    const review = isEE ? `<input id="obj${o.id}_review" placeholder="Final review / outcome\u{2026}" value="${esc(o.review||'')}">` : `<input readonly value="${esc(o.review||'(not set)')}">`;
+    const wInput = isEE ? `<input id="obj${o.id}_w" type="number" min="0" max="100" value="${esc(o.w||20)}" style="width:70px;" onchange="updateWeightTotal()">%` : `<span class="wt-pill">${esc(o.w||20)}%</span>`;
     const selfDD = scoreDD('obj'+o.id+'_self', o.self||null, !isEE, 'obj');
     const mgrDD  = isEE ? scoreDD('obj'+o.id+'_mgr', null, true, 'obj') : scoreDD('obj'+o.id+'_mgr', SC['obj'+o.id+'_mgr']||null, false, 'obj');
     const agrDD  = isEE ? scoreDD('obj'+o.id+'_agr', null, true, 'obj') : scoreDD('obj'+o.id+'_agr', SC['obj'+o.id+'_agr']||null, false, 'obj');
@@ -1691,7 +1704,7 @@ function addDevRow(act, dt, resp) {
   const tb = document.getElementById('dev-tbody');
   if (!tb) return;
   const tr = document.createElement('tr');
-  tr.innerHTML = `<td><input placeholder="Development action\u{2026}" value="${act||''}"></td><td><input type="date" value="${dt||''}"></td><td><input placeholder="Responsible\u{2026}" value="${resp||''}"></td><td><button class="btn btn-ghost" style="padding:3px 8px;" onclick="this.closest('tr').remove()">\u{2715}</button></td>`;
+  tr.innerHTML = `<td><input placeholder="Development action\u{2026}" value="${esc(act||'')}"></td><td><input type="date" value="${esc(dt||'')}"></td><td><input placeholder="Responsible\u{2026}" value="${esc(resp||'')}"></td><td><button class="btn btn-ghost" style="padding:3px 8px;" onclick="this.closest('tr').remove()">\u{2715}</button></td>`;
   tb.appendChild(tr);
 }
 
@@ -1707,7 +1720,7 @@ function addNYRow(desc, w) {
   const tb = document.getElementById('ny-tbody');
   if (!tb) return;
   const tr = document.createElement('tr');
-  tr.innerHTML = `<td><input placeholder="New year objective\u{2026}" value="${desc||''}"></td><td><input type="number" min="0" max="100" placeholder="Weight %" value="${w||''}"></td><td><button class="btn btn-ghost" style="padding:3px 8px;" onclick="this.closest('tr').remove()">\u{2715}</button></td>`;
+  tr.innerHTML = `<td><input placeholder="New year objective\u{2026}" value="${esc(desc||'')}"></td><td><input type="number" min="0" max="100" placeholder="Weight %" value="${esc(w||'')}"></td><td><button class="btn btn-ghost" style="padding:3px 8px;" onclick="this.closest('tr').remove()">\u{2715}</button></td>`;
   tb.appendChild(tr);
 }
 
@@ -1755,7 +1768,10 @@ function toggleMgmt() {
   if (body) body.style.display = (cb && cb.checked) ? 'block' : 'none';
 }
 
-function calcMgrLive() {
+// Pure calculation of the manager's objective avg, competency avg and final score.
+// Returns nulls when scores are incomplete. No DOM writes \u{2014} safe to call from
+// collectMgrReview() so the final score is PERSISTED, not just displayed. (v2.3 fix)
+function computeFinalScore() {
   // Objectives weighted avg (use agreed if set, else mgr)
   // SC keys stored by onDD: 'obj{id}_mgr', 'obj{id}_agr' (mgr view selects)
   let wSum = 0, wsSum = 0, objCount = 0;
@@ -1780,6 +1796,23 @@ function calcMgrLive() {
   });
   const compAvg = cCount > 0 ? (cSum / cCount) : null;
   const final   = (objAvg && compAvg) ? ((objAvg + compAvg) / 2) : null;
+
+  return {
+    objAvg: objAvg,
+    compAvg: compAvg,
+    final: final,
+    objCount: objCount,
+    objTotal: OBJS.length,
+    compCount: cCount,
+    compTotal: COMPS.length,
+    complete: (objCount === OBJS.length && cCount === COMPS.length && final !== null)
+  };
+}
+
+function calcMgrLive() {
+  const r = computeFinalScore();
+  const objAvg = r.objAvg, compAvg = r.compAvg, final = r.final;
+  const objCount = r.objCount, cCount = r.compCount;
 
   // Update live panel
   const fmt = v => v ? v.toFixed(2) : '\u{2014}';
@@ -2204,10 +2237,10 @@ async function loadPAHistory(){
     const mgrName=managerNames[s.manager_code]||(s.manager_code||'\u{2014}');
     const finalScore=s.manager_section_comments?.final_score??s.manager_overall_rating??null;
     return`<tr>
-      <td>${cycleName}</td>
-      <td>${fmtDate(s.submitted_at)}</td>
-      <td>${mgrName}</td>
-      <td><span class="badge ${getBadge(s.status)}">${s.status}</span></td>
+      <td>${esc(cycleName)}</td>
+      <td>${esc(fmtDate(s.submitted_at))}</td>
+      <td>${esc(mgrName)}</td>
+      <td><span class="badge ${getBadge(s.status)}">${esc(s.status)}</span></td>
       <td>${finalScore!==null?Number(finalScore).toFixed(1):'\u{2014}'}</td>
     </tr>`;
   }).join('');
@@ -2229,10 +2262,10 @@ function renderMgrTeam(){
   const row=item=>{
     const p=item.profile,status=item.status,sub=item.submission,submittedAt=sub?fmtDate(sub.submitted_at):'\u{2014}';
     const canReview=status==='Submitted'||status==='Under Review';
-    return `<tr class="clickable" onclick="openMgrReview('${p.employee_code}')">
-      <td><strong>${p.full_name}</strong><br><span style="font-size:12px;color:var(--gray-text)">${p.email||''}</span></td>
-      <td>${p.department||'\u{2014}'}</td><td><span class="badge ${getBadge(status)}">${status}</span></td><td>${submittedAt}</td>
-      <td>${canReview?'<button class="btn btn-primary btn-sm" onclick="event.stopPropagation();openMgrReview(\''+p.employee_code+'\')">Review \u{2192}</button>':'<span style="color:var(--gray-text);font-size:12px;">'+(status==='Approved'?'\u{2705} Done':'\u{2014}')+'</span>'}</td></tr>`;};
+    return `<tr class="clickable" onclick="openMgrReview('${esc(p.employee_code)}')">
+      <td><strong>${esc(p.full_name)}</strong><br><span style="font-size:12px;color:var(--gray-text)">${esc(p.email||'')}</span></td>
+      <td>${esc(p.department||'\u{2014}')}</td><td><span class="badge ${getBadge(status)}">${esc(status)}</span></td><td>${esc(submittedAt)}</td>
+      <td>${canReview?'<button class="btn btn-primary btn-sm" onclick="event.stopPropagation();openMgrReview(\''+esc(p.employee_code)+'\')">Review \u{2192}</button>':'<span style="color:var(--gray-text);font-size:12px;">'+(status==='Approved'?'\u{2705} Done':'\u{2014}')+'</span>'}</td></tr>`;};
   const html=state.teamData.map(row).join('');
   ['mgr-team-preview','mgr-team-full'].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML=html||'<tr><td colspan="5" style="text-align:center;padding:24px;color:var(--gray-text);">No direct reports found.</td></tr>';});
   const el=id=>document.getElementById(id);
@@ -2253,7 +2286,7 @@ async function openMgrReview(empCode){
   const msc=sub?(sub.manager_section_comments||{}):{};
 
   const av=p.full_name.split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase();
-  document.getElementById('mgr-emp-profile-card').innerHTML=`<div class="emp-profile-card"><div class="emp-avatar">${av}</div><div><div class="emp-name">${p.full_name}</div><div class="emp-meta">${p.department||'\u{2014}'} \u{B7} ${p.position||''}</div><div class="emp-meta">${p.email||''}</div></div><div class="emp-status-wrap"><span class="badge ${getBadge(item.status)}">${item.status}</span><div style="font-size:12px;color:var(--gray-text);margin-top:6px;">Submitted: ${sub?fmtDate(sub.submitted_at):'\u{2014}'}</div></div></div>`;
+  document.getElementById('mgr-emp-profile-card').innerHTML=`<div class="emp-profile-card"><div class="emp-avatar">${esc(av)}</div><div><div class="emp-name">${esc(p.full_name)}</div><div class="emp-meta">${esc(p.department||'\u{2014}')} \u{B7} ${esc(p.position||'')}</div><div class="emp-meta">${esc(p.email||'')}</div></div><div class="emp-status-wrap"><span class="badge ${getBadge(item.status)}">${esc(item.status)}</span><div style="font-size:12px;color:var(--gray-text);margin-top:6px;">Submitted: ${sub?esc(fmtDate(sub.submitted_at)):'\u{2014}'}</div></div></div>`;
 
   // Overlay employee self scores into SC for display
   const savedObjs=sd.objectives||[];
@@ -2286,7 +2319,7 @@ async function openMgrReview(empCode){
     const devActions=(sd.dev_actions||[]).filter(a=>a.action);
     if(devActions.length){
       let html='<table style="width:100%;border-collapse:collapse;font-size:13px;"><thead><tr style="background:var(--gray-bg);"><th style="padding:6px 10px;text-align:left;width:55%">Action</th><th style="padding:6px 10px;white-space:nowrap;">Fixed Date</th><th style="padding:6px 10px;">Responsible</th></tr></thead><tbody>';
-      devActions.forEach(a=>{html+=`<tr style="border-top:1px solid var(--gray-border);"><td style="padding:8px 10px;">${a.action||'\u{2014}'}</td><td style="padding:8px 10px;white-space:nowrap;">${a.date||'\u{2014}'}</td><td style="padding:8px 10px;">${a.responsible||'\u{2014}'}</td></tr>`;});
+      devActions.forEach(a=>{html+=`<tr style="border-top:1px solid var(--gray-border);"><td style="padding:8px 10px;">${esc(a.action||'\u{2014}')}</td><td style="padding:8px 10px;white-space:nowrap;">${esc(a.date||'\u{2014}')}</td><td style="padding:8px 10px;">${esc(a.responsible||'\u{2014}')}</td></tr>`;});
       html+='</tbody></table>';
       devView.innerHTML=html;
     }else{devView.innerHTML='<span style="color:var(--gray-text);font-size:13px;">(Not filled by employee)</span>';}
@@ -2302,7 +2335,7 @@ async function openMgrReview(empCode){
     const nyObjs=(sd.ny_objectives||[]).filter(o=>o.desc);
     if(nyObjs.length){
       let html='<table style="width:100%;border-collapse:collapse;font-size:13px;"><thead><tr style="background:var(--gray-bg);"><th style="padding:6px 10px;text-align:left;">Objective Description</th><th style="padding:6px 10px;text-align:center;width:20%">Weight (%)</th></tr></thead><tbody>';
-      nyObjs.forEach(o=>{html+=`<tr style="border-top:1px solid var(--gray-border);"><td style="padding:8px 10px;">${o.desc}</td><td style="padding:8px 10px;text-align:center;">${o.weight||'\u{2014}'}</td></tr>`;});
+      nyObjs.forEach(o=>{html+=`<tr style="border-top:1px solid var(--gray-border);"><td style="padding:8px 10px;">${esc(o.desc)}</td><td style="padding:8px 10px;text-align:center;">${esc(o.weight||'\u{2014}')}</td></tr>`;});
       html+='</tbody></table>';
       nyView.innerHTML=html;
     }else{nyView.innerHTML='<span style="color:var(--gray-text);font-size:13px;">(Not filled by employee)</span>';}
@@ -2354,15 +2387,40 @@ function collectMgrReview(){
     const exEl=document.getElementById('mgr_'+c.id+'_expl'); if(exEl&&exEl.value) compExpl[c.id]=exEl.value;
   });
   const s7Ex=document.getElementById('mgr_sup_expectations'); const s8Rmk=document.getElementById('mgr_sup_remarks');
+  // v2.3 fix: compute and PERSIST the final score. Previously this was only ever
+  // rendered to the live panel by calcMgrLive() and never written to the DB, so
+  // every downstream reader (Reports, Increment Engine, PDF, calibration) saw null.
+  const calc=computeFinalScore();
+  const finalScore=(calc.final!=null)?parseFloat(calc.final.toFixed(2)):null;
   return {
-    manager_section_comments:{obj_scores:objScores,comp_scores:compScores,comp_expl:compExpl,s7_comment:s7Ex?s7Ex.value:'',s8_remarks:s8Rmk?s8Rmk.value:''},
+    manager_section_comments:{obj_scores:objScores,comp_scores:compScores,comp_expl:compExpl,s7_comment:s7Ex?s7Ex.value:'',s8_remarks:s8Rmk?s8Rmk.value:'',final_score:finalScore,obj_avg:(calc.objAvg!=null)?parseFloat(calc.objAvg.toFixed(2)):null,comp_avg:(calc.compAvg!=null)?parseFloat(calc.compAvg.toFixed(2)):null},
     manager_section_ratings:{},// kept for schema compat
-    manager_overall_rating:state.currentEmp?.submission?.manager_overall_rating||null,
+    manager_overall_rating:finalScore,
     manager_recommendation:document.getElementById('mgr-recommendation')?.value||null,
     manager_overall_comment:document.getElementById('mgr-overall-comment')?.value||'',
   };
 }
-function approvePA(){showModal('modal-approve');}
+function approvePA(){
+  // v2.3: warn (do NOT block) if the final score cannot be computed \u{2014} the PA would
+  // otherwise be approved with a blank score that silently breaks Reports/Increment.
+  const calc=computeFinalScore();
+  const w=document.getElementById('approve-score-warn');
+  if(w){
+    if(calc.complete){ w.style.display='none'; w.textContent=''; }
+    else{
+      const missing=[];
+      if(calc.objCount<calc.objTotal) missing.push((calc.objTotal-calc.objCount)+' objective score(s)');
+      if(calc.compCount<calc.compTotal) missing.push((calc.compTotal-calc.compCount)+' competency score(s)');
+      w.textContent='Warning: final score is incomplete. Missing '+(missing.join(' and ')||'scores')+'. '+
+        (calc.final==null
+          ? 'This PA will be approved with a BLANK final score, and will not appear correctly in Reports, the Increment Engine or the exported PDF.'
+          : 'The final score will be calculated from the scores entered so far ('+calc.final.toFixed(2)+').')+
+        ' You can still approve, but consider going back and completing the scores first.';
+      w.style.display='block';
+    }
+  }
+  showModal('modal-approve');
+}
 function returnPA(){showModal('modal-return');}
 async function confirmApprove(){
   closeModal('modal-approve');const item=state.currentEmp;if(!item||!item.submission)return;
@@ -2416,12 +2474,12 @@ async function loadHRData(){
   const sub=document.getElementById('hr-dash-sub');if(sub)sub.textContent='PA Tracker \u{2014} '+state.activeCycle.name;
   const depts=[...new Set(state.allProfiles.map(p=>p.department).filter(Boolean))].sort();
   const deptSel=document.getElementById('hr-filter-dept');
-  if(deptSel)deptSel.innerHTML='<option value="">All Departments</option>'+depts.map(d=>`<option value="${d}">${d}</option>`).join('');
+  if(deptSel)deptSel.innerHTML='<option value="">All Departments</option>'+depts.map(d=>`<option value="${esc(d)}">${esc(d)}</option>`).join('');
   // U3: populate manager filter dropdown
   const mgrSel=document.getElementById('hr-filter-mgr');
   if(mgrSel){
     const managers=state.allProfiles.filter(p=>p.role==='manager'||p.role==='hr').sort((a,b)=>a.full_name.localeCompare(b.full_name));
-    mgrSel.innerHTML='<option value="">All Managers</option>'+managers.map(m=>`<option value="${m.employee_code}">${m.full_name}</option>`).join('');
+    mgrSel.innerHTML='<option value="">All Managers</option>'+managers.map(m=>`<option value="${esc(m.employee_code)}">${esc(m.full_name)}</option>`).join('');
   }
   clearLoading();renderHRTables();
 }
@@ -2430,7 +2488,7 @@ function renderHRRecent(){
   const tbl=document.getElementById('hr-recent-table');if(!tbl)return;
   tbl.innerHTML=state.allData.slice(0,5).map(item=>{
     const p=item.profile,sub=item.submission,mgr=state.allProfiles.find(x=>x.employee_code===p.manager_code);
-    return `<tr class="clickable" onclick="openHRDetail('${p.employee_code}')"><td><strong>${p.full_name}</strong></td><td>${mgr?mgr.full_name:(p.manager_code||'\u{2014}')}</td><td>${p.department||'\u{2014}'}</td><td><span class="badge ${getBadge(item.status)}">${item.status}</span></td><td>${sub?fmtDate(sub.updated_at):'\u{2014}'}</td></tr>`;
+    return `<tr class="clickable" onclick="openHRDetail('${esc(p.employee_code)}')"><td><strong>${esc(p.full_name)}</strong></td><td>${esc(mgr?mgr.full_name:(p.manager_code||'\u{2014}'))}</td><td>${esc(p.department||'\u{2014}')}</td><td><span class="badge ${getBadge(item.status)}">${esc(item.status)}</span></td><td>${sub?esc(fmtDate(sub.updated_at)):'\u{2014}'}</td></tr>`;
   }).join('')||'<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--gray-text);">No data yet.</td></tr>';
 }
 function renderHRAll(filterStatus='',filterDept='',filterMgr=''){
@@ -2442,7 +2500,7 @@ function renderHRAll(filterStatus='',filterDept='',filterMgr=''){
   tbl.innerHTML=data.map(item=>{
     const p=item.profile,sub=item.submission,mgr=state.allProfiles.find(x=>x.employee_code===p.manager_code);
     const finalScore=item.submission?.manager_section_comments?.final_score ?? item.submission?.manager_overall_rating ?? null;
-    return `<tr class="clickable" onclick="openHRDetail('${p.employee_code}')"><td><strong>${p.full_name}</strong><br><span style="font-size:12px;color:var(--gray-text)">${p.email||''}</span></td><td>${p.department||'\u{2014}'}</td><td>${mgr?mgr.full_name:(p.manager_code||'\u{2014}')}</td><td><span class="badge ${getBadge(item.status)}">${item.status}</span></td><td>${sub?fmtDate(sub.submitted_at):'\u{2014}'}</td><td><button class="btn btn-outline btn-sm" onclick="event.stopPropagation();openHRDetail('${p.employee_code}')">View</button></td><td>${riskBadge(item.status==='Approved'?finalScore:null)}</td></tr>`;
+    return `<tr class="clickable" onclick="openHRDetail('${esc(p.employee_code)}')"><td><strong>${esc(p.full_name)}</strong><br><span style="font-size:12px;color:var(--gray-text)">${esc(p.email||'')}</span></td><td>${esc(p.department||'\u{2014}')}</td><td>${esc(mgr?mgr.full_name:(p.manager_code||'\u{2014}'))}</td><td><span class="badge ${getBadge(item.status)}">${esc(item.status)}</span></td><td>${sub?esc(fmtDate(sub.submitted_at)):'\u{2014}'}</td><td><button class="btn btn-outline btn-sm" onclick="event.stopPropagation();openHRDetail('${esc(p.employee_code)}')">View</button></td><td>${riskBadge(item.status==='Approved'?finalScore:null)}</td></tr>`;
   }).join('')||'<tr><td colspan="7" style="text-align:center;padding:20px;color:var(--gray-text);">No records found.</td></tr>';
 }
 function riskBadge(fs){
@@ -2482,7 +2540,7 @@ async function openHRDetail(empCode){
   const msc=sub?(sub.manager_section_comments||{}):{};
   const av=p.full_name.split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase();
   const mgr=state.allProfiles.find(x=>x.employee_code===p.manager_code);
-  document.getElementById('hr-detail-profile').innerHTML=`<div class="emp-profile-card"><div class="emp-avatar">${av}</div><div><div class="emp-name">${p.full_name}</div><div class="emp-meta">${p.department||'\u{2014}'} \u{B7} Manager: ${mgr?mgr.full_name:(p.manager_code||'\u{2014}')}</div><div class="emp-meta">${p.email||''}</div></div><div class="emp-status-wrap"><span class="badge ${getBadge(item.status)}">${item.status}</span><div style="font-size:12px;color:var(--gray-text);margin-top:6px;">Submitted: ${sub?fmtDate(sub.submitted_at):'\u{2014}'}</div></div></div>`;
+  document.getElementById('hr-detail-profile').innerHTML=`<div class="emp-profile-card"><div class="emp-avatar">${esc(av)}</div><div><div class="emp-name">${esc(p.full_name)}</div><div class="emp-meta">${esc(p.department||'\u{2014}')} \u{B7} Manager: ${esc(mgr?mgr.full_name:(p.manager_code||'\u{2014}'))}</div><div class="emp-meta">${esc(p.email||'')}</div></div><div class="emp-status-wrap"><span class="badge ${getBadge(item.status)}">${esc(item.status)}</span><div style="font-size:12px;color:var(--gray-text);margin-top:6px;">Submitted: ${sub?esc(fmtDate(sub.submitted_at)):'\u{2014}'}</div></div></div>`;
 
   // S2 Objectives
   const objs=sd.objectives||[];
@@ -2492,7 +2550,7 @@ async function openHRDetail(empCode){
     objHtml+='<thead><tr style="background:var(--gray-bg);"><th style="padding:6px 10px;text-align:left;">Obj</th><th style="padding:6px 10px;text-align:left;">Description</th><th style="padding:6px 10px;text-align:center;">Wt</th><th style="padding:6px 10px;text-align:center;">Self</th><th style="padding:6px 10px;text-align:center;">Mgr</th><th style="padding:6px 10px;text-align:center;">Agreed</th></tr></thead><tbody>';
     objs.forEach(o=>{
       const self=o.self_score||'\u{2014}', mgSc=objScores['obj'+o.id+'_mgr']||'\u{2014}', agr=objScores['obj'+o.id+'_agr']||'\u{2014}';
-      objHtml+=`<tr style="border-top:1px solid var(--gray-border);"><td style="padding:8px 10px;font-weight:600;">#${o.id}</td><td style="padding:8px 10px;">${o.agree||'(not set)'}<br><span style="font-size:11px;color:var(--gray-text);">${o.review||''}</span></td><td style="padding:8px 10px;text-align:center;">${o.weight||20}%</td><td style="padding:8px 10px;text-align:center;font-weight:600;">${self}</td><td style="padding:8px 10px;text-align:center;font-weight:600;">${mgSc}</td><td style="padding:8px 10px;text-align:center;font-weight:600;">${agr}</td></tr>`;
+      objHtml+=`<tr style="border-top:1px solid var(--gray-border);"><td style="padding:8px 10px;font-weight:600;">#${esc(o.id)}</td><td style="padding:8px 10px;">${esc(o.agree||'(not set)')}<br><span style="font-size:11px;color:var(--gray-text);">${esc(o.review||'')}</span></td><td style="padding:8px 10px;text-align:center;">${esc(o.weight||20)}%</td><td style="padding:8px 10px;text-align:center;font-weight:600;">${esc(self)}</td><td style="padding:8px 10px;text-align:center;font-weight:600;">${esc(mgSc)}</td><td style="padding:8px 10px;text-align:center;font-weight:600;">${esc(agr)}</td></tr>`;
     });
     objHtml+='</tbody></table>';
     document.getElementById('hr-detail-objectives').innerHTML='<div class="tbl-scroll">'+objHtml+'</div>';
@@ -2507,7 +2565,7 @@ async function openHRDetail(empCode){
     compHtml+='<thead><tr style="background:var(--gray-bg);"><th style="padding:6px 10px;text-align:left;">Competency</th><th style="padding:6px 10px;text-align:center;">Self</th><th style="padding:6px 10px;text-align:center;">Mgr</th><th style="padding:6px 10px;text-align:center;">Agreed</th></tr></thead><tbody>';
     COMPS.forEach(c=>{
       const self=cSelf[c.id]||'\u{2014}', mgSc=compScores['mgr_'+c.id+'_mgr']||'\u{2014}', agr=compScores['mgr_'+c.id+'_agr']||'\u{2014}';
-      compHtml+=`<tr style="border-top:1px solid var(--gray-border);"><td style="padding:8px 10px;">${c.n}</td><td style="padding:8px 10px;text-align:center;font-weight:600;">${self}</td><td style="padding:8px 10px;text-align:center;font-weight:600;">${mgSc}</td><td style="padding:8px 10px;text-align:center;font-weight:600;">${agr}</td></tr>`;
+      compHtml+=`<tr style="border-top:1px solid var(--gray-border);"><td style="padding:8px 10px;">${esc(c.n)}</td><td style="padding:8px 10px;text-align:center;font-weight:600;">${esc(self)}</td><td style="padding:8px 10px;text-align:center;font-weight:600;">${esc(mgSc)}</td><td style="padding:8px 10px;text-align:center;font-weight:600;">${esc(agr)}</td></tr>`;
     });
     compHtml+='</tbody></table>';
     document.getElementById('hr-detail-comps').innerHTML='<div class="tbl-scroll">'+compHtml+'</div>';
@@ -2518,9 +2576,9 @@ async function openHRDetail(empCode){
   // S6 Satisfaction
   const smileyLabels={happy:'Satisfied \u{1F60A}',neutral:'Neutral \u{1F610}',sad:'Unsatisfied \u{1F61E}'};
   const satParts=[];
-  if(sd.smiley) satParts.push('<strong>Overall:</strong> '+( smileyLabels[sd.smiley]||sd.smiley));
-  if(sd.sat_training) satParts.push('<strong>Training/Conditions:</strong> '+sd.sat_training);
-  if(sd.sat_teamwork) satParts.push('<strong>Teamwork:</strong> '+sd.sat_teamwork);
+  if(sd.smiley) satParts.push('<strong>Overall:</strong> '+esc(smileyLabels[sd.smiley]||sd.smiley));
+  if(sd.sat_training) satParts.push('<strong>Training/Conditions:</strong> '+esc(sd.sat_training));
+  if(sd.sat_teamwork) satParts.push('<strong>Teamwork:</strong> '+esc(sd.sat_teamwork));
   document.getElementById('hr-detail-satisfaction').innerHTML=satParts.length?satParts.map(t=>`<div style="margin-bottom:8px;">${t}</div>`).join(''):'(Not filled)';
 
   // S7 Expectations
@@ -2552,10 +2610,10 @@ async function loadHREmployeeHistory(empCode){
     const selfObjs=(s.section_data?.objectives||[]).map(o=>o.self_score).filter(Boolean);
     const selfAvg=selfObjs.length?(selfObjs.reduce((a,b)=>a+b,0)/selfObjs.length).toFixed(1):'\u{2014}';
     return`<tr>
-      <td><strong>${cycleName}</strong></td>
-      <td>${fmtDate(s.submitted_at)}</td>
-      <td><span class="badge ${getBadge(s.status)}">${s.status}</span></td>
-      <td>${selfAvg}</td>
+      <td><strong>${esc(cycleName)}</strong></td>
+      <td>${esc(fmtDate(s.submitted_at))}</td>
+      <td><span class="badge ${getBadge(s.status)}">${esc(s.status)}</span></td>
+      <td>${esc(selfAvg)}</td>
       <td>${finalScore!==null?Number(finalScore).toFixed(1):'\u{2014}'}</td>
     </tr>`;
   }).join('');
@@ -2606,7 +2664,9 @@ function generateNarrative(){
   const selfObjs=(sub.section_data?.objectives||[]).map(o=>parseFloat(o.self_score)).filter(v=>!isNaN(v));
   const selfAvg=selfObjs.length?selfObjs.reduce((a,b)=>a+b,0)/selfObjs.length:null;
   const delta=(selfAvg!==null)?finalScore-selfAvg:null;
-  const mgrComment=sub.manager_section_comments?.overall_comments || sub.manager_overall_comments || '';
+  // v2.3 fix: saved by collectMgrReview() as manager_overall_comment (singular).
+  // The old plural/nested reads never matched anything, so the comment never displayed.
+  const mgrComment=sub.manager_overall_comment || sub.manager_section_comments?.overall_comments || '';
   let band;
   if(finalScore<2)band='is showing significant performance gaps that require a structured improvement plan';
   else if(finalScore<3)band='is meeting some expectations but has clear areas for development';
@@ -2670,7 +2730,8 @@ function exportEmployeePDF(){
   doc.setFont('helvetica','normal');doc.setFontSize(11);
   doc.text('Manager Comments:',left,y);y+=6;
   doc.setFontSize(10);
-  const mgrComment=msc.overall_comments || sub.manager_overall_comments || '(No comments)';
+  // v2.3 fix: read the singular field that collectMgrReview() actually writes.
+  const mgrComment=sub.manager_overall_comment || msc.overall_comments || '(No comments)';
   const wrapped=doc.splitTextToSize(mgrComment,right-left);
   doc.text(wrapped,left,y);y+=wrapped.length*5+4;
   line();
@@ -2685,9 +2746,31 @@ function renderReports(){
   const s=document.getElementById('rpt-cycle-sub');if(s)s.textContent=state.activeCycle.name+' \u{2014} Summary Analytics';
   const days=Math.max(0,Math.ceil((new Date(state.activeCycle.end_date)-new Date())/86400000));
   const el=id=>document.getElementById(id);if(el('rpt-days'))el('rpt-days').textContent=days;
-  const allR=state.allData.flatMap(i=>Object.values((i.submission?.section_data?.selfRatings)||{}).filter(v=>v>0));
+  // v2.3 fix: self-ratings live in section_data.objectives[].self_score and
+  // section_data.comp_self{} \u{2014} NOT section_data.selfRatings, which is never written.
+  const allR=state.allData.flatMap(i=>{
+    const sd=i.submission?.section_data||{};
+    const objSelf=(sd.objectives||[]).map(o=>parseFloat(o.self_score));
+    const compSelf=Object.values(sd.comp_self||{}).map(v=>parseFloat(v));
+    return objSelf.concat(compSelf).filter(v=>!isNaN(v)&&v>0);
+  });
   if(el('rpt-avg-self'))el('rpt-avg-self').textContent=allR.length?(allR.reduce((a,b)=>a+b,0)/allR.length).toFixed(1):'\u{2014}';
-  const mgrR=state.allData.flatMap(i=>Object.values((i.submission?.manager_section_ratings)||{}).filter(v=>v>0));
+  // v2.3 fix: manager_section_ratings is always {} (schema-compat stub). Manager scores
+  // live in manager_section_comments.obj_scores / .comp_scores, agreed value winning.
+  const mgrR=state.allData.flatMap(i=>{
+    const msc=i.submission?.manager_section_comments||{};
+    const objSc=msc.obj_scores||{}, compSc=msc.comp_scores||{};
+    const pick=(src)=>{
+      const out={};
+      Object.keys(src).forEach(k=>{
+        const m=k.match(/^(.*)_(mgr|agr)$/); if(!m)return;
+        const base=m[1], type=m[2];
+        if(type==='agr'||out[base]===undefined) out[base]=parseFloat(src[k]);
+      });
+      return Object.values(out);
+    };
+    return pick(objSc).concat(pick(compSc)).filter(v=>!isNaN(v)&&v>0);
+  });
   if(el('rpt-avg-mgr'))el('rpt-avg-mgr').textContent=mgrR.length?(mgrR.reduce((a,b)=>a+b,0)/mgrR.length).toFixed(1):'\u{2014}';
   // I7: flight risk + promo ready counts (Approved PAs only)
   const approvedScores=state.allData.filter(i=>i.status==='Approved').map(i=>{
@@ -2705,7 +2788,7 @@ function renderReports(){
     const subPlus=items.filter(i=>['Submitted','Under Review','Approved'].includes(i.status)).length;
     const appd=items.filter(i=>i.status==='Approved').length,pct=total?Math.round((subPlus/total)*100):0;
     const cls=pct>=100?'badge-approved':pct>=50?'badge-submitted':pct>0?'badge-review':'badge-draft';
-    return`<tr><td>${dept}</td><td>${total}</td><td>${subPlus}</td><td>${appd}</td><td><span class="badge ${cls}">${pct}%</span></td></tr>`;}).join('');
+    return`<tr><td>${esc(dept)}</td><td>${total}</td><td>${subPlus}</td><td>${appd}</td><td><span class="badge ${cls}">${pct}%</span></td></tr>`;}).join('');
 }
 // I6: Bell curve distribution of approved final scores
 function renderBellChart(){
@@ -2759,7 +2842,7 @@ function renderCalibration(){
     if(delta>0.5)flag='\u{1F53A} Inflated';
     else if(delta<-0.5)flag='\u{1F53B} Deflated';
     else flag='\u{2705} Calibrated';
-    return`<tr><td>${name}</td><td>${code}</td><td>${arr.length}</td><td>${theirAvg.toFixed(2)}</td><td>${companyAvg.toFixed(2)}</td><td>${delta>=0?'+':''}${delta.toFixed(2)}</td><td>${flag}</td></tr>`;
+    return`<tr><td>${esc(name)}</td><td>${esc(code)}</td><td>${arr.length}</td><td>${theirAvg.toFixed(2)}</td><td>${companyAvg.toFixed(2)}</td><td>${delta>=0?'+':''}${delta.toFixed(2)}</td><td>${flag}</td></tr>`;
   });
   tbl.innerHTML=rows.join('');
 }
@@ -2793,11 +2876,11 @@ function renderHRIncrement(){
     const scoreDisp=fs!==null?Number(fs).toFixed(2):'\u{2014}';
     const pctClass=pct===0?'badge-returned':pct<=3?'badge-draft':pct<=5?'badge-submitted':pct<=7?'badge-review':'badge-approved';
     return`<tr>
-      <td><strong>${p.full_name}</strong><br><span style="font-size:12px;color:var(--gray-text)">${p.employee_code}</span></td>
-      <td>${p.department||'\u{2014}'}</td>
-      <td>${mgr?mgr.full_name:(p.manager_code||'\u{2014}')}</td>
-      <td style="font-family:monospace;font-weight:700;">${scoreDisp}</td>
-      <td>${band}</td>
+      <td><strong>${esc(p.full_name)}</strong><br><span style="font-size:12px;color:var(--gray-text)">${esc(p.employee_code)}</span></td>
+      <td>${esc(p.department||'\u{2014}')}</td>
+      <td>${esc(mgr?mgr.full_name:(p.manager_code||'\u{2014}'))}</td>
+      <td style="font-family:monospace;font-weight:700;">${esc(scoreDisp)}</td>
+      <td>${esc(band)}</td>
       <td><span class="badge ${pctClass}">${label}</span></td>
     </tr>`;
   }).join('');
@@ -2839,7 +2922,7 @@ function renderProfilesTable(){
   ):state.allProfiles;
   tbl.innerHTML=filtered.map(p=>{
     const mgr=state.allProfiles.find(x=>x.employee_code===p.manager_code);
-    return`<tr><td><strong>${p.employee_code}</strong></td><td>${p.full_name}<br><span style="font-size:11px;color:var(--gray-text)">${p.email||''}</span></td><td><span class="badge ${p.role==='hr'?'badge-approved':p.role==='manager'?'badge-review':'badge-draft'}">${p.role}</span></td><td>${p.department||'\u{2014}'}</td><td>${mgr?mgr.full_name:(p.manager_code||'\u{2014}')}</td><td><span class="badge ${p.is_active?'badge-active':'badge-inactive'}">${p.is_active?'Active':'Inactive'}</span></td><td style="white-space:nowrap;"><button class="btn btn-outline btn-sm" onclick="openEditUser('${p.id}')">Edit</button><button class="btn btn-outline btn-sm" style="margin-left:6px;" onclick="resetUserPassword('${p.email||''}')">Reset Pwd</button>${p.is_active?'<button class="btn-danger-sm" style="margin-left:6px;" onclick="confirmDeactivateUser(\''+p.id+'\')">Deactivate</button>':'<button class="btn btn-outline btn-sm" style="margin-left:6px;" onclick="toggleUserActive(\''+p.id+'\',true)">Reactivate</button>'}</td></tr>`;
+    return`<tr><td><strong>${esc(p.employee_code)}</strong></td><td>${esc(p.full_name)}<br><span style="font-size:11px;color:var(--gray-text)">${esc(p.email||'')}</span></td><td><span class="badge ${p.role==='hr'?'badge-approved':p.role==='manager'?'badge-review':'badge-draft'}">${esc(p.role)}</span></td><td>${esc(p.department||'\u{2014}')}</td><td>${esc(mgr?mgr.full_name:(p.manager_code||'\u{2014}'))}</td><td><span class="badge ${p.is_active?'badge-active':'badge-inactive'}">${p.is_active?'Active':'Inactive'}</span></td><td style="white-space:nowrap;"><button class="btn btn-outline btn-sm" onclick="openEditUser('${esc(p.id)}')">Edit</button><button class="btn btn-outline btn-sm" style="margin-left:6px;" onclick="resetUserPassword('${esc(p.email||'')}')">Reset Pwd</button>${p.is_active?'<button class="btn-danger-sm" style="margin-left:6px;" onclick="confirmDeactivateUser(\''+esc(p.id)+'\')">Deactivate</button>':'<button class="btn btn-outline btn-sm" style="margin-left:6px;" onclick="toggleUserActive(\''+esc(p.id)+'\',true)">Reactivate</button>'}</td></tr>`;
   }).join('')||'<tr><td colspan="7" style="text-align:center;padding:20px;color:var(--gray-text);">No users found.</td></tr>';
 }
 function openAddUser(){
@@ -2865,7 +2948,7 @@ function populateManagerDropdown(selectedCode){
   const sel=document.getElementById('u-manager');if(!sel)return;
   const managers=state.allProfiles.filter(p=>(p.role==='manager'||p.role==='hr')&&p.is_active!==false);
   sel.innerHTML='<option value="">\u{2014} No Manager \u{2014}</option>'+
-    managers.map(m=>`<option value="${m.employee_code}"${m.employee_code===selectedCode?' selected':''}>${m.full_name} (${m.employee_code})</option>`).join('');
+    managers.map(m=>`<option value="${esc(m.employee_code)}"${m.employee_code===selectedCode?' selected':''}>${esc(m.full_name)} (${esc(m.employee_code)})</option>`).join('');
 }
 async function saveUser(){
   const editId=document.getElementById('user-edit-id').value,code=document.getElementById('u-code').value.trim().toUpperCase(),
@@ -2935,12 +3018,12 @@ function parseBulkCSV(input){
     }
     const tbody=document.getElementById('bulk-preview-body');
     tbody.innerHTML=bulkRows.map((r,i)=>`<tr id="bulk-row-${i}">
-      <td style="padding:5px 8px;">${r.employee_code}</td>
-      <td style="padding:5px 8px;">${r.full_name}</td>
-      <td style="padding:5px 8px;">${r.email}</td>
-      <td style="padding:5px 8px;">${r.role}</td>
-      <td style="padding:5px 8px;">${r.department||'\u{2014}'}</td>
-      <td style="padding:5px 8px;">${r.manager_code||'\u{2014}'}</td>
+      <td style="padding:5px 8px;">${esc(r.employee_code)}</td>
+      <td style="padding:5px 8px;">${esc(r.full_name)}</td>
+      <td style="padding:5px 8px;">${esc(r.email)}</td>
+      <td style="padding:5px 8px;">${esc(r.role)}</td>
+      <td style="padding:5px 8px;">${esc(r.department||'\u{2014}')}</td>
+      <td style="padding:5px 8px;">${esc(r.manager_code||'\u{2014}')}</td>
       <td style="padding:5px 8px;" id="bulk-status-${i}"><span style="color:var(--gray-text);font-size:11px;">Pending</span></td>
     </tr>`).join('');
     document.getElementById('bulk-preview-count').textContent=bulkRows.length+' row(s) ready to upload';
@@ -2976,7 +3059,7 @@ async function uploadAllEmployees(){
       ok++;
     }catch(ex){
       const msg=String(ex.message||ex).substring(0,50);
-      if(statusEl)statusEl.innerHTML=`<span class="bulk-status-err" title="${ex.message}">\u{274C} ${msg}</span>`;
+      if(statusEl)statusEl.innerHTML=`<span class="bulk-status-err" title="${esc(ex.message)}">\u{274C} ${esc(msg)}</span>`;
       if(rowEl)rowEl.classList.add('bulk-row-err');
       fail++;
     }
@@ -3028,7 +3111,7 @@ function parseHistCSV(input){
     const tbody=document.getElementById('hist-preview-body');
     tbody.innerHTML=histRows.map((r,i)=>{
       const warn=!r.final_score||!r.cycle_name||!r.employee_code?'<span style="color:var(--red);font-size:11px;">\u{26A0}\u{FE0F} Missing required field</span>':'<span style="color:var(--gray-text);font-size:11px;">Pending</span>';
-      return`<tr id="hist-row-${i}"><td style="padding:5px 8px;">${r.employee_code}</td><td style="padding:5px 8px;">${r.cycle_name}</td><td style="padding:5px 8px;text-align:center;">${r.final_score??'\u{2014}'}</td><td style="padding:5px 8px;">${r.status}</td><td style="padding:5px 8px;" id="hist-status-${i}">${warn}</td></tr>`;
+      return`<tr id="hist-row-${i}"><td style="padding:5px 8px;">${esc(r.employee_code)}</td><td style="padding:5px 8px;">${esc(r.cycle_name)}</td><td style="padding:5px 8px;text-align:center;">${esc(r.final_score??'\u{2014}')}</td><td style="padding:5px 8px;">${esc(r.status)}</td><td style="padding:5px 8px;" id="hist-status-${i}">${warn}</td></tr>`;
     }).join('');
     document.getElementById('hist-preview-count').textContent=histRows.length+' row(s) ready to import';
     document.getElementById('hist-preview-wrap').style.display='';
@@ -3073,7 +3156,7 @@ async function uploadHistData(){
       if(statusEl)statusEl.innerHTML='<span style="color:var(--accent-dark);font-size:11px;">\u{2705} Imported</span>';ok++;
     }catch(ex){
       const msg=String(ex.message||ex).substring(0,60);
-      if(statusEl)statusEl.innerHTML=`<span style="color:var(--red);font-size:11px;" title="${ex.message}">\u{274C} ${msg}</span>`;fail++;
+      if(statusEl)statusEl.innerHTML=`<span style="color:var(--red);font-size:11px;" title="${esc(ex.message)}">\u{274C} ${esc(msg)}</span>`;fail++;
     }
   }
   btn.disabled=false;btn.textContent='\u{2B06}\u{FE0F} Import All';
@@ -3116,10 +3199,10 @@ function renderCyclesTable(){
   tbl.innerHTML=state.allCycles.map(c=>{
     const lockBadge=c.is_locked?'<span class="badge badge-locked">\u{1F512} Locked</span>':'<span class="badge badge-active">\u{1F513} Open</span>';
     const lockBtn=c.is_locked
-      ?`<button class="btn btn-outline btn-sm" onclick="unlockCycle('${c.id}')">\u{1F513} Unlock</button>`
-      :`<button class="btn btn-ghost btn-sm" onclick="lockCycle('${c.id}')">\u{1F512} Lock</button>`;
-    const actionBtn=!c.is_active?`<button class="btn btn-primary btn-sm" onclick="setActiveCycle('${c.id}')">Set Active</button>`:'<span style="font-size:12px;color:var(--gray-text);">Current</span>';
-    return`<tr><td><strong>${c.name}</strong></td><td>${c.start_date||'\u{2014}'}</td><td>${c.end_date||'\u{2014}'}</td><td><span class="badge ${c.is_active?'badge-approved':'badge-draft'}">${c.is_active?'\u{25CF} Active':'Inactive'}</span></td><td>${lockBadge}&nbsp;${lockBtn}</td><td>${actionBtn}</td></tr>`;
+      ?`<button class="btn btn-outline btn-sm" onclick="unlockCycle('${esc(c.id)}')">\u{1F513} Unlock</button>`
+      :`<button class="btn btn-ghost btn-sm" onclick="lockCycle('${esc(c.id)}')">\u{1F512} Lock</button>`;
+    const actionBtn=!c.is_active?`<button class="btn btn-primary btn-sm" onclick="setActiveCycle('${esc(c.id)}')">Set Active</button>`:'<span style="font-size:12px;color:var(--gray-text);">Current</span>';
+    return`<tr><td><strong>${esc(c.name)}</strong></td><td>${esc(c.start_date||'\u{2014}')}</td><td>${esc(c.end_date||'\u{2014}')}</td><td><span class="badge ${c.is_active?'badge-approved':'badge-draft'}">${c.is_active?'\u{25CF} Active':'Inactive'}</span></td><td>${lockBadge}&nbsp;${lockBtn}</td><td>${actionBtn}</td></tr>`;
   }).join('')||'<tr><td colspan="6" style="text-align:center;padding:20px;color:var(--gray-text);">No cycles yet.</td></tr>';
 }
 function openAddCycle(){
@@ -3186,6 +3269,6 @@ document.addEventListener('DOMContentLoaded',async()=>{
 });
 
 </script>
-<div style="position:fixed;bottom:4px;right:8px;font-size:10px;color:#9aa0a6;z-index:9999;pointer-events:none;">v2.2</div>
+<div style="position:fixed;bottom:4px;right:8px;font-size:10px;color:#9aa0a6;z-index:9999;pointer-events:none;">v2.3</div>
 </body>
 </html>
