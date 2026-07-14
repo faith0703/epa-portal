@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ePA Portal v2.3 &#8212; Performance Appraisal</title>
+<title>ePA Portal v2.4 &#8212; Performance Appraisal</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -923,6 +923,20 @@
                 </tr></thead>
                 <tbody id="mgr-comp-body"></tbody>
               </table>
+              <div id="mgr-mgmt-wrap" style="display:none;margin-top:22px;">
+                <div class="card-header" style="padding-left:0;"><span class="card-title">Management Competencies</span><span style="font-size:12px;color:var(--gray-text);margin-left:8px;">This employee declared themselves a supervisor</span></div>
+                <div class="warning-box">&#9888;&#65039; These scores are included in the overall rating, together with the competencies above.</div>
+                <table class="ctbl">
+                  <thead><tr>
+                    <th style="width:28%">Management Competency</th>
+                    <th style="width:22%">Explanation <span style="text-transform:none;letter-spacing:0;font-weight:400">(if applicable)</span></th>
+                    <th>Self</th>
+                    <th>Mgr Score</th>
+                    <th>Agreed Score</th>
+                  </tr></thead>
+                  <tbody id="mgr-mgmt-body"></tbody>
+                </table>
+              </div>
             </div>
           </div>
           <div class="sub-bar"><button class="btn btn-ghost" onclick="goTab('mgr',0)">&#8592; Back</button><button class="btn btn-primary" onclick="goTab('mgr',2)">Next: Dev Actions &#8594;</button></div>
@@ -1145,7 +1159,7 @@
           <tbody id="hr-emp-history-tbody"><tr><td colspan="5" style="text-align:center;padding:20px;color:var(--gray-text);">Loading&#8230;</td></tr></tbody></table>
         </div>
         <!-- I3: Trend chart -->
-        <div class="card" style="padding:24px;margin-top:8px;" id="hr-trend-card" style="display:none;">
+        <div class="card" style="padding:24px;margin-top:8px;display:none;" id="hr-trend-card">
           <div class="form-section-title" style="margin-bottom:14px;">&#128200; Score Trend Across Cycles</div>
           <canvas id="hr-trend-chart" height="100"></canvas>
         </div>
@@ -1447,6 +1461,17 @@ const MGMT = [
   {id:'m3',n:'People Development',d:'Meets own development goal. Recognises and develops employees potential against agreed upon goals, provides employees with effective, timely performance feedback and appraisals. Acknowledges positive performance and takes appropriate action when performance requires improvement.'},
 ];
 const SC = {};
+
+// v2.4 P0 fix. RVW holds the objectives OF THE EMPLOYEE BEING REVIEWED (description,
+// weight, self score). It is set by openMgrReview() and is null everywhere else.
+//
+// Why this exists: before v2.4 the manager review screen rendered from the global
+// OBJS array, but OBJS is only ever populated by loadEmployeeForm() from the LOGGED-IN
+// user's own submission. So a manager saw blank objectives, or - if they had opened
+// their own PA form first - their OWN objectives and weights shown as the employee's.
+// The manager view must never read OBJS. It reads RVW.
+let RVW = null;        // array of {id, agree, review, w, self} for the reviewee
+let RVW_SUP = false;   // did the reviewee tick "I am a supervisor / manager"?
 let smileySel = null;
 
 const state = {
@@ -1462,6 +1487,16 @@ function logAudit(action,targetCode,details={}){
   db.from('audit_log')
     .insert({actor_code:state.currentUser.employee_code,action,target_code:targetCode||null,details})
     .then(({error})=>{if(error)console.warn('Audit log error:',error);});
+}
+// v2.4: fetch one profile by employee_code. Needed because state.allProfiles is only
+// populated for HR, so employee/manager notification lookups silently returned nothing.
+async function lookupProfile(empCode){
+  if(!empCode) return null;
+  const cached=(state.allProfiles||[]).find(p=>p.employee_code===empCode);
+  if(cached) return cached;
+  const {data}=await db.from('profiles').select('employee_code,full_name,email')
+    .eq('employee_code',empCode).maybeSingle();
+  return data||null;
 }
 // S1: Email notifications via Supabase Edge Function (pa-notify) + Brevo
 async function callNotifyEdgeFunction(event,payload){
@@ -1538,6 +1573,23 @@ function esc(v) {
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#39;');
 }
+// v2.4 security: esc() is NOT enough inside an inline handler like
+//   onclick="doThing('${...}')"
+// because the HTML parser decodes &#39; back into a real quote BEFORE the JavaScript
+// is compiled, so the escaping is undone at exactly the moment it has to hold.
+// jsq() backslash-escapes for the JS string context FIRST, then HTML-escapes for the
+// attribute context. Use jsq() for values going inside quotes in an on* handler;
+// use esc() everywhere else.
+function jsq(v) {
+  if (v === null || v === undefined) return '';
+  return esc(String(v)
+    .replace(/\\/g, '\\\\')          // backslash first, or it double-escapes the rest
+    .replace(/'/g, "\\'")
+    .replace(/\r/g, '\\r')          // a raw newline is legal inside an HTML attribute but
+    .replace(/\n/g, '\\n')          // is a SyntaxError inside a JS string literal
+    .replace(/\u2028/g, '\\u2028')
+    .replace(/\u2029/g, '\\u2029'));
+}
 function clearLoading() { document.getElementById('loading-overlay').classList.remove('show'); }
 function toast(msg) {
   const t = document.getElementById('toast'); t.textContent=msg; t.classList.add('show');
@@ -1576,19 +1628,25 @@ function scClass(v) {
   return 's1';
 }
 
-function scoreDD(fid, val, ro, lblType) {
+// v2.4: fid is the SC scratchpad KEY (and the DB key - never change its format).
+// domId is the HTML element id, which may differ. The employee form and the manager
+// form are both in the same document, so they must not share element ids, but they
+// DO share SC keys. Before v2.4 both used the same ids, so getElementById() from the
+// manager view silently returned the employee form's elements. That is P0-B.
+function scoreDD(fid, val, ro, lblType, domId) {
+  const id = domId || fid;
   const lbl = lblType === 'obj' ? OBJ_LBL : (lblType === 'comp' ? COMP_LBL : OBJ_LBL);
   const cls = scClass(val);
   if (ro) {
     const txt = val ? (val + ' \u{2014} ' + (lbl[val]||'')) : '\u{2014}';
-    return `<span id="${fid}" class="ps ${cls}">${txt}</span>`;
+    return `<span id="${id}" class="ps ${cls}">${txt}</span>`;
   }
   let opts = '<option value="">\u{2014} Select \u{2014}</option>';
   HALFPOINTS.forEach(v => {
     const sel = (v === val) ? ' selected' : '';
     opts += `<option value="${v}"${sel}>${v} \u{2014} ${lbl[v]||''}</option>`;
   });
-  return `<select id="${fid}" class="score-sel ${cls}" onchange="onDD('${fid}',this)">${opts}</select>`;
+  return `<select id="${id}" class="score-sel ${cls}" onchange="onDD('${fid}',this)">${opts}</select>`;
 }
 
 function onDD(fid, sel) {
@@ -1596,22 +1654,32 @@ function onDD(fid, sel) {
   SC[fid] = v;
   sel.className = 'score-sel ' + (v ? scClass(v) : '');
   calcMgrLive();
-  updateWeightTotal();
+  // v2.4: the weight total belongs to the EMPLOYEE's form. The manager review has no
+  // weight inputs, so running this there made it read the logged-in manager's own
+  // weight boxes (or find none and flash a red "Weights total 0%" warning).
+  if (RVW === null) updateWeightTotal();
 }
 
-function buildObjSection(wrapId, isEE) {
+// v2.4: renders from the `objs` array passed in, NOT from the global OBJS.
+//   employee view -> buildObjSection('ee-obj-wrap', true)        -> uses OBJS, ids "obj1_w"
+//   manager view  -> buildObjSection('mgr-obj-wrap', false, RVW) -> uses RVW,  ids "m_obj1_mgr"
+// The manager's element ids carry an "m_" prefix so they cannot collide with the
+// employee form's ids, which live in the same document.
+function buildObjSection(wrapId, isEE, objs) {
   const wrap = document.getElementById(wrapId);
   if (!wrap) return;
+  const src = objs || OBJS;
+  const idp = isEE ? '' : 'm_';
   let html = '';
-  OBJS.forEach(o => {
+  src.forEach(o => {
     const agree = isEE ? `<input id="obj${o.id}_agree" placeholder="Describe the objective\u{2026}" value="${esc(o.agree||'')}">` : `<input readonly value="${esc(o.agree||'(not set)')}">`;
     const review = isEE ? `<input id="obj${o.id}_review" placeholder="Final review / outcome\u{2026}" value="${esc(o.review||'')}">` : `<input readonly value="${esc(o.review||'(not set)')}">`;
     const wInput = isEE ? `<input id="obj${o.id}_w" type="number" min="0" max="100" value="${esc(o.w||20)}" style="width:70px;" onchange="updateWeightTotal()">%` : `<span class="wt-pill">${esc(o.w||20)}%</span>`;
-    const selfDD = scoreDD('obj'+o.id+'_self', o.self||null, !isEE, 'obj');
-    const mgrDD  = isEE ? scoreDD('obj'+o.id+'_mgr', null, true, 'obj') : scoreDD('obj'+o.id+'_mgr', SC['obj'+o.id+'_mgr']||null, false, 'obj');
-    const agrDD  = isEE ? scoreDD('obj'+o.id+'_agr', null, true, 'obj') : scoreDD('obj'+o.id+'_agr', SC['obj'+o.id+'_agr']||null, false, 'obj');
+    const selfDD = scoreDD('obj'+o.id+'_self', o.self||null, !isEE, 'obj', idp+'obj'+o.id+'_self');
+    const mgrDD  = isEE ? scoreDD('obj'+o.id+'_mgr', null, true, 'obj') : scoreDD('obj'+o.id+'_mgr', SC['obj'+o.id+'_mgr']||null, false, 'obj', idp+'obj'+o.id+'_mgr');
+    const agrDD  = isEE ? scoreDD('obj'+o.id+'_agr', null, true, 'obj') : scoreDD('obj'+o.id+'_agr', SC['obj'+o.id+'_agr']||null, false, 'obj', idp+'obj'+o.id+'_agr');
     html += `<div class="obj-block">
-      <div class="obj-num">Objective ${o.id} <span class="wt-pill">${o.w||20}%</span></div>
+      <div class="obj-num">Objective ${esc(o.id)} <span class="wt-pill">${esc(o.w||20)}%</span></div>
       <div class="obj-body">
         <div class="obj-row-label">Agreement on Objective Setting</div>
         <div class="obj-desc-row" style="display:flex;gap:8px;align-items:center;">${agree} ${wInput}</div>
@@ -1674,30 +1742,44 @@ function buildMgmtSection(mgmtId, isEE) {
   body.innerHTML = html;
 }
 
-function buildCompSectionMgr(bodyId) {
-  const body = document.getElementById(bodyId);
-  if (!body) return;
-  let html = '';
-  let lastGrp = '';
-  COMPS.forEach(c => {
-    if (c.grp && c.grp !== lastGrp) {
-      html += `<tr><td colspan="5" style="background:#f0f4ff;font-weight:600;font-size:12px;padding:6px 10px;color:var(--blue);">${c.grp}</td></tr>`;
-      lastGrp = c.grp;
-    }
+// v2.4: `isSup` decides whether the management-competency table is rendered for the
+// manager. Before v2.4 the manager review screen had NO management table at all, so a
+// supervisor's management competencies could never be scored by anyone, even though
+// the employee's form promised they counted toward the overall rating.
+function buildCompSectionMgr(bodyId, mgmtBodyId, isSup) {
+  const row = c => {
     const selfVal = SC[c.id+'_self'] || null;
-    const selfPill = selfVal ? `<span class="ps ${scClass(selfVal)}">${selfVal}</span>` : '<span class="ps">\u{2014}</span>';
+    const selfPill = selfVal ? `<span class="ps ${scClass(selfVal)}">${esc(selfVal)}</span>` : '<span class="ps">\u{2014}</span>';
     const expl = `<textarea id="mgr_${c.id}_expl" rows="2" placeholder="Explanation (if applicable)\u{2026}"></textarea>`;
     const mgrDD = scoreDD('mgr_'+c.id+'_mgr', SC['mgr_'+c.id+'_mgr']||null, false, 'comp');
     const agrDD = scoreDD('mgr_'+c.id+'_agr', SC['mgr_'+c.id+'_agr']||null, false, 'comp');
-    html += `<tr>
-      <td><strong>${c.n}</strong><div style="font-size:11px;color:var(--gray-text);margin-top:2px;">${c.d}</div></td>
+    return `<tr>
+      <td><strong>${esc(c.n)}</strong><div style="font-size:11px;color:var(--gray-text);margin-top:2px;">${esc(c.d)}</div></td>
       <td>${expl}</td>
       <td>${selfPill}</td>
       <td>${mgrDD}</td>
       <td>${agrDD}</td>
     </tr>`;
-  });
-  body.innerHTML = html;
+  };
+
+  const body = document.getElementById(bodyId);
+  if (body) {
+    let html = '', lastGrp = '';
+    COMPS.forEach(c => {
+      if (c.grp && c.grp !== lastGrp) {
+        html += `<tr><td colspan="5" style="background:#f0f4ff;font-weight:600;font-size:12px;padding:6px 10px;color:var(--blue);">${esc(c.grp)}</td></tr>`;
+        lastGrp = c.grp;
+      }
+      html += row(c);
+    });
+    body.innerHTML = html;
+  }
+
+  // Management competencies - only for a reviewee who declared themselves a supervisor
+  const mgmtWrap = document.getElementById('mgr-mgmt-wrap');
+  const mgmtBody = mgmtBodyId ? document.getElementById(mgmtBodyId) : null;
+  if (mgmtWrap) mgmtWrap.style.display = isSup ? '' : 'none';
+  if (mgmtBody) mgmtBody.innerHTML = isSup ? MGMT.map(row).join('') : '';
 }
 
 function addDevRow(act, dt, resp) {
@@ -1766,29 +1848,51 @@ function toggleMgmt() {
   const cb = document.getElementById('is-mgr-cb');
   const body = document.getElementById('mgmt-body');
   if (body) body.style.display = (cb && cb.checked) ? 'block' : 'none';
+  // v2.4: ticking the box changes how many competencies count, so the completion
+  // percentage has to be recalculated.
+  updateFormProgress();
 }
 
 // Pure calculation of the manager's objective avg, competency avg and final score.
 // Returns nulls when scores are incomplete. No DOM writes \u{2014} safe to call from
 // collectMgrReview() so the final score is PERSISTED, not just displayed. (v2.3 fix)
 function computeFinalScore() {
+  // v2.4: in the manager review, objectives and their WEIGHTS come from RVW (the
+  // reviewee's own saved data). Only the employee's own live form reads the weight
+  // out of the DOM, because that is where the employee is actively editing it.
+  const inMgr  = (RVW !== null);
+  const objSrc = inMgr ? RVW : OBJS;
+
   // Objectives weighted avg (use agreed if set, else mgr)
-  // SC keys stored by onDD: 'obj{id}_mgr', 'obj{id}_agr' (mgr view selects)
+  // SC keys: 'obj{id}_mgr', 'obj{id}_agr'
   let wSum = 0, wsSum = 0, objCount = 0;
-  OBJS.forEach(o => {
+  objSrc.forEach(o => {
     const agr = SC['obj'+o.id+'_agr'];
     const mgr = SC['obj'+o.id+'_mgr'];
     const score = agr || mgr;
-    const wEl = document.getElementById('obj'+o.id+'_w');
-    const w = parseFloat((wEl && wEl.value) || o.w || 20);
+    let w;
+    if (inMgr) {
+      w = parseFloat(o.w) || 20;                 // reviewee's stored weight
+    } else {
+      const wEl = document.getElementById('obj'+o.id+'_w');
+      w = parseFloat((wEl && wEl.value) || o.w || 20);
+    }
     if (score) { wsSum += score * w; wSum += w; objCount++; }
   });
   const objAvg = wSum > 0 ? (wsSum / wSum) : null;
 
-  // Competency avg (agreed \u{2192} mgr fallback)
-  // SC keys stored by onDD: 'mgr_{id}_mgr', 'mgr_{id}_agr'
+  // Competency avg (agreed \u{2192} mgr fallback). SC keys: 'mgr_{id}_mgr', 'mgr_{id}_agr'.
+  // v2.4: management competencies are now INCLUDED when the employee is a supervisor -
+  // which is what the form has always promised them.
+  // In the manager view that comes from RVW_SUP (the reviewee's saved declaration).
+  // In the employee's own view it must come from the live checkbox, otherwise the
+  // employee's Section 9 would average 8 competencies while the manager's persisted
+  // score averaged 11, and the two would never agree.
+  const eeSupCb = document.getElementById('is-mgr-cb');
+  const isSup   = inMgr ? RVW_SUP : !!(eeSupCb && eeSupCb.checked);
+  const compSrc = isSup ? [...COMPS, ...MGMT] : COMPS;
   let cSum = 0, cCount = 0;
-  COMPS.forEach(c => {
+  compSrc.forEach(c => {
     const agr = SC['mgr_'+c.id+'_agr'];
     const mgr = SC['mgr_'+c.id+'_mgr'];
     const score = agr || mgr;
@@ -1802,10 +1906,10 @@ function computeFinalScore() {
     compAvg: compAvg,
     final: final,
     objCount: objCount,
-    objTotal: OBJS.length,
+    objTotal: objSrc.length,
     compCount: cCount,
-    compTotal: COMPS.length,
-    complete: (objCount === OBJS.length && cCount === COMPS.length && final !== null)
+    compTotal: compSrc.length,
+    complete: (objCount === objSrc.length && cCount === compSrc.length && final !== null)
   };
 }
 
@@ -1821,16 +1925,25 @@ function calcMgrLive() {
   const bigEl = document.getElementById('mgr-big'); if (bigEl) bigEl.textContent = final ? final.toFixed(2) : '\u{2014}';
   const ratingEl = document.getElementById('mgr-rating'); if (ratingEl) ratingEl.textContent = final ? outcomeLabel(final) : 'Enter all scores to calculate';
   const bandEl = document.getElementById('mgr-band'); if (bandEl) bandEl.textContent = final ? final.toFixed(2) : '\u{2014}';
-  const filledEl = document.getElementById('sp-filled'); if (filledEl) filledEl.textContent = objCount+'/'+OBJS.length+' obj, '+cCount+'/'+COMPS.length+' comp';
+  const filledEl = document.getElementById('sp-filled'); if (filledEl) filledEl.textContent = objCount+'/'+r.objTotal+' obj, '+cCount+'/'+r.compTotal+' comp';
 
   // Outcome section
   const ocObjEl = document.getElementById('mgr-oc-obj'); if (ocObjEl) ocObjEl.textContent = objAvg ? (objAvg.toFixed(2)+' \u{2014} '+outcomeLabel(objAvg)) : '\u{2014}';
   const ocSkillEl = document.getElementById('mgr-oc-skill'); if (ocSkillEl) ocSkillEl.textContent = compAvg ? (compAvg.toFixed(2)+' \u{2014} '+outcomeLabel(compAvg)) : '\u{2014}';
   const ocFinalEl = document.getElementById('mgr-oc-final'); if (ocFinalEl) ocFinalEl.textContent = final ? (final.toFixed(2)+' \u{2014} '+outcomeLabel(final)) : '\u{2014}';
-  // Also mirror to ee outcome if visible
-  const eeObjEl = document.getElementById('oc-obj'); if (eeObjEl && objAvg) eeObjEl.textContent = objAvg.toFixed(2)+' \u{2014} '+outcomeLabel(objAvg);
-  const eeSkillEl = document.getElementById('oc-skill'); if (eeSkillEl && compAvg) eeSkillEl.textContent = compAvg.toFixed(2)+' \u{2014} '+outcomeLabel(compAvg);
-  const eeFinalEl = document.getElementById('oc-final'); if (eeFinalEl && final) eeFinalEl.textContent = final.toFixed(2)+' \u{2014} '+outcomeLabel(final);
+  // Mirror to the EMPLOYEE's own Section 9 outcome panel.
+  // v2.4 fix: only do this in the employee's own context (RVW === null). Previously
+  // these ran during a manager review too, and because they were guarded by
+  // "&& objAvg" they were only ever WRITTEN, never cleared - so the reviewee's score
+  // stayed painted in the manager's own Section 9 as if it were their own rating.
+  // Now they are skipped in the manager view, and always assigned (with a fallback)
+  // in the employee view, so a stale value can never survive.
+  if (RVW === null) {
+    const pend = 'Pending manager review';
+    const eeObjEl   = document.getElementById('oc-obj');   if (eeObjEl)   eeObjEl.textContent   = objAvg  ? (objAvg.toFixed(2)+' \u{2014} '+outcomeLabel(objAvg))   : pend;
+    const eeSkillEl = document.getElementById('oc-skill'); if (eeSkillEl) eeSkillEl.textContent = compAvg ? (compAvg.toFixed(2)+' \u{2014} '+outcomeLabel(compAvg)) : pend;
+    const eeFinalEl = document.getElementById('oc-final'); if (eeFinalEl) eeFinalEl.textContent = final   ? (final.toFixed(2)+' \u{2014} '+outcomeLabel(final))     : pend;
+  }
 }
 
 // C4: overlay manager/agreed scores into employee form after PA is reviewed
@@ -1900,11 +2013,12 @@ function showLoginErr(msg){const el=document.getElementById('login-error');el.te
 async function doLogout(){
   setLoading('Signing out\u{2026}');
   await db.auth.signOut();
-  clearLoading();
-  Object.assign(state,{currentUser:null,currentRole:null,activeCycle:null,mySubmission:null,teamData:[],allData:[]});
-  ['topbar-user-name'].forEach(id=>document.getElementById(id).textContent='');
-  ['topbar-role-label','btn-switch-role','btn-logout'].forEach(id=>document.getElementById(id).style.display='none');
-  showScreen('scrLogin');
+  // v2.4: hard reload. OBJS, SC, RVW, smileySel and several state keys are module-level
+  // and were NOT reset here, so the next person to sign in on the same browser could be
+  // shown the previous user's objectives, weights and self-scores. Reloading the page is
+  // the only way to guarantee nothing survives; there is too much module state to
+  // enumerate reliably, and getting it wrong leaks one employee's appraisal to another.
+  location.reload();
 }
 
 async function loadUserProfile(userId,email){
@@ -1952,7 +2066,7 @@ function buildRolePicker(){
     manager: {icon:'\u{1F465}',title:'Manager', desc:"Review your team's PA submissions"},
     hr:      {icon:'\u{1F6E1}\u{FE0F}',title:'HR Admin',desc:'Oversee all PA records & approvals'},
   };
-  const html=roles.map(r=>{const c=CFG[r];return`<div class="role-card" onclick="selectRole('${r}')"><div class="role-icon">${c.icon}</div><div class="role-title">${c.title}</div><div class="role-desc">${c.desc}</div></div>`;}).join('');
+  const html=roles.map(r=>{const c=CFG[r];return`<div class="role-card" onclick="selectRole('${jsq(r)}')"><div class="role-icon">${c.icon}</div><div class="role-title">${c.title}</div><div class="role-desc">${c.desc}</div></div>`;}).join('');
   const wrap=document.getElementById('role-card-wrap'); if(wrap) wrap.innerHTML=html;
   const note=document.getElementById('picker-demo-note'); if(note) note.textContent='';
 }
@@ -2036,6 +2150,18 @@ async function loadEmployeeData(){
 }
 function loadEmployeeForm(){
   const sub=state.mySubmission,user=state.currentUser; if(!sub||!user) return;
+
+  // v2.4: leaving the manager review. Drop the reviewee context and wipe the
+  // scratchpad, otherwise a manager or HR user who reviews someone and then opens
+  // their OWN form would carry that employee's scores and weights across.
+  RVW=null; RVW_SUP=false;
+  Object.keys(SC).forEach(k=>delete SC[k]);
+  // Reset OBJS to blanks before overlaying this user's data. OBJS is mutated in place,
+  // so if this submission has no saved objectives the old contents would otherwise
+  // survive and be rendered - and then written back on Save as if they were this
+  // employee's own.
+  OBJS.forEach(o=>{o.agree='';o.review='';o.w=20;o.self=null;});
+
   const firstName=user.full_name.split(' ')[0];
   const titleEl=document.getElementById('emp-dash-title'); if(titleEl) titleEl.textContent=firstName+"'s Dashboard";
   const sd=sub.section_data||{};
@@ -2061,6 +2187,14 @@ function loadEmployeeForm(){
 
   // S3 \u{2014} build competencies; overlay saved self scores
   buildCompSection('ee-comp-body','ee-mgmt-body',true);
+  // v2.4: restore the supervisor checkbox (it was never persisted before, so the
+  // management section collapsed on every reload even when it had been filled in).
+  const supCbL=document.getElementById('is-mgr-cb');
+  if(supCbL){
+    const wasSup=(sd.is_supervisor===true)||MGMT.some(m=>(sd.comp_self||{})[m.id]!=null);
+    supCbL.checked=wasSup;
+    toggleMgmt();
+  }
   const cSelf=sd.comp_self||{};
   const cExpl=sd.comp_expl||{};
   Object.keys(cSelf).forEach(id=>{
@@ -2118,9 +2252,13 @@ function loadEmployeeForm(){
 
 function updateFormProgress(){
   // Count filled objective self scores + competency self scores
+  // v2.4: management competencies count toward completion once the employee has
+  // ticked the supervisor box, since they now count toward the score.
+  const supCb=document.getElementById('is-mgr-cb');
+  const comps=(supCb&&supCb.checked)?[...COMPS,...MGMT]:COMPS;
   const objFilled=OBJS.filter(o=>SC['obj'+o.id+'_self']>0).length;
-  const compFilled=COMPS.filter(c=>SC[c.id+'_self']>0).length;
-  const pct=Math.min(100,Math.round(((objFilled+compFilled)/(OBJS.length+COMPS.length))*100));
+  const compFilled=comps.filter(c=>SC[c.id+'_self']>0).length;
+  const pct=Math.min(100,Math.round(((objFilled+compFilled)/(OBJS.length+comps.length))*100));
   const pb=document.getElementById('form-progress-bar'); if(pb) pb.style.width=pct+'%';
   const pp=document.getElementById('form-progress-pct'); if(pp) pp.textContent=pct+'%';
   const ec=document.getElementById('emp-completion'); if(ec) ec.textContent=pct+'%';
@@ -2144,8 +2282,14 @@ function collectFormData(){
   });
 
   // S3 competencies
+  // v2.4: persist the supervisor declaration. The manager review screen needs it to
+  // decide whether to show and score the management competencies. If the employee
+  // unticks the box, their management scores are dropped rather than left orphaned.
+  const supCb=document.getElementById('is-mgr-cb');
+  data.is_supervisor=!!(supCb&&supCb.checked);
   data.comp_self={};data.comp_expl={};
-  [...COMPS,...MGMT].forEach(c=>{
+  const compsToSave=data.is_supervisor?[...COMPS,...MGMT]:COMPS;
+  compsToSave.forEach(c=>{
     const selfSel=document.getElementById(c.id+'_self'); if(selfSel&&selfSel.value) data.comp_self[c.id]=parseFloat(selfSel.value);
     const explEl=document.getElementById(c.id+'_expl'); if(explEl) data.comp_expl[c.id]=explEl.value;
   });
@@ -2200,7 +2344,9 @@ async function confirmSubmit(){
   clearLoading(); if(error){toast('Submit failed: '+error.message);return;}
   state.mySubmission=updated; loadEmployeeForm(); empNav('empDashboard');
   logAudit('SUBMIT', state.currentUser.employee_code, {cycle:state.activeCycle?.name});
-  const _mgrP=state.allProfiles.find(p=>p.employee_code===state.currentUser.manager_code);
+  // v2.4: an employee has no allProfiles list, so this lookup always came back empty
+  // and the manager was never emailed. Query the manager's profile directly instead.
+  const _mgrP=await lookupProfile(state.currentUser.manager_code);
   if(_mgrP?.email) callNotifyEdgeFunction('SUBMIT',{toEmail:_mgrP.email,toName:_mgrP.full_name,fromName:state.currentUser.full_name,fromCode:state.currentUser.employee_code,cycle:state.activeCycle?.name});
   toast('PA submitted! Your manager has been notified.');
 }
@@ -2235,7 +2381,12 @@ async function loadPAHistory(){
   tbl.innerHTML=subs.map(s=>{
     const cycleName=s.cycles?.name||s.cycle_name||'\u{2014}';
     const mgrName=managerNames[s.manager_code]||(s.manager_code||'\u{2014}');
-    const finalScore=s.manager_section_comments?.final_score??s.manager_overall_rating??null;
+    // v2.4: only show the final rating once the PA is APPROVED. Since v2.3 persists the
+    // score on Save Draft and on Return too, this column would otherwise show the
+    // employee their manager's unfinished, not-yet-agreed score.
+    const finalScore=(s.status==='Approved')
+      ? (s.manager_section_comments?.final_score??s.manager_overall_rating??null)
+      : null;
     return`<tr>
       <td>${esc(cycleName)}</td>
       <td>${esc(fmtDate(s.submitted_at))}</td>
@@ -2262,10 +2413,10 @@ function renderMgrTeam(){
   const row=item=>{
     const p=item.profile,status=item.status,sub=item.submission,submittedAt=sub?fmtDate(sub.submitted_at):'\u{2014}';
     const canReview=status==='Submitted'||status==='Under Review';
-    return `<tr class="clickable" onclick="openMgrReview('${esc(p.employee_code)}')">
+    return `<tr class="clickable" onclick="openMgrReview('${jsq(p.employee_code)}')">
       <td><strong>${esc(p.full_name)}</strong><br><span style="font-size:12px;color:var(--gray-text)">${esc(p.email||'')}</span></td>
       <td>${esc(p.department||'\u{2014}')}</td><td><span class="badge ${getBadge(status)}">${esc(status)}</span></td><td>${esc(submittedAt)}</td>
-      <td>${canReview?'<button class="btn btn-primary btn-sm" onclick="event.stopPropagation();openMgrReview(\''+esc(p.employee_code)+'\')">Review \u{2192}</button>':'<span style="color:var(--gray-text);font-size:12px;">'+(status==='Approved'?'\u{2705} Done':'\u{2014}')+'</span>'}</td></tr>`;};
+      <td>${canReview?'<button class="btn btn-primary btn-sm" onclick="event.stopPropagation();openMgrReview(\''+jsq(p.employee_code)+'\')">Review \u{2192}</button>':'<span style="color:var(--gray-text);font-size:12px;">'+(status==='Approved'?'\u{2705} Done':'\u{2014}')+'</span>'}</td></tr>`;};
   const html=state.teamData.map(row).join('');
   ['mgr-team-preview','mgr-team-full'].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML=html||'<tr><td colspan="5" style="text-align:center;padding:24px;color:var(--gray-text);">No direct reports found.</td></tr>';});
   const el=id=>document.getElementById(id);
@@ -2279,37 +2430,56 @@ function renderMgrTeam(){
 async function openMgrReview(empCode){
   const item=state.teamData.find(i=>i.profile.employee_code===empCode); if(!item) return;
   state.currentEmp=item;
-  // Clear SC of any previous mgr scores
-  Object.keys(SC).filter(k=>k.startsWith('mgr_')).forEach(k=>delete SC[k]);
+
+  // v2.4 P0-C fix: wipe the WHOLE scratchpad, not just the 'mgr_' keys.
+  // Before v2.4 the objective keys (obj1_mgr / obj1_agr / obj1_self) and the employee
+  // competency self-scores survived from the previously reviewed employee, so the next
+  // employee's form opened pre-filled with someone else's scores - and since v2.3
+  // persists the score, Approve then wrote those scores to the wrong record.
+  Object.keys(SC).forEach(k=>delete SC[k]);
 
   const p=item.profile,sub=item.submission,sd=sub?(sub.section_data||{}):{};
   const msc=sub?(sub.manager_section_comments||{}):{};
 
+  // v2.4 P0-A fix: build the REVIEWEE's objectives. The manager view must never read
+  // the global OBJS, which holds the logged-in user's own data.
+  const savedObjsRV=sd.objectives||[];
+  RVW=OBJS.map((base,i)=>{
+    const o=savedObjsRV.find(x=>String(x.id)===String(base.id)) || savedObjsRV[i] || {};
+    return {
+      id:   base.id,
+      agree:o.agree||'',
+      review:o.review||'',
+      w:    (o.weight!==undefined&&o.weight!==null&&o.weight!=='')?parseFloat(o.weight):20,
+      self: o.self_score||null
+    };
+  });
+  // Did this employee declare themselves a supervisor? Fall back to detecting stored
+  // management self-scores, for records saved before is_supervisor was persisted.
+  const cSelfRV=sd.comp_self||{};
+  RVW_SUP = (sd.is_supervisor===true) || MGMT.some(m=>cSelfRV[m.id]!==undefined&&cSelfRV[m.id]!==null);
+
   const av=p.full_name.split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase();
   document.getElementById('mgr-emp-profile-card').innerHTML=`<div class="emp-profile-card"><div class="emp-avatar">${esc(av)}</div><div><div class="emp-name">${esc(p.full_name)}</div><div class="emp-meta">${esc(p.department||'\u{2014}')} \u{B7} ${esc(p.position||'')}</div><div class="emp-meta">${esc(p.email||'')}</div></div><div class="emp-status-wrap"><span class="badge ${getBadge(item.status)}">${esc(item.status)}</span><div style="font-size:12px;color:var(--gray-text);margin-top:6px;">Submitted: ${sub?esc(fmtDate(sub.submitted_at)):'\u{2014}'}</div></div></div>`;
 
-  // Overlay employee self scores into SC for display
-  const savedObjs=sd.objectives||[];
-  savedObjs.forEach(o=>{if(o.self_score)SC['obj'+o.id+'_self']=o.self_score;});
-  const cSelf=sd.comp_self||{};
-  Object.keys(cSelf).forEach(id=>{SC[id+'_self']=cSelf[id];});
+  // v2.4: fill SC COMPLETELY *before* rendering, then render once. The old code
+  // rendered first and then poked values back into the DOM by id - which, thanks to
+  // the duplicate employee/manager element ids, wrote into the wrong form.
 
-  // S2 \u{2014} build mgr objective section (manager + agreed dropdowns live, self read-only pill)
-  buildObjSection('mgr-obj-wrap', false);
-  // Restore saved mgr/agreed scores into SC and re-render dropdowns
+  // Employee self scores (read-only pills on the manager's screen)
+  savedObjsRV.forEach(o=>{if(o.self_score)SC['obj'+o.id+'_self']=o.self_score;});
+  Object.keys(cSelfRV).forEach(id=>{SC[id+'_self']=cSelfRV[id];});
+
+  // Manager + agreed scores saved from a previous review session
   const objScores=msc.obj_scores||{};
-  Object.keys(objScores).forEach(fid=>{
-    SC[fid]=objScores[fid];
-    const sel=document.getElementById(fid); if(sel){sel.value=objScores[fid];sel.className='score-sel '+scClass(objScores[fid]);}
-  });
-
-  // S3 \u{2014} build mgr competency section
-  buildCompSectionMgr('mgr-comp-body');
+  Object.keys(objScores).forEach(fid=>{SC[fid]=objScores[fid];});
   const compScores=msc.comp_scores||{};
-  Object.keys(compScores).forEach(fid=>{
-    SC[fid]=compScores[fid];
-    const sel=document.getElementById(fid); if(sel){sel.value=compScores[fid];sel.className='score-sel '+scClass(compScores[fid]);}
-  });
+  Object.keys(compScores).forEach(fid=>{SC[fid]=compScores[fid];});
+
+  // Now render. Both sections read their initial values straight out of SC.
+  buildObjSection('mgr-obj-wrap', false, RVW);
+  buildCompSectionMgr('mgr-comp-body', 'mgr-mgmt-body', RVW_SUP);
+
   const compExpl=msc.comp_expl||{};
   Object.keys(compExpl).forEach(id=>{const el=document.getElementById('mgr_'+id+'_expl');if(el)el.value=compExpl[id];});
 
@@ -2367,7 +2537,9 @@ async function openMgrReview(empCode){
   const saveDraftTop=document.getElementById('mgr-save-draft-top');
   if(saveDraftTop) saveDraftTop.style.display=(status==='Submitted'||status==='Under Review'||status==='Returned')?'':'none';
 
-  if(status==='Submitted'&&sub){await db.from('pa_submissions').update({status:'Under Review'}).eq('id',sub.id);item.status='Under Review';if(item.submission)item.submission.status='Under Review';renderMgrTeam();}
+  // v2.4: don't mutate status while the cycle is locked for payroll (every other
+  // manager action already checks this; opening a review did not).
+  if(status==='Submitted'&&sub&&!isCycleLocked()){await db.from('pa_submissions').update({status:'Under Review'}).eq('id',sub.id);item.status='Under Review';if(item.submission)item.submission.status='Under Review';renderMgrTeam();}
 
   calcMgrLive();
   goTab('mgr',0);
@@ -2375,14 +2547,19 @@ async function openMgrReview(empCode){
 }
 
 function collectMgrReview(){
-  // Collect obj scores from SC
+  // Collect obj scores from SC. v2.4: iterate the reviewee's objectives, not the global
+  // OBJS. (The ids match today, but the manager path must not depend on OBJS at all.)
   const objScores={};
-  OBJS.forEach(o=>{
+  (RVW||OBJS).forEach(o=>{
     ['mgr','agr'].forEach(t=>{const key='obj'+o.id+'_'+t;if(SC[key])objScores[key]=SC[key];});
   });
-  // Collect comp scores from SC
+  // Collect comp scores from SC. v2.4: only save MGMT when the reviewee is actually a
+  // supervisor. Otherwise old management scores loaded into SC from a previous save
+  // would be written straight back, leaving orphaned keys in the record that no screen
+  // shows and no calculation uses.
   const compScores={};const compExpl={};
-  [...COMPS,...MGMT].forEach(c=>{
+  const compsToCollect = RVW_SUP ? [...COMPS,...MGMT] : COMPS;
+  compsToCollect.forEach(c=>{
     ['mgr','agr'].forEach(t=>{const key='mgr_'+c.id+'_'+t;if(SC[key])compScores[key]=SC[key];});
     const exEl=document.getElementById('mgr_'+c.id+'_expl'); if(exEl&&exEl.value) compExpl[c.id]=exEl.value;
   });
@@ -2430,7 +2607,9 @@ async function confirmApprove(){
   clearLoading();if(error){toast('Error: '+error.message);return;}
   item.status='Approved';item.submission.status='Approved';
   logAudit('APPROVE', item.profile.employee_code, {cycle:state.activeCycle?.name});
-  const _empPA=state.allProfiles.find(p=>p.employee_code===item.profile.employee_code);
+  // v2.4: use item.profile directly. state.allProfiles is only ever loaded by HR-only
+  // functions, so in the manager role it is empty and this notification never fired.
+  const _empPA=item.profile;
   if(_empPA?.email) callNotifyEdgeFunction('APPROVE',{toEmail:_empPA.email,toName:_empPA.full_name,toCode:_empPA.employee_code,fromName:state.currentUser.full_name,cycle:state.activeCycle?.name});
   renderMgrTeam();mgrNav('mgrTeam');toast('PA Approved!');
 }
@@ -2442,7 +2621,8 @@ async function confirmReturn(){
   clearLoading();if(error){toast('Error: '+error.message);return;}
   item.status='Returned';item.submission.status='Returned';
   logAudit('RETURN', item.profile.employee_code, {cycle:state.activeCycle?.name});
-  const _empPR=state.allProfiles.find(p=>p.employee_code===item.profile.employee_code);
+  // v2.4: same fix as APPROVE - read the employee's profile off the review item.
+  const _empPR=item.profile;
   if(_empPR?.email) callNotifyEdgeFunction('RETURN',{toEmail:_empPR.email,toName:_empPR.full_name,toCode:_empPR.employee_code,fromName:state.currentUser.full_name,cycle:state.activeCycle?.name});
   renderMgrTeam();mgrNav('mgrTeam');toast('PA returned to employee for revision.');
 }
@@ -2464,6 +2644,7 @@ async function loadHRData(){
   setLoading('Loading HR data\u{2026}');
   // Page past the 1000 cap. List view skips the heavy section_data blob;
   // the full record is fetched on demand when HR opens one employee.
+  state.selfScoresCycleId=null; // v2.4: force the Reports self-score cache to refetch
   const allP=await selectAllRows('profiles','*',q=>q.eq('is_active',true));
   const allS=await selectAllRows('pa_submissions',
     'id,employee_code,cycle_id,status,submitted_at,reviewed_at,updated_at,manager_section_comments,manager_overall_rating',
@@ -2488,7 +2669,7 @@ function renderHRRecent(){
   const tbl=document.getElementById('hr-recent-table');if(!tbl)return;
   tbl.innerHTML=state.allData.slice(0,5).map(item=>{
     const p=item.profile,sub=item.submission,mgr=state.allProfiles.find(x=>x.employee_code===p.manager_code);
-    return `<tr class="clickable" onclick="openHRDetail('${esc(p.employee_code)}')"><td><strong>${esc(p.full_name)}</strong></td><td>${esc(mgr?mgr.full_name:(p.manager_code||'\u{2014}'))}</td><td>${esc(p.department||'\u{2014}')}</td><td><span class="badge ${getBadge(item.status)}">${esc(item.status)}</span></td><td>${sub?esc(fmtDate(sub.updated_at)):'\u{2014}'}</td></tr>`;
+    return `<tr class="clickable" onclick="openHRDetail('${jsq(p.employee_code)}')"><td><strong>${esc(p.full_name)}</strong></td><td>${esc(mgr?mgr.full_name:(p.manager_code||'\u{2014}'))}</td><td>${esc(p.department||'\u{2014}')}</td><td><span class="badge ${getBadge(item.status)}">${esc(item.status)}</span></td><td>${sub?esc(fmtDate(sub.updated_at)):'\u{2014}'}</td></tr>`;
   }).join('')||'<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--gray-text);">No data yet.</td></tr>';
 }
 function renderHRAll(filterStatus='',filterDept='',filterMgr=''){
@@ -2500,7 +2681,7 @@ function renderHRAll(filterStatus='',filterDept='',filterMgr=''){
   tbl.innerHTML=data.map(item=>{
     const p=item.profile,sub=item.submission,mgr=state.allProfiles.find(x=>x.employee_code===p.manager_code);
     const finalScore=item.submission?.manager_section_comments?.final_score ?? item.submission?.manager_overall_rating ?? null;
-    return `<tr class="clickable" onclick="openHRDetail('${esc(p.employee_code)}')"><td><strong>${esc(p.full_name)}</strong><br><span style="font-size:12px;color:var(--gray-text)">${esc(p.email||'')}</span></td><td>${esc(p.department||'\u{2014}')}</td><td>${esc(mgr?mgr.full_name:(p.manager_code||'\u{2014}'))}</td><td><span class="badge ${getBadge(item.status)}">${esc(item.status)}</span></td><td>${sub?esc(fmtDate(sub.submitted_at)):'\u{2014}'}</td><td><button class="btn btn-outline btn-sm" onclick="event.stopPropagation();openHRDetail('${esc(p.employee_code)}')">View</button></td><td>${riskBadge(item.status==='Approved'?finalScore:null)}</td></tr>`;
+    return `<tr class="clickable" onclick="openHRDetail('${jsq(p.employee_code)}')"><td><strong>${esc(p.full_name)}</strong><br><span style="font-size:12px;color:var(--gray-text)">${esc(p.email||'')}</span></td><td>${esc(p.department||'\u{2014}')}</td><td>${esc(mgr?mgr.full_name:(p.manager_code||'\u{2014}'))}</td><td><span class="badge ${getBadge(item.status)}">${esc(item.status)}</span></td><td>${sub?esc(fmtDate(sub.submitted_at)):'\u{2014}'}</td><td><button class="btn btn-outline btn-sm" onclick="event.stopPropagation();openHRDetail('${jsq(p.employee_code)}')">View</button></td><td>${riskBadge(item.status==='Approved'?finalScore:null)}</td></tr>`;
   }).join('')||'<tr><td colspan="7" style="text-align:center;padding:20px;color:var(--gray-text);">No records found.</td></tr>';
 }
 function riskBadge(fs){
@@ -2563,10 +2744,20 @@ async function openHRDetail(empCode){
   if(Object.keys(cSelf).length){
     let compHtml='<table style="width:100%;border-collapse:collapse;font-size:13px;">';
     compHtml+='<thead><tr style="background:var(--gray-bg);"><th style="padding:6px 10px;text-align:left;">Competency</th><th style="padding:6px 10px;text-align:center;">Self</th><th style="padding:6px 10px;text-align:center;">Mgr</th><th style="padding:6px 10px;text-align:center;">Agreed</th></tr></thead><tbody>';
-    COMPS.forEach(c=>{
+    // v2.4: show management competencies too, when the employee is a supervisor. They
+    // now count toward the final score, so HR must be able to see and audit them -
+    // previously this table showed 8 rows whose average could not reconcile to the
+    // final score that drove the increment.
+    const hrIsSup=(sd.is_supervisor===true)||MGMT.some(m=>cSelf[m.id]!=null);
+    const rowFor=(c,isMgmt)=>{
       const self=cSelf[c.id]||'\u{2014}', mgSc=compScores['mgr_'+c.id+'_mgr']||'\u{2014}', agr=compScores['mgr_'+c.id+'_agr']||'\u{2014}';
-      compHtml+=`<tr style="border-top:1px solid var(--gray-border);"><td style="padding:8px 10px;">${esc(c.n)}</td><td style="padding:8px 10px;text-align:center;font-weight:600;">${esc(self)}</td><td style="padding:8px 10px;text-align:center;font-weight:600;">${esc(mgSc)}</td><td style="padding:8px 10px;text-align:center;font-weight:600;">${esc(agr)}</td></tr>`;
-    });
+      return `<tr style="border-top:1px solid var(--gray-border);"><td style="padding:8px 10px;">${esc(c.n)}${isMgmt?' <span style="font-size:10px;color:var(--blue);font-weight:600;">MGMT</span>':''}</td><td style="padding:8px 10px;text-align:center;font-weight:600;">${esc(self)}</td><td style="padding:8px 10px;text-align:center;font-weight:600;">${esc(mgSc)}</td><td style="padding:8px 10px;text-align:center;font-weight:600;">${esc(agr)}</td></tr>`;
+    };
+    COMPS.forEach(c=>{compHtml+=rowFor(c,false);});
+    if(hrIsSup){
+      compHtml+='<tr><td colspan="4" style="background:#f0f4ff;font-weight:600;font-size:12px;padding:6px 10px;color:var(--blue);">Management Competencies (included in the overall rating)</td></tr>';
+      MGMT.forEach(c=>{compHtml+=rowFor(c,true);});
+    }
     compHtml+='</tbody></table>';
     document.getElementById('hr-detail-comps').innerHTML='<div class="tbl-scroll">'+compHtml+'</div>';
   } else {
@@ -2696,7 +2887,7 @@ function exportEmployeePDF(){
   const cycleName=state.activeCycle?.name||'PA Cycle';
   const finalScoreRaw=msc.final_score ?? sub.manager_overall_rating ?? null;
   const finalScore=(finalScoreRaw===null||finalScoreRaw===undefined||isNaN(parseFloat(finalScoreRaw)))?null:parseFloat(finalScoreRaw);
-  const inc=incBand(finalScore||0);
+  const inc=incBand(finalScore); // v2.4: pass null through, don't coerce a missing score to 0
   const { jsPDF }=window.jspdf;
   const doc=new jsPDF();
   const pageW=doc.internal.pageSize.getWidth();
@@ -2726,7 +2917,7 @@ function exportEmployeePDF(){
   }
   y+=1;line();
   doc.setFont('helvetica','bold');doc.setFontSize(12);
-  doc.text('Final Score: '+(finalScore!==null?finalScore.toFixed(2):'\u{2014}')+'  |  Band: '+inc.band+'  |  Increment: '+inc.pct+'%',left,y);y+=10;
+  doc.text('Final Score: '+(finalScore!==null?finalScore.toFixed(2):'\u{2014}')+'  |  Band: '+inc.band+'  |  Increment: '+(inc.unscored?'\u{2014}':inc.pct+'%'),left,y);y+=10;
   doc.setFont('helvetica','normal');doc.setFontSize(11);
   doc.text('Manager Comments:',left,y);y+=6;
   doc.setFontSize(10);
@@ -2741,19 +2932,39 @@ function exportEmployeePDF(){
   doc.save(empCode+'_PA_'+cycleName.replace(/[^a-z0-9]/gi,'_')+'.pdf');
   toast('PDF exported!');
 }
-function renderReports(){
+// v2.4: loadHRData() deliberately leaves the heavy section_data blob out of the list
+// query, so the v2.3 "read self_score from the right field" fix read a field that was
+// never fetched and the stat card stayed blank.
+//
+// This DOES pull the full section_data blob - there is no way to project into a JSONB
+// column from PostgREST - but it runs only when the Reports screen is opened, and the
+// result is reduced to a small per-employee array of numbers and cached for the cycle.
+// If Reports ever gets slow on a large headcount, the fix is a DB view or an RPC that
+// aggregates server-side, not a wider list query.
+async function loadSelfScores(){
+  if(!state.activeCycle) return;
+  if(state.selfScoresCycleId===state.activeCycle.id) return; // already cached
+  const rows=await selectAllRows('pa_submissions','employee_code,section_data',
+    q=>q.eq('cycle_id',state.activeCycle.id));
+  const map={};
+  (rows||[]).forEach(r=>{
+    const sd=r.section_data||{};
+    const objSelf=(sd.objectives||[]).map(o=>parseFloat(o.self_score));
+    const compSelf=Object.values(sd.comp_self||{}).map(v=>parseFloat(v));
+    map[r.employee_code]=objSelf.concat(compSelf).filter(v=>!isNaN(v)&&v>0);
+  });
+  state.selfScores=map;
+  state.selfScoresCycleId=state.activeCycle.id;
+}
+async function renderReports(){
   if(!state.activeCycle)return;
   const s=document.getElementById('rpt-cycle-sub');if(s)s.textContent=state.activeCycle.name+' \u{2014} Summary Analytics';
   const days=Math.max(0,Math.ceil((new Date(state.activeCycle.end_date)-new Date())/86400000));
   const el=id=>document.getElementById(id);if(el('rpt-days'))el('rpt-days').textContent=days;
-  // v2.3 fix: self-ratings live in section_data.objectives[].self_score and
-  // section_data.comp_self{} \u{2014} NOT section_data.selfRatings, which is never written.
-  const allR=state.allData.flatMap(i=>{
-    const sd=i.submission?.section_data||{};
-    const objSelf=(sd.objectives||[]).map(o=>parseFloat(o.self_score));
-    const compSelf=Object.values(sd.comp_self||{}).map(v=>parseFloat(v));
-    return objSelf.concat(compSelf).filter(v=>!isNaN(v)&&v>0);
-  });
+  // v2.4: self scores come from the dedicated fetch above, keyed by employee_code.
+  await loadSelfScores();
+  const scores=state.selfScores||{};
+  const allR=state.allData.flatMap(i=>scores[i.profile.employee_code]||[]);
   if(el('rpt-avg-self'))el('rpt-avg-self').textContent=allR.length?(allR.reduce((a,b)=>a+b,0)/allR.length).toFixed(1):'\u{2014}';
   // v2.3 fix: manager_section_ratings is always {} (schema-compat stub). Manager scores
   // live in manager_section_comments.obj_scores / .comp_scores, agreed value winning.
@@ -2849,17 +3060,29 @@ function renderCalibration(){
 function exportCSV(){
   const rows=[['Name','Email','Department','Manager','Status','Submitted']];
   state.allData.forEach(i=>{const p=i.profile,sub=i.submission;rows.push([p.full_name,p.email||'',p.department||'',p.manager_code||'',i.status,sub?fmtDate(sub.submitted_at):'']);});
-  const csv=rows.map(r=>r.map(v=>'"'+String(v||'').replace(/"/g,'""')+'"').join(',')).join('\n');
+  // v2.4: neutralise CSV formula injection. A name or department beginning with
+  // = + - @ (or a tab / CR) is executed as a formula when the file opens in Excel.
+  const cell=v=>{
+    let s=String(v==null?'':v);
+    if(/^[=+\-@\t\r]/.test(s)) s="'"+s;
+    return '"'+s.replace(/"/g,'""')+'"';
+  };
+  const csv=rows.map(r=>r.map(cell).join(',')).join('\n');
   const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);
   a.download='PA_Export_'+(state.activeCycle?state.activeCycle.name.replace(/[^a-z0-9]/gi,'_'):'all')+'.csv';a.click();toast('CSV exported!');
 }
 
 // I2: Increment recommendation engine
+// v2.4: a MISSING score is not the same as a score of zero. Previously both fell into
+// the first branch, so a PA approved without complete scores was reported and exported
+// to payroll as "Below Expectation / PIP / 0%" - an actively defamatory default.
 function incBand(score){
-  if(!score||score<2) return {band:'Below Expectation',pct:0,label:'PIP'};
-  if(score<3) return {band:'Average',pct:3,label:'3%'};
-  if(score<4) return {band:'Meet Expectations',pct:5,label:'5%'};
-  if(score<4.6) return {band:'Excellent',pct:7,label:'7%'};
+  const s=(score===null||score===undefined||score===''||isNaN(parseFloat(score)))?null:parseFloat(score);
+  if(s===null) return {band:'Not Scored',pct:null,label:'\u{2014} review incomplete',unscored:true};
+  if(s<2) return {band:'Below Expectation',pct:0,label:'PIP'};
+  if(s<3) return {band:'Average',pct:3,label:'3%'};
+  if(s<4) return {band:'Meet Expectations',pct:5,label:'5%'};
+  if(s<4.6) return {band:'Excellent',pct:7,label:'7%'};
   return {band:'Outstanding',pct:10,label:'10%'};
 }
 function renderHRIncrement(){
@@ -2871,17 +3094,18 @@ function renderHRIncrement(){
   tbl.innerHTML=approved.map(item=>{
     const p=item.profile,sub=item.submission;
     const fs=sub?.manager_section_comments?.final_score??sub?.manager_overall_rating??null;
-    const {band,pct,label}=incBand(fs?parseFloat(fs):null);
+    const {band,pct,label,unscored}=incBand(fs);
     const mgr=state.allProfiles.find(x=>x.employee_code===p.manager_code);
-    const scoreDisp=fs!==null?Number(fs).toFixed(2):'\u{2014}';
-    const pctClass=pct===0?'badge-returned':pct<=3?'badge-draft':pct<=5?'badge-submitted':pct<=7?'badge-review':'badge-approved';
+    const scoreDisp=(fs!==null&&fs!==undefined&&!isNaN(parseFloat(fs)))?Number(fs).toFixed(2):'\u{2014}';
+    // v2.4: an unscored approval is flagged amber, not branded PIP.
+    const pctClass=unscored?'badge-review':pct===0?'badge-returned':pct<=3?'badge-draft':pct<=5?'badge-submitted':pct<=7?'badge-review':'badge-approved';
     return`<tr>
       <td><strong>${esc(p.full_name)}</strong><br><span style="font-size:12px;color:var(--gray-text)">${esc(p.employee_code)}</span></td>
       <td>${esc(p.department||'\u{2014}')}</td>
       <td>${esc(mgr?mgr.full_name:(p.manager_code||'\u{2014}'))}</td>
       <td style="font-family:monospace;font-weight:700;">${esc(scoreDisp)}</td>
       <td>${esc(band)}</td>
-      <td><span class="badge ${pctClass}">${label}</span></td>
+      <td><span class="badge ${pctClass}">${esc(label)}</span></td>
     </tr>`;
   }).join('');
 }
@@ -2890,11 +3114,18 @@ function exportIncrementXLSX(){
   if(typeof XLSX==='undefined'){toast('Excel library not loaded. Please refresh and try again.');return;}
   const approved=state.allData.filter(i=>i.status==='Approved');
   const rows=[['Employee Code','Employee Name','Department','Manager Code','Final Score','Band','Increment %']];
+  // v2.4: an approved-but-unscored record must NOT go to payroll as 0%. It is exported
+  // with a blank increment and an explicit band so whoever runs payroll sees it.
+  let unscoredCount=0;
   approved.forEach(item=>{
     const p=item.profile,sub=item.submission;
     const fs=sub?.manager_section_comments?.final_score??sub?.manager_overall_rating??null;
-    const {band,pct}=incBand(fs?parseFloat(fs):null);
-    rows.push([p.employee_code,p.full_name,p.department||'',p.manager_code||'',fs!==null?parseFloat(Number(fs).toFixed(2)):null,band,pct+'%']);
+    const {band,pct,unscored}=incBand(fs);
+    if(unscored) unscoredCount++;
+    rows.push([p.employee_code,p.full_name,p.department||'',p.manager_code||'',
+      unscored?null:parseFloat(Number(fs).toFixed(2)),
+      band,
+      unscored?'':pct+'%']);
   });
   const ws=XLSX.utils.aoa_to_sheet(rows);
   // Column widths
@@ -2902,7 +3133,9 @@ function exportIncrementXLSX(){
   const wb=XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb,'Increment',ws);
   XLSX.writeFile(wb,'Increment_'+state.activeCycle.name.replace(/[^a-z0-9]/gi,'_')+'.xlsx');
-  toast('Increment Excel exported!');
+  toast(unscoredCount
+    ? 'Exported \u{2014} but '+unscoredCount+' approved PA(s) have NO final score. They are marked "Not Scored" with a blank increment. Fix before running payroll.'
+    : 'Increment Excel exported!');
 }
 
 // == HR USER MANAGEMENT ==
@@ -2922,7 +3155,7 @@ function renderProfilesTable(){
   ):state.allProfiles;
   tbl.innerHTML=filtered.map(p=>{
     const mgr=state.allProfiles.find(x=>x.employee_code===p.manager_code);
-    return`<tr><td><strong>${esc(p.employee_code)}</strong></td><td>${esc(p.full_name)}<br><span style="font-size:11px;color:var(--gray-text)">${esc(p.email||'')}</span></td><td><span class="badge ${p.role==='hr'?'badge-approved':p.role==='manager'?'badge-review':'badge-draft'}">${esc(p.role)}</span></td><td>${esc(p.department||'\u{2014}')}</td><td>${esc(mgr?mgr.full_name:(p.manager_code||'\u{2014}'))}</td><td><span class="badge ${p.is_active?'badge-active':'badge-inactive'}">${p.is_active?'Active':'Inactive'}</span></td><td style="white-space:nowrap;"><button class="btn btn-outline btn-sm" onclick="openEditUser('${esc(p.id)}')">Edit</button><button class="btn btn-outline btn-sm" style="margin-left:6px;" onclick="resetUserPassword('${esc(p.email||'')}')">Reset Pwd</button>${p.is_active?'<button class="btn-danger-sm" style="margin-left:6px;" onclick="confirmDeactivateUser(\''+esc(p.id)+'\')">Deactivate</button>':'<button class="btn btn-outline btn-sm" style="margin-left:6px;" onclick="toggleUserActive(\''+esc(p.id)+'\',true)">Reactivate</button>'}</td></tr>`;
+    return`<tr><td><strong>${esc(p.employee_code)}</strong></td><td>${esc(p.full_name)}<br><span style="font-size:11px;color:var(--gray-text)">${esc(p.email||'')}</span></td><td><span class="badge ${p.role==='hr'?'badge-approved':p.role==='manager'?'badge-review':'badge-draft'}">${esc(p.role)}</span></td><td>${esc(p.department||'\u{2014}')}</td><td>${esc(mgr?mgr.full_name:(p.manager_code||'\u{2014}'))}</td><td><span class="badge ${p.is_active?'badge-active':'badge-inactive'}">${p.is_active?'Active':'Inactive'}</span></td><td style="white-space:nowrap;"><button class="btn btn-outline btn-sm" onclick="openEditUser('${jsq(p.id)}')">Edit</button><button class="btn btn-outline btn-sm" style="margin-left:6px;" onclick="resetUserPassword('${jsq(p.email||'')}')">Reset Pwd</button>${p.is_active?'<button class="btn-danger-sm" style="margin-left:6px;" onclick="confirmDeactivateUser(\''+jsq(p.id)+'\')">Deactivate</button>':'<button class="btn btn-outline btn-sm" style="margin-left:6px;" onclick="toggleUserActive(\''+jsq(p.id)+'\',true)">Reactivate</button>'}</td></tr>`;
   }).join('')||'<tr><td colspan="7" style="text-align:center;padding:20px;color:var(--gray-text);">No users found.</td></tr>';
 }
 function openAddUser(){
@@ -3199,9 +3432,9 @@ function renderCyclesTable(){
   tbl.innerHTML=state.allCycles.map(c=>{
     const lockBadge=c.is_locked?'<span class="badge badge-locked">\u{1F512} Locked</span>':'<span class="badge badge-active">\u{1F513} Open</span>';
     const lockBtn=c.is_locked
-      ?`<button class="btn btn-outline btn-sm" onclick="unlockCycle('${esc(c.id)}')">\u{1F513} Unlock</button>`
-      :`<button class="btn btn-ghost btn-sm" onclick="lockCycle('${esc(c.id)}')">\u{1F512} Lock</button>`;
-    const actionBtn=!c.is_active?`<button class="btn btn-primary btn-sm" onclick="setActiveCycle('${esc(c.id)}')">Set Active</button>`:'<span style="font-size:12px;color:var(--gray-text);">Current</span>';
+      ?`<button class="btn btn-outline btn-sm" onclick="unlockCycle('${jsq(c.id)}')">\u{1F513} Unlock</button>`
+      :`<button class="btn btn-ghost btn-sm" onclick="lockCycle('${jsq(c.id)}')">\u{1F512} Lock</button>`;
+    const actionBtn=!c.is_active?`<button class="btn btn-primary btn-sm" onclick="setActiveCycle('${jsq(c.id)}')">Set Active</button>`:'<span style="font-size:12px;color:var(--gray-text);">Current</span>';
     return`<tr><td><strong>${esc(c.name)}</strong></td><td>${esc(c.start_date||'\u{2014}')}</td><td>${esc(c.end_date||'\u{2014}')}</td><td><span class="badge ${c.is_active?'badge-approved':'badge-draft'}">${c.is_active?'\u{25CF} Active':'Inactive'}</span></td><td>${lockBadge}&nbsp;${lockBtn}</td><td>${actionBtn}</td></tr>`;
   }).join('')||'<tr><td colspan="6" style="text-align:center;padding:20px;color:var(--gray-text);">No cycles yet.</td></tr>';
 }
@@ -3228,6 +3461,12 @@ async function setActiveCycle(cycleId){
   await db.from('cycles').update({is_active:true}).eq('id',cycleId);
   const {data:cycle}=await db.from('cycles').select('*').eq('id',cycleId).single();
   state.activeCycle=cycle;clearLoading();toast('Active cycle updated to: '+cycle.name);loadCycles();
+  // v2.4: state.allData still holds the OLD cycle's submissions. Without this reload,
+  // Reports would show the NEW cycle's self-ratings next to the OLD cycle's manager
+  // ratings, flight-risk counts, bell curve and calibration - all under the new cycle's
+  // heading, with no sign anything was wrong.
+  state.selfScoresCycleId=null;
+  await loadHRData();
 }
 // S3: lock/unlock cycle
 async function lockCycle(cycleId){
@@ -3269,6 +3508,6 @@ document.addEventListener('DOMContentLoaded',async()=>{
 });
 
 </script>
-<div style="position:fixed;bottom:4px;right:8px;font-size:10px;color:#9aa0a6;z-index:9999;pointer-events:none;">v2.3</div>
+<div style="position:fixed;bottom:4px;right:8px;font-size:10px;color:#9aa0a6;z-index:9999;pointer-events:none;">v2.4</div>
 </body>
 </html>
