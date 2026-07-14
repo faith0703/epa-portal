@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ePA Portal v2.4 &#8212; Performance Appraisal</title>
+<title>ePA Portal v2.4.1 &#8212; Performance Appraisal</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -1865,11 +1865,18 @@ function computeFinalScore() {
 
   // Objectives weighted avg (use agreed if set, else mgr)
   // SC keys: 'obj{id}_mgr', 'obj{id}_agr'
+  // v2.4.1: also track how many lines have NO Agreed Score. The Agreed Score is the one
+  // the manager and employee settle on AFTER they discuss it. If it is blank we fall back
+  // to the manager's own score, which is right - but it means the record cannot tell
+  // "we discussed and agreed on 4" apart from "the manager said 4 and never asked".
+  // We count the gap here so Approve can warn about it.
+  let missingAgreed = 0;
   let wSum = 0, wsSum = 0, objCount = 0;
   objSrc.forEach(o => {
     const agr = SC['obj'+o.id+'_agr'];
     const mgr = SC['obj'+o.id+'_mgr'];
     const score = agr || mgr;
+    if (score && !agr) missingAgreed++;
     let w;
     if (inMgr) {
       w = parseFloat(o.w) || 20;                 // reviewee's stored weight
@@ -1896,6 +1903,7 @@ function computeFinalScore() {
     const agr = SC['mgr_'+c.id+'_agr'];
     const mgr = SC['mgr_'+c.id+'_mgr'];
     const score = agr || mgr;
+    if (score && !agr) missingAgreed++;
     if (score) { cSum += score; cCount++; }
   });
   const compAvg = cCount > 0 ? (cSum / cCount) : null;
@@ -1909,6 +1917,7 @@ function computeFinalScore() {
     objTotal: objSrc.length,
     compCount: cCount,
     compTotal: compSrc.length,
+    missingAgreed: missingAgreed,
     complete: (objCount === objSrc.length && cCount === compSrc.length && final !== null)
   };
 }
@@ -2578,22 +2587,37 @@ function collectMgrReview(){
   };
 }
 function approvePA(){
-  // v2.3: warn (do NOT block) if the final score cannot be computed \u{2014} the PA would
-  // otherwise be approved with a blank score that silently breaks Reports/Increment.
+  // Warn (never block) on two separate problems:
+  //  1. v2.3 - scores are missing, so the final score is incomplete or blank.
+  //  2. v2.4.1 - scores are present but the AGREED score was never entered. The agreed
+  //     score is the one the manager and employee settle on after they discuss it. When
+  //     it is blank we fall back to the manager's own score, which means the record
+  //     cannot show whether a discussion ever happened. Make that visible.
   const calc=computeFinalScore();
   const w=document.getElementById('approve-score-warn');
   if(w){
-    if(calc.complete){ w.style.display='none'; w.textContent=''; }
-    else{
+    const msgs=[];
+    if(!calc.complete){
       const missing=[];
       if(calc.objCount<calc.objTotal) missing.push((calc.objTotal-calc.objCount)+' objective score(s)');
       if(calc.compCount<calc.compTotal) missing.push((calc.compTotal-calc.compCount)+' competency score(s)');
-      w.textContent='Warning: final score is incomplete. Missing '+(missing.join(' and ')||'scores')+'. '+
+      msgs.push('<strong>Scores are incomplete.</strong> Missing '+(missing.join(' and ')||'scores')+'. '+
         (calc.final==null
-          ? 'This PA will be approved with a BLANK final score, and will not appear correctly in Reports, the Increment Engine or the exported PDF.'
-          : 'The final score will be calculated from the scores entered so far ('+calc.final.toFixed(2)+').')+
-        ' You can still approve, but consider going back and completing the scores first.';
+          ? 'This PA will be approved with a BLANK final score and will not show correctly in Reports, the Increment Engine or the PDF.'
+          : 'The final score will be worked out from the scores entered so far ('+calc.final.toFixed(2)+').'));
+    }
+    if(calc.missingAgreed>0){
+      msgs.push('<strong>'+calc.missingAgreed+' line(s) have no Agreed Score.</strong> '+
+        'For those lines your own Manager Score will be used as the final agreed score. '+
+        'The Agreed Score is what you and the employee settle on after discussing the review, so please '+
+        'confirm you have had that conversation.');
+    }
+    if(msgs.length){
+      w.innerHTML=msgs.join('<div style="height:8px;"></div>')+
+        '<div style="margin-top:8px;">You can still approve.</div>';
       w.style.display='block';
+    } else {
+      w.style.display='none'; w.textContent='';
     }
   }
   showModal('modal-approve');
@@ -3508,6 +3532,6 @@ document.addEventListener('DOMContentLoaded',async()=>{
 });
 
 </script>
-<div style="position:fixed;bottom:4px;right:8px;font-size:10px;color:#9aa0a6;z-index:9999;pointer-events:none;">v2.4</div>
+<div style="position:fixed;bottom:4px;right:8px;font-size:10px;color:#9aa0a6;z-index:9999;pointer-events:none;">v2.4.1</div>
 </body>
 </html>
