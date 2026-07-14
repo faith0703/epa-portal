@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ePA Portal v2.4.1 &#8212; Performance Appraisal</title>
+<title>ePA Portal v2.5 &#8212; Performance Appraisal</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -1053,7 +1053,7 @@
       <div class="sidebar-item" onclick="hrNav('hrReports')"><span class="si-icon">&#128202;</span> Reports</div>
       <div class="sidebar-item" onclick="hrNav('hrUsers')"><span class="si-icon">&#128100;</span> User Management</div>
       <div class="sidebar-item" onclick="hrNav('hrCycles')"><span class="si-icon">&#128260;</span> PA Cycles</div>
-      <div class="sidebar-item" onclick="hrNav('hrIncrement')"><span class="si-icon">&#128200;</span> Increment Engine</div>
+      <div class="sidebar-item" id="hr-nav-increment" style="display:none;" onclick="hrNav('hrIncrement')"><span class="si-icon">&#128200;</span> Increment Engine</div>
       <div class="sidebar-item" onclick="hrNav('hrAuditLog')"><span class="si-icon">&#128373;&#65039;</span> Audit Log</div>
     </div>
     <div class="content">
@@ -2048,6 +2048,10 @@ function showScreen(id){
 }
 function applyLogin(){
   const user=state.currentUser; if(!user) return;
+  // v2.5: only show the Increment Engine menu item if an approved merit matrix exists
+  // and INCREMENT_ENABLED has been turned on. It is off by default.
+  const incNav=document.getElementById('hr-nav-increment');
+  if(incNav) incNav.style.display = INCREMENT_ENABLED ? '' : 'none';
   document.getElementById('topbar-user-name').textContent=user.full_name;
   document.getElementById('topbar-role-label').style.display='';
   document.getElementById('btn-logout').style.display='';
@@ -2111,6 +2115,12 @@ function mgrNav(section){
   renderMgrTeam();
 }
 function hrNav(section){
+  // v2.5: the Increment Engine is off until an approved merit matrix exists.
+  // Guard the route as well as the menu, so a stale link or bookmark cannot reach it.
+  if(section==='hrIncrement' && !INCREMENT_ENABLED){
+    toast('Increment Engine is disabled. It needs an approved merit matrix first.');
+    section='hrDashboard';
+  }
   document.querySelectorAll('.sidebar').forEach(s=>s.classList.remove('open'));
   ['hrDashboard','hrAll','hrDetail','hrReports','hrUsers','hrCycles','hrIncrement','hrAuditLog'].forEach(s=>{const el=document.getElementById(s);if(el)el.style.display='none';});
   document.getElementById(section).style.display='';
@@ -2911,7 +2921,7 @@ function exportEmployeePDF(){
   const cycleName=state.activeCycle?.name||'PA Cycle';
   const finalScoreRaw=msc.final_score ?? sub.manager_overall_rating ?? null;
   const finalScore=(finalScoreRaw===null||finalScoreRaw===undefined||isNaN(parseFloat(finalScoreRaw)))?null:parseFloat(finalScoreRaw);
-  const inc=incBand(finalScore); // v2.4: pass null through, don't coerce a missing score to 0
+  // v2.5: incBand is NOT called here any more. The PDF must not carry a pay number.
   const { jsPDF }=window.jspdf;
   const doc=new jsPDF();
   const pageW=doc.internal.pageSize.getWidth();
@@ -2941,7 +2951,18 @@ function exportEmployeePDF(){
   }
   y+=1;line();
   doc.setFont('helvetica','bold');doc.setFontSize(12);
-  doc.text('Final Score: '+(finalScore!==null?finalScore.toFixed(2):'\u{2014}')+'  |  Band: '+inc.band+'  |  Increment: '+(inc.unscored?'\u{2014}':inc.pct+'%'),left,y);y+=10;
+  // v2.5: the appraisal PDF NO LONGER prints a salary increment percentage.
+  //
+  // Why: the increment bands (3/5/7/10%) were invented in a build session in June 2026.
+  // No merit matrix, no compensation policy and no sign-off exists for them anywhere.
+  // Printing an unapproved percentage on a document that goes to an employee, or into
+  // their personnel file, creates a promise the company never made. If they are shown
+  // 7% and paid 3%, that is a grievance with a paper trail. It is not worth it.
+  //
+  // The PDF now shows the final score and the RATING band, which come from the approved
+  // 1 to 5 rating scale in the original PA design. Nothing about pay.
+  const ratingLabel=(finalScore!==null)?outcomeLabel(finalScore):'\u{2014}';
+  doc.text('Final Score: '+(finalScore!==null?finalScore.toFixed(2):'\u{2014}')+'  |  Rating: '+ratingLabel,left,y);y+=10;
   doc.setFont('helvetica','normal');doc.setFontSize(11);
   doc.text('Manager Comments:',left,y);y+=6;
   doc.setFontSize(10);
@@ -3096,7 +3117,31 @@ function exportCSV(){
   a.download='PA_Export_'+(state.activeCycle?state.activeCycle.name.replace(/[^a-z0-9]/gi,'_'):'all')+'.csv';a.click();toast('CSV exported!');
 }
 
-// I2: Increment recommendation engine
+// ===========================================================================
+// INCREMENT ENGINE - DISABLED BY DEFAULT. READ THIS BEFORE TURNING IT ON.
+// ===========================================================================
+// The bands below (0 / 3 / 5 / 7 / 10 percent) were invented during a build
+// session in June 2026. As of July 2026 there is:
+//
+//   NO approved merit matrix.
+//   NO compensation policy document.
+//   NO sign-off from Finance, HR leadership or anyone else.
+//
+// They appear in no requirement, no design document and no meeting record.
+// They exist only in the five lines of code below.
+//
+// A performance appraisal tool that prints a salary percentage against a
+// person's name creates an expectation the company has not agreed to. If an
+// employee is shown 7 percent and paid 3 percent, that is a grievance with a
+// paper trail. So the screen is hidden and the appraisal PDF no longer prints
+// a pay number.
+//
+// TO ENABLE: get a real merit matrix approved by whoever owns compensation,
+// replace the bands below with the approved ones, then set this to true.
+// Do not flip this flag on its own.
+const INCREMENT_ENABLED = false;
+// ===========================================================================
+
 // v2.4: a MISSING score is not the same as a score of zero. Previously both fell into
 // the first branch, so a PA approved without complete scores was reported and exported
 // to payroll as "Below Expectation / PIP / 0%" - an actively defamatory default.
@@ -3134,6 +3179,9 @@ function renderHRIncrement(){
   }).join('');
 }
 function exportIncrementXLSX(){
+  // v2.5: belt and braces. Even if the screen is somehow reached, no payroll file
+  // leaves this app while the bands are unapproved.
+  if(!INCREMENT_ENABLED){toast('Increment export is disabled until an approved merit matrix is in place.');return;}
   if(!state.activeCycle)return;
   if(typeof XLSX==='undefined'){toast('Excel library not loaded. Please refresh and try again.');return;}
   const approved=state.allData.filter(i=>i.status==='Approved');
@@ -3532,6 +3580,6 @@ document.addEventListener('DOMContentLoaded',async()=>{
 });
 
 </script>
-<div style="position:fixed;bottom:4px;right:8px;font-size:10px;color:#9aa0a6;z-index:9999;pointer-events:none;">v2.4.1</div>
+<div style="position:fixed;bottom:4px;right:8px;font-size:10px;color:#9aa0a6;z-index:9999;pointer-events:none;">v2.5</div>
 </body>
 </html>
